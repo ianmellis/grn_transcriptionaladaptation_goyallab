@@ -67,11 +67,11 @@ for iname = 1:1
     set_proddiff{iname} = sprintf('proddiff%d', iname);             %difference in production rate between burst 'on' and burst 'off' (> 1)
     set_deg{iname} = sprintf('deg%d', iname);                       %degradation rate
     set_onbasal{iname} = sprintf('onbasal%d', iname);               %basal on-rate of burst
-    set_ondep{iname} = sprintf('ondep%d', iname);                   %additional on-rate due to dependency to other node
+    set_ondep{iname} = sprintf('ondep%d', iname);                   %additional on-rate of target due to dependency to original regulator
     set_off{iname} = sprintf('off%d', iname);                       %off rate of burst
     set_onbasal_aprime{iname} = sprintf('onbasal_aprime%d', iname); %basal on-rate of burst of paralog
     set_onbasal_b{iname} = sprintf('onbasal_b%d', iname);           %basal on-rate of burst of downstream target
-    set_ondep_prime{iname} = sprintf('ondep_prime', iname);                %additional on-rate due to dependency on paralog
+    set_ondep_prime{iname} = sprintf('ondep_prime', iname);                %additional on-rate of target due to dependency on paralog
     set_nitc{iname} = sprintf('nitc%d', iname);                            %additional on-rate of paralog due to dependency on NITC after mutation
     set_spec_para{iname} = sprintf('Aprime%d', iname);
     set_spec_targ{iname} = sprintf('B%d', iname); 
@@ -292,8 +292,13 @@ for istruc = 1:nstruc
         end
         
 %         ondep for each downstream target B regulated by A 
-        for ondep_txt = 1:n_species
+        for ondep_txt = 1:n_species_downstr
             fprintf(fileID,'%s = %f : %s = %s\n', set_ondep{ondep_txt}, latinhyp_ondep(iruns,ondep_txt), set_Boff{ondep_txt}, set_Bon{ondep_txt});
+        end
+        
+%         ondep for each downstream target B regulated by Aprime
+        for ondep_txt = 1:n_species_downstr
+            fprintf(fileID,'%s = %f : %s = %s\n', set_ondep_prime{ondep_txt}, latinhyp_ondep(iruns,ondep_txt), set_Boff{ondep_txt}, set_Bon{ondep_txt});
         end
         
         for on_txt = 1:n_species
