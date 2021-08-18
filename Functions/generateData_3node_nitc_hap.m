@@ -38,6 +38,8 @@ function generateData_3node_nitc_hap(nruns,n_species_upstr, n_species_paralog, n
 n_species_upstr = 1;
 n_species_paralog = 1;
 n_species_downstr = 1;
+type = 'rigid_3';
+gen = 'yes';
 
 %overall specifications (for up to 10 species)
 set_spec_orig = cell(1,1);
@@ -129,34 +131,37 @@ elseif isequal(type, 'nitc') == 1
     nstruc = length(M_iso);
 end
 
-M = [];
+M_orig_targ = [1]; % A->B edges; rows are A
+M_para_targ = [1]; % A'->B edges; rows are A'
+M_nitc_para = [1]; % Post-NITC A->A' edges; rows are NITC-A
 
 if isequal(gen,'yes') == 1                  %generate new parameters by latin hypercube sampling method
     rng('shuffle');                         %receive different values upon new start
     
-    min_range = [repmat(0.01,1,1),...       %production rate
-        repmat(0.001,1,1),...               %degradation rate
-        repmat(0.001,1,1),...               %basal on-rate of burst
+    min_range = [repmat(0.01,1,1),...       %production rate - same for all genes
+        repmat(0.001,1,1),...               %degradation rate - same for all genes
+        repmat(0.001,1,1),...               %basal on-rate of burst - original regulator
         repmat(0.1,1,1),...                 %Hill coefficient n (Hill function)
         repmat(0.1,1,1),...                 %additional on-rate due to dependency to other node
         repmat(0.01,1,1),...                %off rate of burst
         repmat(2,1,1),...                   %proddiff
-        repmat(0.001,1,1),...               %basal on-rate of burst - paralog
-        repmat(0.001,1,1),...               %basal on-rate of burst - target
+        repmat(0.001,1,1),...               %basal on-rate of burst - paralogs
+        repmat(0.001,1,1),...               %basal on-rate of burst - targets
         repmat(0.1,1,1),...                 %additional on-rate due to dependency to other node - paralog
         repmat(0.1,1,1)];                   %additional on-rate of paralog due to NITC
     
-    max_range = [repmat(1,1,1),...          %production rate
-        repmat(0.1,1,1),...                 %degradation rate
-        repmat(0.1,1,1),...                 %basal on-rate of burst
+    max_range = [repmat(1,1,1),...          %production rate - same for all genes
+        repmat(0.1,1,1),...                 %degradation rate - same for all genes
+        repmat(0.1,1,1),...                 %basal on-rate of burst - original regulator
         repmat(10,1,1),...                  %Hill coefficient n (Hill function)
         repmat(1,1,1),...                   %additional on-rate due to dependency to other node
         repmat(0.1,1,1),...                 %off rate of burst
-        repmat(100,1,1),...                   %proddiff
-        repmat(0.1,1,1),...               %basal on-rate of burst - paralog
-        repmat(0.1,1,1),...               %basal on-rate of burst - target
-        repmat(1,1,1),...                 %additional on-rate due to dependency to other node - paralog
-        repmat(1,1,1)];                   %additional on-rate of paralog due to NITC
+        repmat(100,1,1),...                 %proddiff
+        repmat(0.1,1,1),...                 %basal on-rate of burst - paralogs
+        repmat(0.1,1,1),...                 %basal on-rate of burst - targets
+        repmat(1,1,1),...                   %additional on-rate due to dependency to other node - paralog
+        repmat(1,1,1)];                     %additional on-rate of paralog due to NITC
+    
     
     latinhyp = lhsdesign_modified(nruns, min_range, max_range);
     
@@ -175,6 +180,7 @@ if isequal(gen,'yes') == 1                  %generate new parameters by latin hy
     latinhyp_nitc = repmat(latinhyp(:,11),1,n_species);
     
     k = repmat(0.95*latinhyp(:,1)./latinhyp(:,2).*latinhyp(:,7),1,n_species); %0.95 of stationary on-state of system
+    % do a search over k
     
 else
     load(data)  %load parameter set
@@ -214,11 +220,16 @@ for istruc = 1:nstruc
     
     clear T_outpar S_outpar
     
+    n_species = n_species_upstr + n_species_paralog + n_species_downstr;
+    
     % needs to change? ***
     T_outpar = cell(1,nruns);
     S_outpar = cell(1,nruns);
+%     S = zeros(nruns,3*n_species);
+%     R = zeros(nruns,8*n_species);
+%     P = zeros(nruns,4*n_species);
     S = zeros(nruns,3*n_species);
-    R = zeros(nruns,8*n_species);
+    R = zeros(nruns,11*n_species);
     P = zeros(nruns,4*n_species);
     
     for iruns = 1:nruns
