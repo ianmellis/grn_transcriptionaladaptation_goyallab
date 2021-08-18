@@ -35,28 +35,24 @@
 %%
 function generateData_3node_nitc_hap(nruns,n_species_upstr, n_species_paralog, n_species_downstr, maxgillespie,gen,init,data,type)
 
-n_species_upstr = 1;
-n_species_paralog = 1;
-n_species_downstr = 1;
-
 %overall specifications (for up to 10 species)
-set_spec_orig = cell(1,1);
-set_spec_para = cell(1,1);
-set_Burston = cell(1,1);
-set_Burstoff = cell(1,1);
-set_prod = cell(1,1);
-set_proddiff = cell(1,1);
-set_deg = cell(1,1);
-set_onbasal = cell(1,1);
-set_ondep = cell(1,1);
-set_off = cell(1,1);
-set_onbasal_aprime = cell(1,1);
-set_onbasal_b = cell(1,1);
-set_ondep_prime = cell(1,1);
-set_nitc = cell(1,1);
-set_spec_targ = cell(1,1);
+set_spec_orig = cell(1,10);
+set_spec_para = cell(1,10);
+set_Burston = cell(1,10);
+set_Burstoff = cell(1,10);
+set_prod = cell(1,10);
+set_proddiff = cell(1,10);
+set_deg = cell(1,10);
+set_onbasal = cell(1,10);
+set_ondep = cell(1,10);
+set_off = cell(1,10);
+set_onbasal_aprime = cell(1,10);
+set_onbasal_b = cell(1,10);
+set_ondep_prime = cell(1,10);
+set_nitc = cell(1,10);
+set_spec_targ = cell(1,10);
 
-for iname = 1:1
+for iname = 1:10
     
     set_spec_orig{iname} = sprintf('A%d', iname);              %species
     set_Burston_orig{iname} = sprintf('Burst%d_on_orig', iname);                      %burst 'on' original regulator
@@ -128,8 +124,6 @@ elseif isequal(type, 'nitc') == 1
     M_iso = M_iso_nitc_A1_Aprime1_B1;
     nstruc = length(M_iso);
 end
-
-M = [];
 
 if isequal(gen,'yes') == 1                  %generate new parameters by latin hypercube sampling method
     rng('shuffle');                         %receive different values upon new start
