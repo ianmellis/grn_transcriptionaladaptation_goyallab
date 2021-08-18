@@ -236,9 +236,22 @@ for istruc = 1:nstruc
         
         fclose all;
         clear functions
+%         clearvars -except nruns maxgillespie n_species init gen...
+%             set_spec set_Bon set_Boff set_prod set_proddiff set_deg...
+%             set_onbasal set_ondep set_off M_iso nstruc...
+%             latinhyp_prod latinhyp_deg latinhyp_onbasal latinhyp_n...
+%             latinhyp_ondep latinhyp_off latinhyp_proddiff k...
+%             iruns istruc S P R type
+
         clearvars -except nruns maxgillespie n_species init gen...
-            set_spec set_Bon set_Boff set_prod set_proddiff set_deg...
-            set_onbasal set_ondep set_off M_iso nstruc...
+            n_species_downstr n_species_upstr n_species_paralog...
+            set_prod set_proddiff set_deg...
+            set_spec_orig set_Burston_orig set_Burstoff_orig...
+            set_onbasal set_ondep set_off set_onbasal_aprime...
+            set_onbasal_b set_ondep_prime set_nitc set_spec_para...
+            set_spec_targ set_Burston_para set_Burstoff_para...
+            set_Burston_targ set_Burstoff_targ M_iso nstruc...
+            M_orig_targ M_para_targ M_nitc_para...
             latinhyp_prod latinhyp_deg latinhyp_onbasal latinhyp_n...
             latinhyp_ondep latinhyp_off latinhyp_proddiff k...
             iruns istruc S P R type
@@ -252,14 +265,33 @@ for istruc = 1:nstruc
         
         fprintf(fileID,'%d\n', maxgillespie);
         
-        for prod_txt = 1:n_species
-            fprintf(fileID,'%s = %f : = %s \n', set_prod{prod_txt}, latinhyp_prod(iruns,prod_txt), set_spec{prod_txt}) ;
+%         set_prod for each species
+        for prod_txt = 1:n_species_upstr
+            fprintf(fileID,'A_%s = %f : = %s \n', set_prod{prod_txt}, latinhyp_prod(iruns,prod_txt), set_spec_orig{prod_txt}) ;
         end
         
-        for deg_txt = 1:n_species
-            fprintf(fileID,'%s = %f : %s = \n', set_deg{deg_txt}, latinhyp_deg(iruns,deg_txt), set_spec{deg_txt}) ;
+        for prod_txt = 1:n_species_paralog
+            fprintf(fileID,'Aprime_%s = %f : = %s \n', set_prod{prod_txt}, latinhyp_prod(iruns,prod_txt), set_spec_para{prod_txt}) ;
         end
         
+        for prod_txt = 1:n_species_downstr
+            fprintf(fileID,'B_%s = %f : = %s \n', set_prod{prod_txt}, latinhyp_prod(iruns,prod_txt), set_spec_targ{prod_txt}) ;
+        end
+        
+%         set_deg for each species
+        for deg_txt = 1:n_species_upstr
+            fprintf(fileID,'A_%s = %f : %s = \n', set_deg{deg_txt}, latinhyp_deg(iruns,deg_txt), set_spec_orig{deg_txt}) ;
+        end
+        
+        for deg_txt = 1:n_species_paralog
+            fprintf(fileID,'Aprime_%s = %f : %s = \n', set_deg{deg_txt}, latinhyp_deg(iruns,deg_txt), set_spec_para{deg_txt}) ;
+        end
+        
+        for deg_txt = 1:n_species_downstr
+            fprintf(fileID,'B_%s = %f : %s = \n', set_deg{deg_txt}, latinhyp_deg(iruns,deg_txt), set_spec_targ{deg_txt}) ;
+        end
+        
+%         ondep for each downstream target B regulated by A 
         for ondep_txt = 1:n_species
             fprintf(fileID,'%s = %f : %s = %s\n', set_ondep{ondep_txt}, latinhyp_ondep(iruns,ondep_txt), set_Boff{ondep_txt}, set_Bon{ondep_txt});
         end
