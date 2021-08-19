@@ -337,15 +337,15 @@ for istruc = 1:nstruc
         
         fprintf(fileID,'%s\n', 'Basal values');
         
-        for onbasak_txt = 1:n_species
+        for onbasak_txt = 1:n_species_upstr
             fprintf(fileID,'%s = %d\n', set_onbasal{onbasak_txt}, latinhyp_onbasal(iruns,onbasak_txt));
         end
         
-        for onbasal_aprime_txt = 1:n_species
+        for onbasal_aprime_txt = 1:n_species_paralog
             fprintf(fileID,'%s = %d\n', set_onbasal_aprime{onbasal_aprime_txt}, latinhyp_onbasal_aprime(iruns,onbasal_aprime_txt));
         end
         
-        for onbasal_b_txt = 1:n_species
+        for onbasal_b_txt = 1:n_species_downstr
             fprintf(fileID,'%s = %d\n', set_onbasal_b{onbasal_b_txt}, latinhyp_onbasal_b(iruns,onbasal_b_txt));
         end
         
