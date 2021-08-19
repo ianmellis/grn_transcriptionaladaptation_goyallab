@@ -293,26 +293,32 @@ for istruc = 1:nstruc
         
 %         ondep for each downstream target B regulated by A 
         for ondep_txt = 1:n_species_downstr
-            fprintf(fileID,'%s = %f : %s = %s\n', set_ondep{ondep_txt}, latinhyp_ondep(iruns,ondep_txt), set_Boff{ondep_txt}, set_Bon{ondep_txt});
+            fprintf(fileID,'B_%s = %f : %s = %s\n', set_ondep{ondep_txt}, latinhyp_ondep(iruns,ondep_txt), set_Burstoff_targ{ondep_txt}, set_Burston_targ{ondep_txt});
         end
         
 %         ondep for each downstream target B regulated by Aprime
         for ondep_txt = 1:n_species_downstr
-            fprintf(fileID,'%s = %f : %s = %s\n', set_ondep_prime{ondep_txt}, latinhyp_ondep(iruns,ondep_txt), set_Boff{ondep_txt}, set_Bon{ondep_txt});
+            fprintf(fileID,'B_%s = %f : %s = %s\n', set_ondep_prime{ondep_txt}, latinhyp_ondep_prime(iruns,ondep_txt), set_Burstoff_targ{ondep_txt}, set_Burston_targ{ondep_txt});
         end
         
-        for on_txt = 1:n_species
-            fprintf(fileID,'%s = %f : %s = %s\n', set_off{on_txt}, latinhyp_off(iruns,on_txt), set_Bon{on_txt}, set_Boff{on_txt});
-        end
-        
-        
-        for ondepprime_txt = 1:nspecies
-            fprintf(fileID,'%s = %f : %s = \n', set_ondep_prime{ondepprime_txt}, latinhyp_ondep_prime(iruns,ondepprime_txt), set_spec{ondepprime_txt});
-        end
-        
+%         NITC-based ondep for Aprime regulated by NITC-type A
         for nitc_txt = 1:nspecies
-            fprintf(fileID,'%s = %f : %s = \n', set_nitc{nitc_txt}, latinhyp_nitc(iruns,nitc_txt), set_spec{nitc_txt});
+            fprintf(fileID,'Aprime%s = %f : %s = %s\n', set_nitc{nitc_txt}, latinhyp_nitc(iruns,nitc_txt), set_Burstoff_para{ondep_txt}, set_Burston_para{ondep_txt});
         end
+        
+%         off for each species
+        for on_txt = 1:n_species_upstr
+            fprintf(fileID,'A_%s = %f : %s = %s\n', set_off{on_txt}, latinhyp_off(iruns,on_txt), set_Bon{on_txt}, set_Boff{on_txt});
+        end
+        
+        for on_txt = 1:n_species_paralog
+            fprintf(fileID,'Aprime_%s = %f : %s = %s\n', set_off{on_txt}, latinhyp_off(iruns,on_txt), set_Bon{on_txt}, set_Boff{on_txt});
+        end
+        
+        for on_txt = 1:n_species_downstr
+            fprintf(fileID,'B_%s = %f : %s = %s\n', set_off{on_txt}, latinhyp_off(iruns,on_txt), set_Bon{on_txt}, set_Boff{on_txt});
+        end
+        
         
         fprintf(fileID,'%s\n', 'Production difference');
         
