@@ -442,11 +442,18 @@ for istruc = 1:nstruc
         R_save = sprintf('./Example/R_outparC%d_%d',n_species,istruc);
         S_save = sprintf('./Example/S_outparC%d_%d',n_species,istruc);
         P_save = sprintf('./Example/P_outparC%d_%d',n_species,istruc);
+    elseif isequal(type,'rigid_3') == 1
+        %         R_save = sprintf('/Volumes/MELANOMAII/Example/R_outparC%d_%d',n_species,istruc);
+        %         S_save = sprintf('/Volumes/MELANOMAII/Example/S_outparC%d_%d',n_species,istruc);
+        %         P_save = sprintf('/Volumes/MELANOMAII/Example/P_outparC%d_%d',n_species,istruc);
+        R_save = sprintf('./Example/R_outpar_NITC_%d_%d_%d',n_species_upstr,n_species_paralog,n_species_downstr);
+        S_save = sprintf('./Example/S_outpar_NITC_%d_%d_%d',n_species,n_species_paralog,n_species_downstr);
+        P_save = sprintf('./Example/P_outpar_NITC_%d_%d_%d',n_species,n_species_paralog,n_species_downstr);
     end
     
-    save(R_save,'R','-v7.3');
-    save(S_save,'S','-v7.3');
-    save(P_save,'P','-v7.3');
+    save(R_save,'R','-v1.0');
+    save(S_save,'S','-v1.0');
+    save(P_save,'P','-v1.0');
     
     for kmem = 1:1
         
