@@ -66,7 +66,7 @@ for iname = 1:1
     set_prod{iname} = sprintf('prod%d', iname);                     %production rate
     set_proddiff{iname} = sprintf('proddiff%d', iname);             %difference in production rate between burst 'on' and burst 'off' (> 1)
     set_deg{iname} = sprintf('deg%d', iname);                       %degradation rate
-    set_onbasal{iname} = sprintf('onbasal%d', iname);               %basal on-rate of burst
+    set_onbasal{iname} = sprintf('onbasal_a%d', iname);               %basal on-rate of burst
     set_ondep{iname} = sprintf('ondep%d', iname);                   %additional on-rate of target due to dependency to original regulator
     set_off{iname} = sprintf('off%d', iname);                       %off rate of burst
     set_onbasal_aprime{iname} = sprintf('onbasal_aprime%d', iname); %basal on-rate of burst of paralog
@@ -322,9 +322,18 @@ for istruc = 1:nstruc
         
         fprintf(fileID,'%s\n', 'Production difference');
         
-        for proddiff_txt = 1:n_species
-            fprintf(fileID,'%s = %d\n', set_proddiff {proddiff_txt}, latinhyp_proddiff(iruns,proddiff_txt));
+        for proddiff_txt = 1:n_species_upstr
+            fprintf(fileID,'A_%s = %d\n', set_proddiff {proddiff_txt}, latinhyp_proddiff(iruns,proddiff_txt));
         end
+        
+        for proddiff_txt = 1:n_species_paralog
+            fprintf(fileID,'Aprime_%s = %d\n', set_proddiff {proddiff_txt}, latinhyp_proddiff(iruns,proddiff_txt));
+        end
+        
+        for proddiff_txt = 1:n_species_downstr
+            fprintf(fileID,'B_%s = %d\n', set_proddiff {proddiff_txt}, latinhyp_proddiff(iruns,proddiff_txt));
+        end
+        
         
         fprintf(fileID,'%s\n', 'Basal values');
         
@@ -340,8 +349,9 @@ for istruc = 1:nstruc
             fprintf(fileID,'%s = %d\n', set_onbasal_b{onbasal_b_txt}, latinhyp_onbasal_b(iruns,onbasal_b_txt));
         end
         
-        fprintf(fileID,'%s\n', 'Hill function k');
         
+        fprintf(fileID,'%s\n', 'Hill function k');
+%         how to handle?
         for spec_txt = 1:n_species
             fprintf(fileID,'k%s = %d\n', set_spec{spec_txt}, k(iruns,spec_txt));
         end
@@ -352,10 +362,19 @@ for istruc = 1:nstruc
             fprintf(fileID,'n%s = %d\n', set_spec{n_txt}, latinhyp_n(iruns,n_txt));
         end
         
+        
         fprintf(fileID,'%s\n', 'Initial values');
         
-        for initspec_txt = 1:n_species
-            fprintf(fileID,'%s = %d\n', set_spec{initspec_txt}, init.spec(initspec_txt));
+        for initspec_txt = 1:n_species_upstr
+            fprintf(fileID,'%s = %d\n', set_spec_orig{initspec_txt}, init.spec_A(initspec_txt));
+        end
+        
+        for initspec_txt = 1:n_species_paralog
+            fprintf(fileID,'%s = %d\n', set_spec_para{initspec_txt}, init.spec_Aprime(initspec_txt));
+        end
+        
+        for initspec_txt = 1:n_species_downstr
+            fprintf(fileID,'%s = %d\n', set_spec_targ{initspec_txt}, init.spec_B(initspec_txt));
         end
         
         for initB_txt = 1:n_species
