@@ -19,6 +19,10 @@ maxgillespiesteps = str2double(gillstepsline);
 clear inlines lines rate ratenames ratelines
 
 n_species = n_species_upstr + n_species_paralog + n_species_downstr;
+% ordering will borrow from Schuh et al. code. However, since these are no
+% longer symmetric networks, the ordering of species will be: original,
+% paralogs, targets. 
+
 
 inlines = cell(1,4*n_species);
 onlines = cell(1,1);
