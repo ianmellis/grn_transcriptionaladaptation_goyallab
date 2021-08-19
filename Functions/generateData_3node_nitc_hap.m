@@ -377,14 +377,30 @@ for istruc = 1:nstruc
             fprintf(fileID,'%s = %d\n', set_spec_targ{initspec_txt}, init.spec_B(initspec_txt));
         end
         
-        for initB_txt = 1:n_species
-            fprintf(fileID,'%s = %d\n', set_Boff{initB_txt}, init.Boff(initB_txt));
-            fprintf(fileID,'%s = %d\n', set_Bon{initB_txt}, init.Bon(initB_txt));
+        for initB_txt = 1:n_species_upstr
+            fprintf(fileID,'%s = %d\n', set_Burstoff_orig{initB_txt}, init.Burstoff_A(initB_txt));
+            fprintf(fileID,'%s = %d\n', set_Burston_orig{initB_txt}, init.Burston_A(initB_txt));
+        end
+        
+        for initB_txt = 1:n_species_paralog
+            fprintf(fileID,'%s = %d\n', set_Burstoff_para{initB_txt}, init.Burstoff_Aprime(initB_txt));
+            fprintf(fileID,'%s = %d\n', set_Burston_para{initB_txt}, init.Burston_Aprime(initB_txt));
+        end
+        
+        for initB_txt = 1:n_species_downstr
+            fprintf(fileID,'%s = %d\n', set_Burstoff_targ{initB_txt}, init.Burstoff_B(initB_txt));
+            fprintf(fileID,'%s = %d\n', set_Burston_targ{initB_txt}, init.Burston_B(initB_txt));
         end
         
         fprintf(fileID,'%s\n', 'Network');
-        for net_txt = 1:n_species
-            fprintf(fileID,'%d\n',parmat(net_txt,:));
+        for net_txt = 1:n_species_upstr
+            fprintf(fileID,'%d\n',M_orig_targ(net_txt,:));
+        end
+        for net_txt = 1:n_species_paralog
+            fprintf(fileID,'%d\n',M_para_targ(net_txt,:));
+        end
+        for net_txt = 1:n_species_upstr
+            fprintf(fileID,'%d\n',M_nitc_para(net_txt,:));
         end
         fclose(fileID);
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%
