@@ -1,0 +1,33 @@
+100000
+prod1 = 0.707073 : = X1 
+prod2 = 0.707073 : = X2 
+deg1 = 0.009732 : X1 = 
+deg2 = 0.009732 : X2 = 
+ondep1 = 0.016756 : B1_off = B1_on
+ondep2 = 0.016756 : B2_off = B2_on
+off1 = 8.143938 : B1_on = B1_off
+off2 = 8.143938 : B2_on = B2_off
+Production difference
+proddiff1 = 2.197631e-01
+proddiff2 = 2.197631e-01
+Basal values
+onbasal1 = 7.955968e-02
+onbasal2 = 7.955968e-02
+Hill function k
+kX1 = 6.342763e+03
+kX2 = 6.342763e+03
+Hill function n
+nX1 = 9.189161e+01
+nX2 = 9.189161e+01
+Initial values
+X1 = 20
+X2 = 20
+B1_off = 1
+B1_on = 0
+B2_off = 1
+B2_on = 0
+Network
+1
+1
+1
+1

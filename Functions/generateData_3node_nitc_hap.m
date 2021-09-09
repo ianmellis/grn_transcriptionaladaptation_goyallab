@@ -177,20 +177,21 @@ if isequal(gen,'yes') == 1                  %generate new parameters by latin hy
     
     latinhyp_prod = repmat(latinhyp(:,1),1,n_species);
     latinhyp_deg = repmat(latinhyp(:,2),1,n_species);
-    latinhyp_onbasal = repmat(latinhyp(:,3),1,n_species);
+    latinhyp_onbasal = repmat(latinhyp(:,3),1,n_species_upstr);
     latinhyp_n = repmat(latinhyp(:,4),1,n_species);
-    latinhyp_ondep = repmat(latinhyp(:,5),1,n_species);
+    latinhyp_ondep = repmat(latinhyp(:,5),1,n_species_downstr);
     latinhyp_off = repmat(latinhyp(:,6),1,n_species);
     latinhyp_proddiff = repmat(latinhyp(:,7),1,n_species);
     
 %     new parameters
-    latinhyp_onbasal_aprime = repmat(latinhyp(:,8),1,n_species); % change this to only apply to paralogs
-    latinhyp_onbasal_b = repmat(latinhyp(:,9),1,n_species);
-    latinhyp_ondep_prime = repmat(latinhyp(:,10),1,n_species);
-    latinhyp_nitc = repmat(latinhyp(:,11),1,n_species);
+    latinhyp_onbasal_aprime = repmat(latinhyp(:,8),1,n_species_paralog); % change this to only apply to paralogs
+    latinhyp_onbasal_b = repmat(latinhyp(:,9),1,n_species_downstr);
+    latinhyp_ondep_prime = repmat(latinhyp(:,10),1,n_species_downstr);
+    latinhyp_nitc = repmat(latinhyp(:,11),1,n_species_paralog);
     
-    k = repmat(0.95*latinhyp(:,1)./latinhyp(:,2).*latinhyp(:,7),1,n_species); %0.95 of stationary on-state of system
-    % do a search over k
+    x = 0.5;
+    k = repmat(x*latinhyp(:,1)./latinhyp(:,2).*latinhyp(:,7),1,n_species); %0.95 of stationary on-state of system
+    % do a search over x
      
     
 else
@@ -265,6 +266,8 @@ for istruc = 1:nstruc
             M_orig_targ M_para_targ M_nitc_para...
             latinhyp_prod latinhyp_deg latinhyp_onbasal latinhyp_n...
             latinhyp_ondep latinhyp_off latinhyp_proddiff k...
+            latinhyp_onbasal_aprime latinhyp_onbasal_b...
+            latinhyp_ondep_prime latinhyp_nitc x...
             iruns istruc S P R type
         
         parmat = M_iso{istruc};
@@ -272,7 +275,7 @@ for istruc = 1:nstruc
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %create txt file for specific network/sampled parameter set
         %         fileID = fopen('/Volumes/MELANOMAII/Example/gillespie_bursts.txt','w');
-        fileID = fopen('./Example/gillespie_bursts.txt','w');
+        fileID = fopen('./nitc_3node_v1/gillespie_bursts.txt','w');
         
         fprintf(fileID,'%d\n', maxgillespie);
         

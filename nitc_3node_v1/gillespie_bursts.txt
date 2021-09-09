@@ -1,0 +1,8 @@
+10000
+A_prod1 = 0.154437 : = A1 
+Aprime_prod1 = 0.154437 : = Aprime1 
+B_prod1 = 0.154437 : = B1 
+A_deg1 = 0.018162 : A1 = 
+Aprime_deg1 = 0.018162 : Aprime1 = 
+B_deg1 = 0.018162 : B1 = 
+B_ondep1 = 0.251199 : Burst1_off_targ = Burst1_on_targ
