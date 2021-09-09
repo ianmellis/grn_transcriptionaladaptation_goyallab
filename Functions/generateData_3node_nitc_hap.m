@@ -41,6 +41,8 @@ n_species_downstr = 1;
 type = 'rigid_3';
 gen = 'yes';
 
+n_species = n_species_upstr + n_species_paralog + n_species_downstr;
+
 %overall specifications (for up to 10 species)
 set_spec_orig = cell(1,1);
 set_spec_para = cell(1,1);
@@ -126,14 +128,22 @@ elseif isequal(type,'constrained') == 1
     load(load_M_iso);
     nstruc = length(M_iso);
 elseif isequal(type, 'nitc') == 1
-    load('./M_iso_nitc_A1_Aprime1_B1'); % path check
-    M_iso = M_iso_nitc_A1_Aprime1_B1;
-    nstruc = length(M_iso);
+%     load('./M_iso_nitc_A1_Aprime1_B1'); % path check and consider
+%     creating file
+%     M_iso = M_iso_nitc_A1_Aprime1_B1;
+%     nstruc = length(M_iso);
 end
 
 M_orig_targ = [1]; % A->B edges; rows are A
 M_para_targ = [1]; % A'->B edges; rows are A'
 M_nitc_para = [1]; % Post-NITC A->A' edges; rows are NITC-A
+
+M_iso = cell(1,3);
+M_iso{1} = M_orig_targ;
+M_iso{2} = M_para_targ;
+M_iso{3} = M_nitc_para;
+
+nstruc = length(M_iso);
 
 if isequal(gen,'yes') == 1                  %generate new parameters by latin hypercube sampling method
     rng('shuffle');                         %receive different values upon new start
@@ -174,13 +184,14 @@ if isequal(gen,'yes') == 1                  %generate new parameters by latin hy
     latinhyp_proddiff = repmat(latinhyp(:,7),1,n_species);
     
 %     new parameters
-    latinhyp_onbasal_aprime = repmat(latinhyp(:,8),1,n_species);
+    latinhyp_onbasal_aprime = repmat(latinhyp(:,8),1,n_species); % change this to only apply to paralogs
     latinhyp_onbasal_b = repmat(latinhyp(:,9),1,n_species);
     latinhyp_ondep_prime = repmat(latinhyp(:,10),1,n_species);
     latinhyp_nitc = repmat(latinhyp(:,11),1,n_species);
     
     k = repmat(0.95*latinhyp(:,1)./latinhyp(:,2).*latinhyp(:,7),1,n_species); %0.95 of stationary on-state of system
     % do a search over k
+     
     
 else
     load(data)  %load parameter set
@@ -410,7 +421,7 @@ for istruc = 1:nstruc
         
         %         tok = make_param_mex_bursts('/Volumes/MELANOMAII/Example/gillespie_bursts.txt',...
         %             '/Volumes/MELANOMAII/Example/gillespie_bursts',n_species,iruns);
-        tok = make_param_mex_bursts('./Example/gillespie_bursts.txt',...
+        tok = make_param_mex_bursts_nitc('./Example/gillespie_bursts.txt',...
             './Example/gillespie_bursts',n_species,iruns);
         
         gillespie_burstsparams  %load parameters set by txt
