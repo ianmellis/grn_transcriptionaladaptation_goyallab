@@ -20,7 +20,6 @@ onbasal_a1 = 6.775094e-02
 onbasal_aprime1 = 8.015511e-02
 onbasal_b1 = 9.392152e-02
 Hill function k
-Hill function k
 kA1 = 4.642440e+02
 kAprime1 = 4.642440e+02
 kB1 = 4.642440e+02
