@@ -1,8 +1,45 @@
 10000
-A_prod1 = 0.154437 : = A1 
-Aprime_prod1 = 0.154437 : = Aprime1 
-B_prod1 = 0.154437 : = B1 
-A_deg1 = 0.018162 : A1 = 
-Aprime_deg1 = 0.018162 : Aprime1 = 
-B_deg1 = 0.018162 : B1 = 
-B_ondep1 = 0.251199 : Burst1_off_targ = Burst1_on_targ
+A_prod1 = 0.831786 : = A1 
+Aprime_prod1 = 0.831786 : = Aprime1 
+B_prod1 = 0.831786 : = B1 
+A_deg1 = 0.041163 : A1 = 
+Aprime_deg1 = 0.041163 : Aprime1 = 
+B_deg1 = 0.041163 : B1 = 
+B_ondep1 = 0.891703 : Burst1_off_targ = Burst1_on_targ
+B_ondep_prime = 0.685844 : Burst1_off_targ = Burst1_on_targ
+Aprimenitc1 = 0.247986 : Burst1_off_para = Burst1_on_para
+A_off1 = 0.035732 : Burst1_on_orig = Burst1_off_orig
+Aprime_off1 = 0.035732 : Burst1_on_para = Burst1_off_para
+B_off1 = 0.035732 : Burst1_on_targ = Burst1_off_targ
+Production difference
+A_proddiff1 = 4.594860e+01
+Aprime_proddiff1 = 4.594860e+01
+B_proddiff1 = 4.594860e+01
+Basal values
+onbasal_a1 = 6.775094e-02
+onbasal_aprime1 = 8.015511e-02
+onbasal_b1 = 9.392152e-02
+Hill function k
+Hill function k
+kA1 = 4.642440e+02
+kAprime1 = 4.642440e+02
+kB1 = 4.642440e+02
+Hill function n
+nA1 = 9.201470e+00
+nAprime1 = 9.201470e+00
+nB1 = 9.201470e+00
+Initial values
+A1 = 1
+Aprime1 = 1
+B1 = 1
+Burst1_off_orig = 1
+Burst1_off_orig = 1
+Burst1_on_orig = 1
+Burst1_off_para = 1
+Burst1_on_para = 1
+Burst1_off_targ = 1
+Burst1_on_targ = 1
+Network
+1
+1
+1

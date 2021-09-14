@@ -35,6 +35,8 @@
 %%
 function generateData_3node_nitc_hap(nruns,n_species_upstr, n_species_paralog, n_species_downstr, maxgillespie,gen,init,data,type)
 
+rng(8723);
+
 n_species_upstr = 1;
 n_species_paralog = 1;
 n_species_downstr = 1;
@@ -316,21 +318,21 @@ for istruc = 1:nstruc
         end
         
 %         NITC-based ondep for Aprime regulated by NITC-type A
-        for nitc_txt = 1:nspecies
+        for nitc_txt = 1:n_species_paralog
             fprintf(fileID,'Aprime%s = %f : %s = %s\n', set_nitc{nitc_txt}, latinhyp_nitc(iruns,nitc_txt), set_Burstoff_para{ondep_txt}, set_Burston_para{ondep_txt});
         end
         
 %         off for each species
         for on_txt = 1:n_species_upstr
-            fprintf(fileID,'A_%s = %f : %s = %s\n', set_off{on_txt}, latinhyp_off(iruns,on_txt), set_Bon{on_txt}, set_Boff{on_txt});
+            fprintf(fileID,'A_%s = %f : %s = %s\n', set_off{on_txt}, latinhyp_off(iruns,on_txt), set_Burston_orig{on_txt}, set_Burstoff_orig{on_txt});
         end
         
         for on_txt = 1:n_species_paralog
-            fprintf(fileID,'Aprime_%s = %f : %s = %s\n', set_off{on_txt}, latinhyp_off(iruns,on_txt), set_Bon{on_txt}, set_Boff{on_txt});
+            fprintf(fileID,'Aprime_%s = %f : %s = %s\n', set_off{on_txt}, latinhyp_off(iruns,on_txt), set_Burston_para{on_txt}, set_Burstoff_para{on_txt});
         end
         
         for on_txt = 1:n_species_downstr
-            fprintf(fileID,'B_%s = %f : %s = %s\n', set_off{on_txt}, latinhyp_off(iruns,on_txt), set_Bon{on_txt}, set_Boff{on_txt});
+            fprintf(fileID,'B_%s = %f : %s = %s\n', set_off{on_txt}, latinhyp_off(iruns,on_txt), set_Burston_targ{on_txt}, set_Burstoff_targ{on_txt});
         end
         
         
@@ -366,14 +368,30 @@ for istruc = 1:nstruc
         
         fprintf(fileID,'%s\n', 'Hill function k');
 %         how to handle?
-        for spec_txt = 1:n_species
-            fprintf(fileID,'k%s = %d\n', set_spec{spec_txt}, k(iruns,spec_txt));
+        for spec_txt = 1:n_species_upstr
+            fprintf(fileID,'k%s = %d\n', set_spec_orig{spec_txt}, k(iruns,spec_txt));
+        end
+        
+        for spec_txt = 1:n_species_paralog
+            fprintf(fileID,'k%s = %d\n', set_spec_para{spec_txt}, k(iruns,spec_txt));
+        end
+        
+        for spec_txt = 1:n_species_downstr
+            fprintf(fileID,'k%s = %d\n', set_spec_targ{spec_txt}, k(iruns,spec_txt));
         end
         
         fprintf(fileID,'%s\n', 'Hill function n');
         
-        for n_txt = 1:n_species
-            fprintf(fileID,'n%s = %d\n', set_spec{n_txt}, latinhyp_n(iruns,n_txt));
+        for n_txt = 1:n_species_upstr
+            fprintf(fileID,'n%s = %d\n', set_spec_orig{n_txt}, latinhyp_n(iruns,n_txt));
+        end
+        
+        for n_txt = 1:n_species_paralog
+            fprintf(fileID,'n%s = %d\n', set_spec_para{n_txt}, latinhyp_n(iruns,n_txt));
+        end
+        
+        for n_txt = 1:n_species_downstr
+            fprintf(fileID,'n%s = %d\n', set_spec_targ{n_txt}, latinhyp_n(iruns,n_txt));
         end
         
         
@@ -424,8 +442,8 @@ for istruc = 1:nstruc
         
         %         tok = make_param_mex_bursts('/Volumes/MELANOMAII/Example/gillespie_bursts.txt',...
         %             '/Volumes/MELANOMAII/Example/gillespie_bursts',n_species,iruns);
-        tok = make_param_mex_bursts_nitc('./Example/gillespie_bursts.txt',...
-            './Example/gillespie_bursts',n_species,iruns);
+        tok = make_param_mex_bursts_nitc('./nitc_3node_v1/gillespie_bursts.txt',...
+            './nitc_3node_v1/gillespie_bursts',n_species_upstr,n_species_paralog,n_species_downstr,iruns);
         
         gillespie_burstsparams  %load parameters set by txt
         
