@@ -308,6 +308,8 @@ for istruc = 1:nstruc
         end
         
 %         ondep for each downstream target B regulated by A 
+% These propensities (ultimately propensities[6:8] aren't correctly
+% specified
         for ondep_txt = 1:n_species_downstr
             fprintf(fileID,'B_%s = %f : %s = %s\n', set_ondep{ondep_txt}, latinhyp_ondep(iruns,ondep_txt), set_Burstoff_targ{ondep_txt}, set_Burston_targ{ondep_txt});
         end
