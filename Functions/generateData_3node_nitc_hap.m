@@ -243,7 +243,7 @@ for istruc = 1:nstruc
 %     R = zeros(nruns,8*n_species);
 %     P = zeros(nruns,4*n_species);
     S = zeros(nruns,3*n_species);
-    R = zeros(nruns,11*n_species);
+    R = zeros(nruns,8*n_species);
     P = zeros(nruns,4*n_species);
     
     for iruns = 1:nruns
@@ -480,14 +480,14 @@ for istruc = 1:nstruc
         %         R_save = sprintf('/Volumes/MELANOMAII/Example/R_outparC%d_%d',n_species,istruc);
         %         S_save = sprintf('/Volumes/MELANOMAII/Example/S_outparC%d_%d',n_species,istruc);
         %         P_save = sprintf('/Volumes/MELANOMAII/Example/P_outparC%d_%d',n_species,istruc);
-        R_save = sprintf('./Example/R_outpar_NITC_%d_%d_%d',n_species_upstr,n_species_paralog,n_species_downstr);
-        S_save = sprintf('./Example/S_outpar_NITC_%d_%d_%d',n_species,n_species_paralog,n_species_downstr);
-        P_save = sprintf('./Example/P_outpar_NITC_%d_%d_%d',n_species,n_species_paralog,n_species_downstr);
+        R_save = sprintf('./nitc_3node_v1/R_outpar_NITC_%d_%d_%d',n_species_upstr,n_species_paralog,n_species_downstr);
+        S_save = sprintf('./nitc_3node_v1/S_outpar_NITC_%d_%d_%d',n_species_upstr,n_species_paralog,n_species_downstr);
+        P_save = sprintf('./nitc_3node_v1/P_outpar_NITC_%d_%d_%d',n_species_upstr,n_species_paralog,n_species_downstr);
     end
     
-    save(R_save,'R','-v1.0');
-    save(S_save,'S','-v1.0');
-    save(P_save,'P','-v1.0');
+    save(R_save,'R');%,'-v1.0');
+    save(S_save,'S');%,'-v1.0');
+    save(P_save,'P');%,'-v1.0');
     
     for kmem = 1:1
         
@@ -516,9 +516,11 @@ for istruc = 1:nstruc
         elseif isequal(type,'constrained') == 1
             %             S_save = sprintf('/Volumes/MELANOMAII/Example/S_outparC%d_%d_%d',n_species,istruc,kmem);
             S_save = sprintf('./Example/S_outparC%d_%d_%d',n_species,istruc,kmem);
+        elseif isequal(type,'rigid_3') == 1
+            S_save = sprintf('./nitc_3node_v1/S_outparC%d_%d_%d_%d',n_species_upstr,n_species_paralog,n_species_downstr,istruc);
         end
         
-        save(S_save,'S_outpar','-v7.3');
+        save(S_save,'S_outpar');%,'-v7.3');
         
         clear S_outpar
     end
