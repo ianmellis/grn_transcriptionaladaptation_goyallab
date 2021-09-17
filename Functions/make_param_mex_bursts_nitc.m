@@ -366,7 +366,7 @@ if iruns == 1
         else
             fprintf(foutc,'} else if (p<cumpropensities[%d]) {\n',i-1);
         end
-        fprintf(foutc,'  // rxn: %s\n',lines{i}); % why is Burst1_off_targ = Burst1_on_targ duplicated? -- Ans: because it is two separate propensities based on regulator A or Aprime
+        fprintf(foutc,'  // rxn: %s\n',lines{i}); % why is Burst1_off_targ = Burst1_on_targ duplicated? -- Ans: because it is two separate propensities based on regulator A or Aprime -- update: this should be changed to a single propensity for B_off->on including effects of basal on rate for B, additional effect of A, and additional effect of Aprime
         allstoichiometry = rhsstoichiometry-lhsstoichiometry;
         idx = find(allstoichiometry(:,i)~=0);
         for j = idx'

@@ -31,13 +31,12 @@ Initial values
 A1 = 1
 Aprime1 = 1
 B1 = 1
-Burst1_off_orig = 1
-Burst1_off_orig = 1
+Burst1_off_orig = 0
 Burst1_on_orig = 1
 Burst1_off_para = 1
-Burst1_on_para = 1
+Burst1_on_para = 0
 Burst1_off_targ = 1
-Burst1_on_targ = 1
+Burst1_on_targ = 0
 Network
 1
 1

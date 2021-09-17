@@ -42,6 +42,7 @@ n_species_paralog = 1;
 n_species_downstr = 1;
 type = 'rigid_3';
 gen = 'yes';
+isetoff = 1;
 
 n_species = n_species_upstr + n_species_paralog + n_species_downstr;
 
