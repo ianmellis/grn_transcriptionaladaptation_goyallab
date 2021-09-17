@@ -117,7 +117,9 @@ propensity(3) = B_prod1 *B_proddiff1 *Burst1_off_orig+B_prod1 *Burst1_on_orig;
 propensity(4) = A_deg1 *A1;
 propensity(5) = Aprime_deg1 *Aprime1;
 propensity(6) = B_deg1 *B1;
-propensity(7) = B_ondep1 *((A1^nA1 )/(kA1 ^nA1 +A1^nA1 ))*Burst1_off_targ + onbasal_a1 *Burst1_off_targ;
+% needs on propensity for A and a single on propensity for B (as well as
+% updated Aprime on propensity
+propensity(7) = B_ondep1 *((A1^nA1 )/(kA1 ^nA1 +A1^nA1 ))*Burst1_off_targ + B_ondep_prime *((Aprime1^nAprime1 )/(kAprime1 ^nAprime1 +Aprime1^nAprime1 ))*Burst1_off_targ + onbasal_a1 *Burst1_off_targ;
 propensity(8) = B_ondep_prime *((A1^nA1 )/(kA1 ^nA1 +A1^nA1 ))*Burst1_off_para+onbasal_aprime1 *Burst1_off_para;
 propensity(9) = Aprimenitc1 *((A1^nA1 )/(kA1 ^nA1 +A1^nA1 ))*Burst1_on_orig+onbasal_b1 *Burst1_on_orig;
 propensity(10) = A_off1 *Burst1_on_targ;
