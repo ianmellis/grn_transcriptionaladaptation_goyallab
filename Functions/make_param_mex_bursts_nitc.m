@@ -308,7 +308,7 @@ if iruns == 1
     end
 
     for i = 1:nspecies
-        fprintf(foutc,'  %s = (long)species[%d];\n',uniquetok{i},i-1);
+        fprintf(foutc,'  %s = (long)species[%d];\n',uniquetok{i},i-1); % update per species type
     end
 
     while ~strcmp(lin,'//UNPACK ALL RATES HERE')
