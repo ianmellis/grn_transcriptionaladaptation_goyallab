@@ -308,7 +308,7 @@ if iruns == 1
     end
 
     for i = 1:nspecies
-        fprintf(foutc,'  %s = (long)species[%d];\n',uniquetok{i},i-1); % update per species type
+        fprintf(foutc,'  %s = (long)species[%d];\n',uniquetok{i},i-1); % update per species type - done
     end
 
     while ~strcmp(lin,'//UNPACK ALL RATES HERE')
@@ -389,7 +389,7 @@ if iruns == 1
                 end
             elseif ismember(currrxn,n_species+1:2*n_species) %Degradation
                 fprintf(foutc,'*%s', uniquetok{currrxn-n_species});
-            elseif ismember(currrxn,2*n_species+1:3*n_species) %Burst on
+            elseif ismember(currrxn,2*n_species+1:3*n_species) %Burst on - update to include NITC
                  jnew = currrxn-(2*n_species);
                  countjparmat = 0;
                  for jparmat = 1:nspecies/3
