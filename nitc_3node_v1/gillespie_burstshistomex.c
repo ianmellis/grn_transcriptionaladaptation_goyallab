@@ -164,12 +164,12 @@ if (p<cumpropensities[0]) {
   propensities[4] = Aprime_deg1 *Aprime1;
   //update propensity for B1 = 
   propensities[5] = B_deg1 *B1;
-  //update propensity for Burst1_off_targ = Burst1_on_targ
-  propensities[6] = B_ondep1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_targ+onbasal_a1 *Burst1_off_targ;
-  //update propensity for Burst1_off_targ = Burst1_on_targ
-  propensities[7] = B_ondep_prime *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_para+onbasal_aprime1 *Burst1_off_para;
+  //update propensity for Burst1_off_orig = Burst1_on_orig
+  propensities[6] = onbasal_aprime1 *Burst1_off_orig;
   //update propensity for Burst1_off_para = Burst1_on_para
-  propensities[8] = Aprimenitc1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_on_orig+onbasal_b1 *Burst1_on_orig;
+  propensities[7] = Aprimenitc1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_para+onbasal_aprime1 *Burst1_off_para;
+  //update propensity for Burst1_off_targ = Burst1_on_targ
+  propensities[8] = B_ondep1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_targ+ B_ondep_prime *(pow(Aprime1,nAprime1 )/(pow(kAprime1 ,nAprime1 )+pow(Aprime1,nAprime1 )))*Burst1_off_targ +onbasal_a1 *Burst1_off_targ;
   //update propensity for Burst1_on_orig = Burst1_off_orig
   propensities[9] = A_off1 *Burst1_on_targ;
   //update propensity for Burst1_on_para = Burst1_off_para
