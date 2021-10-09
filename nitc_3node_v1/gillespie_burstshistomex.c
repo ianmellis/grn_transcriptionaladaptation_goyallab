@@ -317,10 +317,11 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_on_targ = Burst1_off_targ
   propensities[11] = B_off1 *Burst1_off_orig;
 } else if (p<cumpropensities[6]) {
-  // rxn: Burst1_off_targ = Burst1_on_targ
-  Burst1_off_targ=Burst1_off_targ + -1;
-  Burst1_on_targ=Burst1_on_targ + 1;
-
+  // rxn: Burst1_off_orig = Burst1_on_orig
+  
+  Burst1_off_orig=Burst1_off_orig + -1;
+  Burst1_on_orig=Burst1_on_orig + 1;
+  
   //update propensity for = A1 
   propensities[0] = A_prod1 *A_proddiff1 *Burst1_on_targ+A_prod1 *Burst1_off_targ;
   //update propensity for = Aprime1 
@@ -346,9 +347,10 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_on_targ = Burst1_off_targ
   propensities[11] = B_off1 *Burst1_off_orig;
 } else if (p<cumpropensities[7]) {
-  // rxn: Burst1_off_targ = Burst1_on_targ
-  Burst1_off_targ=Burst1_off_targ + -1;
-  Burst1_on_targ=Burst1_on_targ + 1;
+  // rxn: Burst1_off_para = Burst1_on_para
+  
+  Burst1_off_para=Burst1_off_para + -1;
+  Burst1_on_para=Burst1_on_para + 1;
 
   //update propensity for = A1 
   propensities[0] = A_prod1 *A_proddiff1 *Burst1_on_targ+A_prod1 *Burst1_off_targ;
@@ -375,9 +377,9 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_on_targ = Burst1_off_targ
   propensities[11] = B_off1 *Burst1_off_orig;
 } else if (p<cumpropensities[8]) {
-  // rxn: Burst1_off_para = Burst1_on_para
-  Burst1_off_para=Burst1_off_para + -1;
-  Burst1_on_para=Burst1_on_para + 1;
+  // rxn: Burst1_off_targ = Burst1_on_targ
+  Burst1_off_targ=Burst1_off_targ + -1;
+  Burst1_on_targ=Burst1_on_targ + 1;
 
   //update propensity for = A1 
   propensities[0] = A_prod1 *A_proddiff1 *Burst1_on_targ+A_prod1 *Burst1_off_targ;
