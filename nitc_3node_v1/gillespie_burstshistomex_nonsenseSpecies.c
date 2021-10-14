@@ -64,7 +64,7 @@ void gillespie(long m, double *times_out,double *species_out,double currT,double
   long totaliterations;
 
 //INSERT ALL VARIABLE DECLARATIONS HERE
-  long A1,A1_nonsense,Aprime1,B1,Burst1_off_targ,Burst1_on_targ,Burst1_off_para,Burst1_on_para,Burst1_on_orig,Burst1_off_orig;
+  long A1,A1_nonsense,Aprime1,B1,Burst1_off_targ,Burst1_on_targ,Burst1_off_para,Burst1_on_para,Burst1_on_orig,Burst1_off_orig,Burst1_is_mutated;
   double A_prod1 ,Aprime_prod1 ,B_prod1 ,A_deg1 ,Aprime_deg1 ,B_deg1 ,B_ondep1 ,B_ondep_prime ,Aprimenitc1 ,A_off1 ,Aprime_off1 ,B_off1 ,A_proddiff1 ,Aprime_proddiff1 ,B_proddiff1 ,onbasal_a1 ,onbasal_aprime1 ,onbasal_b1 ,kA1 ,kAprime1 ,kB1 ,nA1 ,nAprime1 ,nB1 ;
 
   long i, j, k;
@@ -79,31 +79,36 @@ void gillespie(long m, double *times_out,double *species_out,double currT,double
   Burst1_on_para = (long)species[7];
   Burst1_on_orig = (long)species[8];
   Burst1_off_orig = (long)species[9];
+  Burst1_is_mutated = (long)species[10];
 //UNPACK ALL RATES HERE
   A_prod1  = rates[0];
-  Aprime_prod1  = rates[1];
-  B_prod1  = rates[2];
-  A_deg1  = rates[3];
-  Aprime_deg1  = rates[4];
-  B_deg1  = rates[5];
-  B_ondep1  = rates[6];
-  B_ondep_prime  = rates[7];
-  Aprimenitc1  = rates[8];
-  A_off1  = rates[9];
-  Aprime_off1  = rates[10];
-  B_off1  = rates[11];
-  A_proddiff1  = rates[12];
-  Aprime_proddiff1  = rates[13];
-  B_proddiff1  = rates[14];
-  onbasal_a1  = rates[15];
-  onbasal_aprime1  = rates[16];
-  onbasal_b1  = rates[17];
-  kA1  = rates[18];
-  kAprime1  = rates[19];
-  kB1  = rates[20];
-  nA1  = rates[21];
-  nAprime1  = rates[22];
-  nB1  = rates[23];
+  Anonsense_prod1  = rates[1];
+  Aprime_prod1  = rates[2];
+  B_prod1  = rates[3];
+  A_deg1  = rates[4];
+  Anonsense_deg1  = rates[5];
+  Aprime_deg1  = rates[6];
+  B_deg1  = rates[7];
+  B_ondep1  = rates[8];
+  B_ondep_prime  = rates[9];
+  Aprimenitc1  = rates[10];
+  A_off1  = rates[11];
+  Aprime_off1  = rates[12];
+  B_off1  = rates[13];
+  A_proddiff1  = rates[14];
+  Aprime_proddiff1  = rates[15];
+  B_proddiff1  = rates[16];
+  onbasal_a1  = rates[17];
+  onbasal_aprime1  = rates[18];
+  onbasal_b1  = rates[19];
+  kA1  = rates[20];
+  kA1_nonsense  = rates[21];
+  kAprime1  = rates[22];
+  kB1  = rates[23];
+  nA1  = rates[24];
+  nA1_nonsense  = rates[25];
+  nAprime1  = rates[26];
+  nB1  = rates[27];
 
   zigset(seed);
   totaliterations = 0;
@@ -115,6 +120,9 @@ void gillespie(long m, double *times_out,double *species_out,double currT,double
 
   //  for (i=0; i<m; i++) {
   while (currT<totalt) {
+    if (currT == 10000) {
+      Burst1_is_mutated = 1;
+    }
     totaliterations++;
     cumpropensities[0] = propensities[0];
     for (j=1; j<NUMRXNS; j++)
@@ -132,14 +140,16 @@ void gillespie(long m, double *times_out,double *species_out,double currT,double
         if (savecount < m){
 //INSERT SAVE HERE
 species_out[savecount*NSPECIES+0] = A1;
-species_out[savecount*NSPECIES+1] = Aprime1;
-species_out[savecount*NSPECIES+2] = B1;
-species_out[savecount*NSPECIES+3] = Burst1_off_targ;
-species_out[savecount*NSPECIES+4] = Burst1_on_targ;
-species_out[savecount*NSPECIES+5] = Burst1_off_para;
-species_out[savecount*NSPECIES+6] = Burst1_on_para;
-species_out[savecount*NSPECIES+7] = Burst1_on_orig;
-species_out[savecount*NSPECIES+8] = Burst1_off_orig;
+species_out[savecount*NSPECIES+1] = A1_nonsense;
+species_out[savecount*NSPECIES+2] = Aprime1;
+species_out[savecount*NSPECIES+3] = B1;
+species_out[savecount*NSPECIES+4] = Burst1_off_targ;
+species_out[savecount*NSPECIES+5] = Burst1_on_targ;
+species_out[savecount*NSPECIES+6] = Burst1_off_para;
+species_out[savecount*NSPECIES+7] = Burst1_on_para;
+species_out[savecount*NSPECIES+8] = Burst1_on_orig;
+species_out[savecount*NSPECIES+9] = Burst1_off_orig;
+species_out[savecount*NSPECIES+10] = Burst1_is_mutated;
             times_out[savecount] = savecount*deltaTsave;
             savecount++;
             savecountcheck++;
@@ -151,7 +161,11 @@ species_out[savecount*NSPECIES+8] = Burst1_off_orig;
 //INSERT IF STATEMENT HERE
 if (p<cumpropensities[0]) {
   // rxn: = A1 
-  A1=A1 + 1;
+  if (Burst1_is_mutated == 0){
+    A1=A1 + 1;
+  } else if (Burst1_is_mutated == 0) {
+    A1_nonsense=A1_nonsense + 1;
+  }
 
   //update propensity for = A1 
   propensities[0] = A_prod1 *A_proddiff1 *Burst1_on_orig+A_prod1 *Burst1_off_orig;
@@ -168,7 +182,7 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_off_orig = Burst1_on_orig
   propensities[6] = onbasal_aprime1 *Burst1_off_orig;
   //update propensity for Burst1_off_para = Burst1_on_para
-  propensities[7] = Aprimenitc1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_para+onbasal_aprime1 *Burst1_off_para;
+  propensities[7] = Aprimenitc1 *(pow(A1_nonsense,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_para+onbasal_aprime1 *Burst1_off_para;
   //update propensity for Burst1_off_targ = Burst1_on_targ
   propensities[8] = B_ondep1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_targ+ B_ondep_prime *(pow(Aprime1,nAprime1 )/(pow(kAprime1 ,nAprime1 )+pow(Aprime1,nAprime1 )))*Burst1_off_targ +onbasal_a1 *Burst1_off_targ;
   //update propensity for Burst1_on_orig = Burst1_off_orig
