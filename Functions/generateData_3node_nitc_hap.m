@@ -499,7 +499,8 @@ for istruc = 1:nstruc
             par_rates = R(100*kmem-100+jruns,:);
             par_prop = P(100*kmem-100+jruns,:);
             
-            [times,savespecies] = gillespie_burstshistomex(0,par_spec,par_rates_manual,par_prop,sum(clock*100),maxgillespie,maxgillespie);
+%             [times,savespecies] = gillespie_burstshistomex(0,par_spec,par_rates_manual,par_prop,sum(clock*100),maxgillespie,maxgillespie);
+            [times,savespecies_ns] = gillespie_burstshistomex_nonsenseSpecies(0,par_spec,par_rates_ns,par_prop_ns,sum(clock*100),maxgillespie,maxgillespie);
             
             S_outpar{jruns} = savespecies;
             

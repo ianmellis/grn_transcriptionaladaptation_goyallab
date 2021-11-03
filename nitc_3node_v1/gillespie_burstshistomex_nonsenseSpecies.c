@@ -121,7 +121,7 @@ void gillespie(long m, double *times_out,double *species_out,double currT,double
 
   //  for (i=0; i<m; i++) {
   while (currT<totalt) {
-    if (currT == 10000) {
+    if (currT > 10000) {
       Burst1_is_mutated = 1;
       Burst1_not_mutated = 0;
     }
