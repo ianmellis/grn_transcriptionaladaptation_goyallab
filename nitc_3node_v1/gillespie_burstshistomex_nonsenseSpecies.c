@@ -45,10 +45,10 @@ void zigset(unsigned long jsrseed);
 #define TOTALT_IN         prhs[6]
 
 //INCLUDE NSPECIES HERE
-#define NSPECIES 9
+#define NSPECIES 12
 
 //INCLUDE NUMRXNS HERE
-#define NUMRXNS 12
+#define NUMRXNS 14
 
 
 //void gillespie(long m, double *times_out,double *species_out,double currT,double *species,double *rates,double *propensities,double *rand1,double *rand2)
