@@ -64,8 +64,8 @@ void gillespie(long m, double *times_out,double *species_out,double currT,double
   long totaliterations;
 
 //INSERT ALL VARIABLE DECLARATIONS HERE
-  long A1,A1_nonsense,Aprime1,B1,Burst1_off_targ,Burst1_on_targ,Burst1_off_para,Burst1_on_para,Burst1_on_orig,Burst1_off_orig,Burst1_is_mutated;
-  double A_prod1 ,Aprime_prod1 ,B_prod1 ,A_deg1 ,Aprime_deg1 ,B_deg1 ,B_ondep1 ,B_ondep_prime ,Aprimenitc1 ,A_off1 ,Aprime_off1 ,B_off1 ,A_proddiff1 ,Aprime_proddiff1 ,B_proddiff1 ,onbasal_a1 ,onbasal_aprime1 ,onbasal_b1 ,kA1 ,kAprime1 ,kB1 ,nA1 ,nAprime1 ,nB1 ;
+  long A1,A1_nonsense,Aprime1,B1,Burst1_off_targ,Burst1_on_targ,Burst1_off_para,Burst1_on_para,Burst1_on_orig,Burst1_off_orig,Burst1_is_mutated,Burst1_not_mutated;
+  double A_prod1 ,Anonsense_prod1 , Aprime_prod1 ,B_prod1 ,A_deg1 ,Anonsense_deg1 ,Aprime_deg1 ,B_deg1 ,B_ondep1 ,B_ondep_prime ,Aprimenitc1 ,A_off1 ,Aprime_off1 ,B_off1 ,A_proddiff1 ,Aprime_proddiff1 ,B_proddiff1 ,onbasal_a1 ,onbasal_aprime1 ,onbasal_b1 ,kA1 ,kA1_nonsense ,kAprime1 ,kB1 ,nA1 ,nA1_nonsense ,nAprime1 ,nB1 ;
 
   long i, j, k;
 //UNPACK ALL SPECIES HERE
@@ -80,6 +80,7 @@ void gillespie(long m, double *times_out,double *species_out,double currT,double
   Burst1_on_orig = (long)species[8];
   Burst1_off_orig = (long)species[9];
   Burst1_is_mutated = (long)species[10];
+  Burst1_not_mutated = (long)species[11];
 //UNPACK ALL RATES HERE
   A_prod1  = rates[0];
   Anonsense_prod1  = rates[1];
@@ -122,6 +123,7 @@ void gillespie(long m, double *times_out,double *species_out,double currT,double
   while (currT<totalt) {
     if (currT == 10000) {
       Burst1_is_mutated = 1;
+      Burst1_not_mutated = 0;
     }
     totaliterations++;
     cumpropensities[0] = propensities[0];
@@ -161,13 +163,13 @@ species_out[savecount*NSPECIES+10] = Burst1_is_mutated;
 //INSERT IF STATEMENT HERE
 if (p<cumpropensities[0]) {
   // rxn: = A1 
-  if (Burst1_is_mutated == 0){
+  if (Burst1_is_mutated == 0){ // extra check for mutation ?necessary?
     A1=A1 + 1;
   }
   //update propensity for = A1 
-  propensities[0] = A_prod1 *A_proddiff1 *Burst1_on_orig+A_prod1 *Burst1_off_orig;
+  propensities[0] = Burst1_not_mutated*(A_prod1 *A_proddiff1 *Burst1_on_orig+A_prod1 *Burst1_off_orig);
   //update propensity for = A1_nonsense 
-  propensities[1] = Anonsense_prod1 *A_proddiff1 *Burst1_on_orig+Anonsense_prod1 *Burst1_off_orig;
+  propensities[1] = Burst1_is_mutated*(Anonsense_prod1 *A_proddiff1 *Burst1_on_orig+Anonsense_prod1 *Burst1_off_orig);
   //update propensity for = Aprime1 
   propensities[2] = Aprime_prod1 *Aprime_proddiff1 *Burst1_on_para+Aprime_prod1 *Burst1_on_para;
   //update propensity for = B1 
