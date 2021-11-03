@@ -152,6 +152,7 @@ species_out[savecount*NSPECIES+7] = Burst1_on_para;
 species_out[savecount*NSPECIES+8] = Burst1_on_orig;
 species_out[savecount*NSPECIES+9] = Burst1_off_orig;
 species_out[savecount*NSPECIES+10] = Burst1_is_mutated;
+species_out[savecount*NSPECIES+11] = Burst1_not_mutated;
             times_out[savecount] = savecount*deltaTsave;
             savecount++;
             savecountcheck++;
@@ -199,147 +200,227 @@ if (p<cumpropensities[0]) {
   if (Burst1_is_mutated == 1){
     A1_nonsense=A1_nonsense + 1;
   }
-} else if (p<cumpropensities[1]) {
+  //update propensity for = A1 
+  propensities[0] = Burst1_not_mutated*(A_prod1 *A_proddiff1 *Burst1_on_orig+A_prod1 *Burst1_off_orig);
+  //update propensity for = A1_nonsense 
+  propensities[1] = Burst1_is_mutated*(Anonsense_prod1 *A_proddiff1 *Burst1_on_orig+Anonsense_prod1 *Burst1_off_orig);
+  //update propensity for = Aprime1 
+  propensities[2] = Aprime_prod1 *Aprime_proddiff1 *Burst1_on_para+Aprime_prod1 *Burst1_on_para;
+  //update propensity for = B1 
+  propensities[3] = B_prod1 *B_proddiff1 *Burst1_on_targ+B_prod1 *Burst1_on_targ;
+  //update propensity for A1 = 
+  propensities[4] = A_deg1 *A1;
+  //update propensity for A1_nonsense = 
+  propensities[5] = Anonsense_deg1 *A1_nonsense;
+  //update propensity for Aprime1 = 
+  propensities[6] = Aprime_deg1 *Aprime1;
+  //update propensity for B1 = 
+  propensities[7] = B_deg1 *B1;
+  //update propensity for Burst1_off_orig = Burst1_on_orig
+  propensities[8] = onbasal_aprime1 *Burst1_off_orig;
+  //update propensity for Burst1_off_para = Burst1_on_para
+  propensities[9] = Aprimenitc1 *(pow(A1_nonsense,nA1_nonsense )/(pow(kA1_nonsense ,nA1_nonsense )+pow(A1_nonsense,nA1_nonsense )))*Burst1_off_para+onbasal_aprime1 *Burst1_off_para;
+  //update propensity for Burst1_off_targ = Burst1_on_targ
+  propensities[10] = B_ondep1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_targ+ B_ondep_prime *(pow(Aprime1,nAprime1 )/(pow(kAprime1 ,nAprime1 )+pow(Aprime1,nAprime1 )))*Burst1_off_targ +onbasal_a1 *Burst1_off_targ;
+  //update propensity for Burst1_on_orig = Burst1_off_orig
+  propensities[11] = A_off1 *Burst1_on_targ;
+  //update propensity for Burst1_on_para = Burst1_off_para
+  propensities[12] = Aprime_off1 *Burst1_on_para;
+  //update propensity for Burst1_on_targ = Burst1_off_targ
+  propensities[13] = B_off1 *Burst1_on_orig;
+} else if (p<cumpropensities[2]) {
   // rxn: = Aprime1 
   Aprime1=Aprime1 + 1;
 
   //update propensity for = A1 
-  propensities[0] = A_prod1 *A_proddiff1 *Burst1_on_orig+A_prod1 *Burst1_off_orig;
+  propensities[0] = Burst1_not_mutated*(A_prod1 *A_proddiff1 *Burst1_on_orig+A_prod1 *Burst1_off_orig);
+  //update propensity for = A1_nonsense 
+  propensities[1] = Burst1_is_mutated*(Anonsense_prod1 *A_proddiff1 *Burst1_on_orig+Anonsense_prod1 *Burst1_off_orig);
   //update propensity for = Aprime1 
-  propensities[1] = Aprime_prod1 *Aprime_proddiff1 *Burst1_on_para+Aprime_prod1 *Burst1_on_para;
+  propensities[2] = Aprime_prod1 *Aprime_proddiff1 *Burst1_on_para+Aprime_prod1 *Burst1_on_para;
   //update propensity for = B1 
-  propensities[2] = B_prod1 *B_proddiff1 *Burst1_on_targ+B_prod1 *Burst1_on_targ;
+  propensities[3] = B_prod1 *B_proddiff1 *Burst1_on_targ+B_prod1 *Burst1_on_targ;
   //update propensity for A1 = 
-  propensities[3] = A_deg1 *A1;
+  propensities[4] = A_deg1 *A1;
+  //update propensity for A1_nonsense = 
+  propensities[5] = Anonsense_deg1 *A1_nonsense;
   //update propensity for Aprime1 = 
-  propensities[4] = Aprime_deg1 *Aprime1;
+  propensities[6] = Aprime_deg1 *Aprime1;
   //update propensity for B1 = 
-  propensities[5] = B_deg1 *B1;
+  propensities[7] = B_deg1 *B1;
   //update propensity for Burst1_off_orig = Burst1_on_orig
-  propensities[6] = onbasal_aprime1 *Burst1_off_orig;
+  propensities[8] = onbasal_aprime1 *Burst1_off_orig;
   //update propensity for Burst1_off_para = Burst1_on_para
-  propensities[7] = Aprimenitc1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_para+onbasal_aprime1 *Burst1_off_para;
+  propensities[9] = Aprimenitc1 *(pow(A1_nonsense,nA1_nonsense )/(pow(kA1_nonsense ,nA1_nonsense )+pow(A1_nonsense,nA1_nonsense )))*Burst1_off_para+onbasal_aprime1 *Burst1_off_para;
   //update propensity for Burst1_off_targ = Burst1_on_targ
-  propensities[8] = B_ondep1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_targ+ B_ondep_prime *(pow(Aprime1,nAprime1 )/(pow(kAprime1 ,nAprime1 )+pow(Aprime1,nAprime1 )))*Burst1_off_targ +onbasal_a1 *Burst1_off_targ;
+  propensities[10] = B_ondep1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_targ+ B_ondep_prime *(pow(Aprime1,nAprime1 )/(pow(kAprime1 ,nAprime1 )+pow(Aprime1,nAprime1 )))*Burst1_off_targ +onbasal_a1 *Burst1_off_targ;
   //update propensity for Burst1_on_orig = Burst1_off_orig
-  propensities[9] = A_off1 *Burst1_on_targ;
+  propensities[11] = A_off1 *Burst1_on_targ;
   //update propensity for Burst1_on_para = Burst1_off_para
-  propensities[10] = Aprime_off1 *Burst1_on_para;
+  propensities[12] = Aprime_off1 *Burst1_on_para;
   //update propensity for Burst1_on_targ = Burst1_off_targ
-  propensities[11] = B_off1 *Burst1_on_orig;
-} else if (p<cumpropensities[2]) {
+  propensities[13] = B_off1 *Burst1_on_orig;
+} else if (p<cumpropensities[3]) {
   // rxn: = B1 
   B1=B1 + 1;
 
   //update propensity for = A1 
-  propensities[0] = A_prod1 *A_proddiff1 *Burst1_on_orig+A_prod1 *Burst1_off_orig;
+  propensities[0] = Burst1_not_mutated*(A_prod1 *A_proddiff1 *Burst1_on_orig+A_prod1 *Burst1_off_orig);
+  //update propensity for = A1_nonsense 
+  propensities[1] = Burst1_is_mutated*(Anonsense_prod1 *A_proddiff1 *Burst1_on_orig+Anonsense_prod1 *Burst1_off_orig);
   //update propensity for = Aprime1 
-  propensities[1] = Aprime_prod1 *Aprime_proddiff1 *Burst1_on_para+Aprime_prod1 *Burst1_on_para;
+  propensities[2] = Aprime_prod1 *Aprime_proddiff1 *Burst1_on_para+Aprime_prod1 *Burst1_on_para;
   //update propensity for = B1 
-  propensities[2] = B_prod1 *B_proddiff1 *Burst1_on_targ+B_prod1 *Burst1_on_targ;
+  propensities[3] = B_prod1 *B_proddiff1 *Burst1_on_targ+B_prod1 *Burst1_on_targ;
   //update propensity for A1 = 
-  propensities[3] = A_deg1 *A1;
+  propensities[4] = A_deg1 *A1;
+  //update propensity for A1_nonsense = 
+  propensities[5] = Anonsense_deg1 *A1_nonsense;
   //update propensity for Aprime1 = 
-  propensities[4] = Aprime_deg1 *Aprime1;
+  propensities[6] = Aprime_deg1 *Aprime1;
   //update propensity for B1 = 
-  propensities[5] = B_deg1 *B1;
+  propensities[7] = B_deg1 *B1;
   //update propensity for Burst1_off_orig = Burst1_on_orig
-  propensities[6] = onbasal_aprime1 *Burst1_off_orig;
+  propensities[8] = onbasal_aprime1 *Burst1_off_orig;
   //update propensity for Burst1_off_para = Burst1_on_para
-  propensities[7] = Aprimenitc1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_para+onbasal_aprime1 *Burst1_off_para;
+  propensities[9] = Aprimenitc1 *(pow(A1_nonsense,nA1_nonsense )/(pow(kA1_nonsense ,nA1_nonsense )+pow(A1_nonsense,nA1_nonsense )))*Burst1_off_para+onbasal_aprime1 *Burst1_off_para;
   //update propensity for Burst1_off_targ = Burst1_on_targ
-  propensities[8] = B_ondep1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_targ+ B_ondep_prime *(pow(Aprime1,nAprime1 )/(pow(kAprime1 ,nAprime1 )+pow(Aprime1,nAprime1 )))*Burst1_off_targ +onbasal_a1 *Burst1_off_targ;
+  propensities[10] = B_ondep1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_targ+ B_ondep_prime *(pow(Aprime1,nAprime1 )/(pow(kAprime1 ,nAprime1 )+pow(Aprime1,nAprime1 )))*Burst1_off_targ +onbasal_a1 *Burst1_off_targ;
   //update propensity for Burst1_on_orig = Burst1_off_orig
-  propensities[9] = A_off1 *Burst1_on_targ;
+  propensities[11] = A_off1 *Burst1_on_targ;
   //update propensity for Burst1_on_para = Burst1_off_para
-  propensities[10] = Aprime_off1 *Burst1_on_para;
+  propensities[12] = Aprime_off1 *Burst1_on_para;
   //update propensity for Burst1_on_targ = Burst1_off_targ
-  propensities[11] = B_off1 *Burst1_on_orig;
-} else if (p<cumpropensities[3]) {
+  propensities[13] = B_off1 *Burst1_on_orig;
+} else if (p<cumpropensities[4]) {
   // rxn: A1 = 
   A1=A1 + -1;
 
   //update propensity for = A1 
-  propensities[0] = A_prod1 *A_proddiff1 *Burst1_on_orig+A_prod1 *Burst1_off_orig;
+  propensities[0] = Burst1_not_mutated*(A_prod1 *A_proddiff1 *Burst1_on_orig+A_prod1 *Burst1_off_orig);
+  //update propensity for = A1_nonsense 
+  propensities[1] = Burst1_is_mutated*(Anonsense_prod1 *A_proddiff1 *Burst1_on_orig+Anonsense_prod1 *Burst1_off_orig);
   //update propensity for = Aprime1 
-  propensities[1] = Aprime_prod1 *Aprime_proddiff1 *Burst1_on_para+Aprime_prod1 *Burst1_on_para;
+  propensities[2] = Aprime_prod1 *Aprime_proddiff1 *Burst1_on_para+Aprime_prod1 *Burst1_on_para;
   //update propensity for = B1 
-  propensities[2] = B_prod1 *B_proddiff1 *Burst1_on_targ+B_prod1 *Burst1_on_targ;
+  propensities[3] = B_prod1 *B_proddiff1 *Burst1_on_targ+B_prod1 *Burst1_on_targ;
   //update propensity for A1 = 
-  propensities[3] = A_deg1 *A1;
+  propensities[4] = A_deg1 *A1;
+  //update propensity for A1_nonsense = 
+  propensities[5] = Anonsense_deg1 *A1_nonsense;
   //update propensity for Aprime1 = 
-  propensities[4] = Aprime_deg1 *Aprime1;
+  propensities[6] = Aprime_deg1 *Aprime1;
   //update propensity for B1 = 
-  propensities[5] = B_deg1 *B1;
+  propensities[7] = B_deg1 *B1;
   //update propensity for Burst1_off_orig = Burst1_on_orig
-  propensities[6] = onbasal_aprime1 *Burst1_off_orig;
+  propensities[8] = onbasal_aprime1 *Burst1_off_orig;
   //update propensity for Burst1_off_para = Burst1_on_para
-  propensities[7] = Aprimenitc1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_para+onbasal_aprime1 *Burst1_off_para;
+  propensities[9] = Aprimenitc1 *(pow(A1_nonsense,nA1_nonsense )/(pow(kA1_nonsense ,nA1_nonsense )+pow(A1_nonsense,nA1_nonsense )))*Burst1_off_para+onbasal_aprime1 *Burst1_off_para;
   //update propensity for Burst1_off_targ = Burst1_on_targ
-  propensities[8] = B_ondep1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_targ+ B_ondep_prime *(pow(Aprime1,nAprime1 )/(pow(kAprime1 ,nAprime1 )+pow(Aprime1,nAprime1 )))*Burst1_off_targ +onbasal_a1 *Burst1_off_targ;
+  propensities[10] = B_ondep1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_targ+ B_ondep_prime *(pow(Aprime1,nAprime1 )/(pow(kAprime1 ,nAprime1 )+pow(Aprime1,nAprime1 )))*Burst1_off_targ +onbasal_a1 *Burst1_off_targ;
   //update propensity for Burst1_on_orig = Burst1_off_orig
-  propensities[9] = A_off1 *Burst1_on_targ;
+  propensities[11] = A_off1 *Burst1_on_targ;
   //update propensity for Burst1_on_para = Burst1_off_para
-  propensities[10] = Aprime_off1 *Burst1_on_para;
+  propensities[12] = Aprime_off1 *Burst1_on_para;
   //update propensity for Burst1_on_targ = Burst1_off_targ
-  propensities[11] = B_off1 *Burst1_on_orig;
-} else if (p<cumpropensities[4]) {
+  propensities[13] = B_off1 *Burst1_on_orig;
+} else if (p<cumpropensities[5]) {
+  // rxn: Aprime1 = 
+  A1_nonsense=A1_nonsense + -1;
+
+  //update propensity for = A1 
+  propensities[0] = Burst1_not_mutated*(A_prod1 *A_proddiff1 *Burst1_on_orig+A_prod1 *Burst1_off_orig);
+  //update propensity for = A1_nonsense 
+  propensities[1] = Burst1_is_mutated*(Anonsense_prod1 *A_proddiff1 *Burst1_on_orig+Anonsense_prod1 *Burst1_off_orig);
+  //update propensity for = Aprime1 
+  propensities[2] = Aprime_prod1 *Aprime_proddiff1 *Burst1_on_para+Aprime_prod1 *Burst1_on_para;
+  //update propensity for = B1 
+  propensities[3] = B_prod1 *B_proddiff1 *Burst1_on_targ+B_prod1 *Burst1_on_targ;
+  //update propensity for A1 = 
+  propensities[4] = A_deg1 *A1;
+  //update propensity for A1_nonsense = 
+  propensities[5] = Anonsense_deg1 *A1_nonsense;
+  //update propensity for Aprime1 = 
+  propensities[6] = Aprime_deg1 *Aprime1;
+  //update propensity for B1 = 
+  propensities[7] = B_deg1 *B1;
+  //update propensity for Burst1_off_orig = Burst1_on_orig
+  propensities[8] = onbasal_aprime1 *Burst1_off_orig;
+  //update propensity for Burst1_off_para = Burst1_on_para
+  propensities[9] = Aprimenitc1 *(pow(A1_nonsense,nA1_nonsense )/(pow(kA1_nonsense ,nA1_nonsense )+pow(A1_nonsense,nA1_nonsense )))*Burst1_off_para+onbasal_aprime1 *Burst1_off_para;
+  //update propensity for Burst1_off_targ = Burst1_on_targ
+  propensities[10] = B_ondep1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_targ+ B_ondep_prime *(pow(Aprime1,nAprime1 )/(pow(kAprime1 ,nAprime1 )+pow(Aprime1,nAprime1 )))*Burst1_off_targ +onbasal_a1 *Burst1_off_targ;
+  //update propensity for Burst1_on_orig = Burst1_off_orig
+  propensities[11] = A_off1 *Burst1_on_targ;
+  //update propensity for Burst1_on_para = Burst1_off_para
+  propensities[12] = Aprime_off1 *Burst1_on_para;
+  //update propensity for Burst1_on_targ = Burst1_off_targ
+  propensities[13] = B_off1 *Burst1_on_orig;
+} else if (p<cumpropensities[6]) {
   // rxn: Aprime1 = 
   Aprime1=Aprime1 + -1;
 
   //update propensity for = A1 
-  propensities[0] = A_prod1 *A_proddiff1 *Burst1_on_orig+A_prod1 *Burst1_off_orig;
+  propensities[0] = Burst1_not_mutated*(A_prod1 *A_proddiff1 *Burst1_on_orig+A_prod1 *Burst1_off_orig);
+  //update propensity for = A1_nonsense 
+  propensities[1] = Burst1_is_mutated*(Anonsense_prod1 *A_proddiff1 *Burst1_on_orig+Anonsense_prod1 *Burst1_off_orig);
   //update propensity for = Aprime1 
-  propensities[1] = Aprime_prod1 *Aprime_proddiff1 *Burst1_on_para+Aprime_prod1 *Burst1_on_para;
+  propensities[2] = Aprime_prod1 *Aprime_proddiff1 *Burst1_on_para+Aprime_prod1 *Burst1_on_para;
   //update propensity for = B1 
-  propensities[2] = B_prod1 *B_proddiff1 *Burst1_on_targ+B_prod1 *Burst1_on_targ;
+  propensities[3] = B_prod1 *B_proddiff1 *Burst1_on_targ+B_prod1 *Burst1_on_targ;
   //update propensity for A1 = 
-  propensities[3] = A_deg1 *A1;
+  propensities[4] = A_deg1 *A1;
+  //update propensity for A1_nonsense = 
+  propensities[5] = Anonsense_deg1 *A1_nonsense;
   //update propensity for Aprime1 = 
-  propensities[4] = Aprime_deg1 *Aprime1;
+  propensities[6] = Aprime_deg1 *Aprime1;
   //update propensity for B1 = 
-  propensities[5] = B_deg1 *B1;
+  propensities[7] = B_deg1 *B1;
   //update propensity for Burst1_off_orig = Burst1_on_orig
-  propensities[6] = onbasal_aprime1 *Burst1_off_orig;
+  propensities[8] = onbasal_aprime1 *Burst1_off_orig;
   //update propensity for Burst1_off_para = Burst1_on_para
-  propensities[7] = Aprimenitc1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_para+onbasal_aprime1 *Burst1_off_para;
+  propensities[9] = Aprimenitc1 *(pow(A1_nonsense,nA1_nonsense )/(pow(kA1_nonsense ,nA1_nonsense )+pow(A1_nonsense,nA1_nonsense )))*Burst1_off_para+onbasal_aprime1 *Burst1_off_para;
   //update propensity for Burst1_off_targ = Burst1_on_targ
-  propensities[8] = B_ondep1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_targ+ B_ondep_prime *(pow(Aprime1,nAprime1 )/(pow(kAprime1 ,nAprime1 )+pow(Aprime1,nAprime1 )))*Burst1_off_targ +onbasal_a1 *Burst1_off_targ;
+  propensities[10] = B_ondep1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_targ+ B_ondep_prime *(pow(Aprime1,nAprime1 )/(pow(kAprime1 ,nAprime1 )+pow(Aprime1,nAprime1 )))*Burst1_off_targ +onbasal_a1 *Burst1_off_targ;
   //update propensity for Burst1_on_orig = Burst1_off_orig
-  propensities[9] = A_off1 *Burst1_on_targ;
+  propensities[11] = A_off1 *Burst1_on_targ;
   //update propensity for Burst1_on_para = Burst1_off_para
-  propensities[10] = Aprime_off1 *Burst1_on_para;
+  propensities[12] = Aprime_off1 *Burst1_on_para;
   //update propensity for Burst1_on_targ = Burst1_off_targ
-  propensities[11] = B_off1 *Burst1_on_orig;
-} else if (p<cumpropensities[5]) {
+  propensities[13] = B_off1 *Burst1_on_orig;
+} else if (p<cumpropensities[7]) {
   // rxn: B1 = 
   B1=B1 + -1;
 
   //update propensity for = A1 
-  propensities[0] = A_prod1 *A_proddiff1 *Burst1_on_orig+A_prod1 *Burst1_off_orig;
+  propensities[0] = Burst1_not_mutated*(A_prod1 *A_proddiff1 *Burst1_on_orig+A_prod1 *Burst1_off_orig);
+  //update propensity for = A1_nonsense 
+  propensities[1] = Burst1_is_mutated*(Anonsense_prod1 *A_proddiff1 *Burst1_on_orig+Anonsense_prod1 *Burst1_off_orig);
   //update propensity for = Aprime1 
-  propensities[1] = Aprime_prod1 *Aprime_proddiff1 *Burst1_on_para+Aprime_prod1 *Burst1_on_para;
+  propensities[2] = Aprime_prod1 *Aprime_proddiff1 *Burst1_on_para+Aprime_prod1 *Burst1_on_para;
   //update propensity for = B1 
-  propensities[2] = B_prod1 *B_proddiff1 *Burst1_on_targ+B_prod1 *Burst1_on_targ;
+  propensities[3] = B_prod1 *B_proddiff1 *Burst1_on_targ+B_prod1 *Burst1_on_targ;
   //update propensity for A1 = 
-  propensities[3] = A_deg1 *A1;
+  propensities[4] = A_deg1 *A1;
+  //update propensity for A1_nonsense = 
+  propensities[5] = Anonsense_deg1 *A1_nonsense;
   //update propensity for Aprime1 = 
-  propensities[4] = Aprime_deg1 *Aprime1;
+  propensities[6] = Aprime_deg1 *Aprime1;
   //update propensity for B1 = 
-  propensities[5] = B_deg1 *B1;
+  propensities[7] = B_deg1 *B1;
   //update propensity for Burst1_off_orig = Burst1_on_orig
-  propensities[6] = onbasal_aprime1 *Burst1_off_orig;
+  propensities[8] = onbasal_aprime1 *Burst1_off_orig;
   //update propensity for Burst1_off_para = Burst1_on_para
-  propensities[7] = Aprimenitc1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_para+onbasal_aprime1 *Burst1_off_para;
+  propensities[9] = Aprimenitc1 *(pow(A1_nonsense,nA1_nonsense )/(pow(kA1_nonsense ,nA1_nonsense )+pow(A1_nonsense,nA1_nonsense )))*Burst1_off_para+onbasal_aprime1 *Burst1_off_para;
   //update propensity for Burst1_off_targ = Burst1_on_targ
-  propensities[8] = B_ondep1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_targ+ B_ondep_prime *(pow(Aprime1,nAprime1 )/(pow(kAprime1 ,nAprime1 )+pow(Aprime1,nAprime1 )))*Burst1_off_targ +onbasal_a1 *Burst1_off_targ;
+  propensities[10] = B_ondep1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_targ+ B_ondep_prime *(pow(Aprime1,nAprime1 )/(pow(kAprime1 ,nAprime1 )+pow(Aprime1,nAprime1 )))*Burst1_off_targ +onbasal_a1 *Burst1_off_targ;
   //update propensity for Burst1_on_orig = Burst1_off_orig
-  propensities[9] = A_off1 *Burst1_on_targ;
+  propensities[11] = A_off1 *Burst1_on_targ;
   //update propensity for Burst1_on_para = Burst1_off_para
-  propensities[10] = Aprime_off1 *Burst1_on_para;
+  propensities[12] = Aprime_off1 *Burst1_on_para;
   //update propensity for Burst1_on_targ = Burst1_off_targ
-  propensities[11] = B_off1 *Burst1_on_orig;
-} else if (p<cumpropensities[6]) {
+  propensities[13] = B_off1 *Burst1_on_orig;
+} else if (p<cumpropensities[8]) {
   // rxn: Burst1_off_orig = Burst1_on_orig
   
   if(Burst1_off_orig == 1) {
@@ -351,30 +432,34 @@ if (p<cumpropensities[0]) {
   //Burst1_on_orig=Burst1_on_orig + 1;
   
   //update propensity for = A1 
-  propensities[0] = A_prod1 *A_proddiff1 *Burst1_on_orig+A_prod1 *Burst1_off_orig;
+  propensities[0] = Burst1_not_mutated*(A_prod1 *A_proddiff1 *Burst1_on_orig+A_prod1 *Burst1_off_orig);
+  //update propensity for = A1_nonsense 
+  propensities[1] = Burst1_is_mutated*(Anonsense_prod1 *A_proddiff1 *Burst1_on_orig+Anonsense_prod1 *Burst1_off_orig);
   //update propensity for = Aprime1 
-  propensities[1] = Aprime_prod1 *Aprime_proddiff1 *Burst1_on_para+Aprime_prod1 *Burst1_on_para;
+  propensities[2] = Aprime_prod1 *Aprime_proddiff1 *Burst1_on_para+Aprime_prod1 *Burst1_on_para;
   //update propensity for = B1 
-  propensities[2] = B_prod1 *B_proddiff1 *Burst1_on_targ+B_prod1 *Burst1_on_targ;
+  propensities[3] = B_prod1 *B_proddiff1 *Burst1_on_targ+B_prod1 *Burst1_on_targ;
   //update propensity for A1 = 
-  propensities[3] = A_deg1 *A1;
+  propensities[4] = A_deg1 *A1;
+  //update propensity for A1_nonsense = 
+  propensities[5] = Anonsense_deg1 *A1_nonsense;
   //update propensity for Aprime1 = 
-  propensities[4] = Aprime_deg1 *Aprime1;
+  propensities[6] = Aprime_deg1 *Aprime1;
   //update propensity for B1 = 
-  propensities[5] = B_deg1 *B1;
+  propensities[7] = B_deg1 *B1;
   //update propensity for Burst1_off_orig = Burst1_on_orig
-  propensities[6] = onbasal_aprime1 *Burst1_off_orig;
+  propensities[8] = onbasal_aprime1 *Burst1_off_orig;
   //update propensity for Burst1_off_para = Burst1_on_para
-  propensities[7] = Aprimenitc1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_para+onbasal_aprime1 *Burst1_off_para;
+  propensities[9] = Aprimenitc1 *(pow(A1_nonsense,nA1_nonsense )/(pow(kA1_nonsense ,nA1_nonsense )+pow(A1_nonsense,nA1_nonsense )))*Burst1_off_para+onbasal_aprime1 *Burst1_off_para;
   //update propensity for Burst1_off_targ = Burst1_on_targ
-  propensities[8] = B_ondep1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_targ+ B_ondep_prime *(pow(Aprime1,nAprime1 )/(pow(kAprime1 ,nAprime1 )+pow(Aprime1,nAprime1 )))*Burst1_off_targ +onbasal_a1 *Burst1_off_targ;
+  propensities[10] = B_ondep1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_targ+ B_ondep_prime *(pow(Aprime1,nAprime1 )/(pow(kAprime1 ,nAprime1 )+pow(Aprime1,nAprime1 )))*Burst1_off_targ +onbasal_a1 *Burst1_off_targ;
   //update propensity for Burst1_on_orig = Burst1_off_orig
-  propensities[9] = A_off1 *Burst1_on_targ;
+  propensities[11] = A_off1 *Burst1_on_targ;
   //update propensity for Burst1_on_para = Burst1_off_para
-  propensities[10] = Aprime_off1 *Burst1_on_para;
+  propensities[12] = Aprime_off1 *Burst1_on_para;
   //update propensity for Burst1_on_targ = Burst1_off_targ
-  propensities[11] = B_off1 *Burst1_on_orig;
-} else if (p<cumpropensities[7]) {
+  propensities[13] = B_off1 *Burst1_on_orig;
+} else if (p<cumpropensities[9]) {
   // rxn: Burst1_off_para = Burst1_on_para
   
 if(Burst1_off_para == 1) {
@@ -385,31 +470,35 @@ if(Burst1_off_para == 1) {
   //Burst1_off_para=Burst1_off_para + -1;
   //Burst1_on_para=Burst1_on_para + 1;
 
-  //update propensity for = A1 
-  propensities[0] = A_prod1 *A_proddiff1 *Burst1_on_orig+A_prod1 *Burst1_off_orig;
+    //update propensity for = A1 
+  propensities[0] = Burst1_not_mutated*(A_prod1 *A_proddiff1 *Burst1_on_orig+A_prod1 *Burst1_off_orig);
+  //update propensity for = A1_nonsense 
+  propensities[1] = Burst1_is_mutated*(Anonsense_prod1 *A_proddiff1 *Burst1_on_orig+Anonsense_prod1 *Burst1_off_orig);
   //update propensity for = Aprime1 
-  propensities[1] = Aprime_prod1 *Aprime_proddiff1 *Burst1_on_para+Aprime_prod1 *Burst1_on_para;
+  propensities[2] = Aprime_prod1 *Aprime_proddiff1 *Burst1_on_para+Aprime_prod1 *Burst1_on_para;
   //update propensity for = B1 
-  propensities[2] = B_prod1 *B_proddiff1 *Burst1_on_targ+B_prod1 *Burst1_on_targ;
+  propensities[3] = B_prod1 *B_proddiff1 *Burst1_on_targ+B_prod1 *Burst1_on_targ;
   //update propensity for A1 = 
-  propensities[3] = A_deg1 *A1;
+  propensities[4] = A_deg1 *A1;
+  //update propensity for A1_nonsense = 
+  propensities[5] = Anonsense_deg1 *A1_nonsense;
   //update propensity for Aprime1 = 
-  propensities[4] = Aprime_deg1 *Aprime1;
+  propensities[6] = Aprime_deg1 *Aprime1;
   //update propensity for B1 = 
-  propensities[5] = B_deg1 *B1;
+  propensities[7] = B_deg1 *B1;
   //update propensity for Burst1_off_orig = Burst1_on_orig
-  propensities[6] = onbasal_aprime1 *Burst1_off_orig;
+  propensities[8] = onbasal_aprime1 *Burst1_off_orig;
   //update propensity for Burst1_off_para = Burst1_on_para
-  propensities[7] = Aprimenitc1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_para+onbasal_aprime1 *Burst1_off_para;
+  propensities[9] = Aprimenitc1 *(pow(A1_nonsense,nA1_nonsense )/(pow(kA1_nonsense ,nA1_nonsense )+pow(A1_nonsense,nA1_nonsense )))*Burst1_off_para+onbasal_aprime1 *Burst1_off_para;
   //update propensity for Burst1_off_targ = Burst1_on_targ
-  propensities[8] = B_ondep1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_targ+ B_ondep_prime *(pow(Aprime1,nAprime1 )/(pow(kAprime1 ,nAprime1 )+pow(Aprime1,nAprime1 )))*Burst1_off_targ +onbasal_a1 *Burst1_off_targ;
+  propensities[10] = B_ondep1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_targ+ B_ondep_prime *(pow(Aprime1,nAprime1 )/(pow(kAprime1 ,nAprime1 )+pow(Aprime1,nAprime1 )))*Burst1_off_targ +onbasal_a1 *Burst1_off_targ;
   //update propensity for Burst1_on_orig = Burst1_off_orig
-  propensities[9] = A_off1 *Burst1_on_targ;
+  propensities[11] = A_off1 *Burst1_on_targ;
   //update propensity for Burst1_on_para = Burst1_off_para
-  propensities[10] = Aprime_off1 *Burst1_on_para;
+  propensities[12] = Aprime_off1 *Burst1_on_para;
   //update propensity for Burst1_on_targ = Burst1_off_targ
-  propensities[11] = B_off1 *Burst1_on_orig;
-} else if (p<cumpropensities[8]) {
+  propensities[13] = B_off1 *Burst1_on_orig;
+} else if (p<cumpropensities[10]) {
   // rxn: Burst1_off_targ = Burst1_on_targ
   
   if(Burst1_off_targ == 1) {
@@ -420,31 +509,35 @@ if(Burst1_off_para == 1) {
   //Burst1_off_targ=Burst1_off_targ + -1;
   //Burst1_on_targ=Burst1_on_targ + 1;
 
-  //update propensity for = A1 
-  propensities[0] = A_prod1 *A_proddiff1 *Burst1_on_orig+A_prod1 *Burst1_off_orig;
+    //update propensity for = A1 
+  propensities[0] = Burst1_not_mutated*(A_prod1 *A_proddiff1 *Burst1_on_orig+A_prod1 *Burst1_off_orig);
+  //update propensity for = A1_nonsense 
+  propensities[1] = Burst1_is_mutated*(Anonsense_prod1 *A_proddiff1 *Burst1_on_orig+Anonsense_prod1 *Burst1_off_orig);
   //update propensity for = Aprime1 
-  propensities[1] = Aprime_prod1 *Aprime_proddiff1 *Burst1_on_para+Aprime_prod1 *Burst1_on_para;
+  propensities[2] = Aprime_prod1 *Aprime_proddiff1 *Burst1_on_para+Aprime_prod1 *Burst1_on_para;
   //update propensity for = B1 
-  propensities[2] = B_prod1 *B_proddiff1 *Burst1_on_targ+B_prod1 *Burst1_on_targ;
+  propensities[3] = B_prod1 *B_proddiff1 *Burst1_on_targ+B_prod1 *Burst1_on_targ;
   //update propensity for A1 = 
-  propensities[3] = A_deg1 *A1;
+  propensities[4] = A_deg1 *A1;
+  //update propensity for A1_nonsense = 
+  propensities[5] = Anonsense_deg1 *A1_nonsense;
   //update propensity for Aprime1 = 
-  propensities[4] = Aprime_deg1 *Aprime1;
+  propensities[6] = Aprime_deg1 *Aprime1;
   //update propensity for B1 = 
-  propensities[5] = B_deg1 *B1;
+  propensities[7] = B_deg1 *B1;
   //update propensity for Burst1_off_orig = Burst1_on_orig
-  propensities[6] = onbasal_aprime1 *Burst1_off_orig;
+  propensities[8] = onbasal_aprime1 *Burst1_off_orig;
   //update propensity for Burst1_off_para = Burst1_on_para
-  propensities[7] = Aprimenitc1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_para+onbasal_aprime1 *Burst1_off_para;
+  propensities[9] = Aprimenitc1 *(pow(A1_nonsense,nA1_nonsense )/(pow(kA1_nonsense ,nA1_nonsense )+pow(A1_nonsense,nA1_nonsense )))*Burst1_off_para+onbasal_aprime1 *Burst1_off_para;
   //update propensity for Burst1_off_targ = Burst1_on_targ
-  propensities[8] = B_ondep1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_targ+ B_ondep_prime *(pow(Aprime1,nAprime1 )/(pow(kAprime1 ,nAprime1 )+pow(Aprime1,nAprime1 )))*Burst1_off_targ +onbasal_a1 *Burst1_off_targ;
+  propensities[10] = B_ondep1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_targ+ B_ondep_prime *(pow(Aprime1,nAprime1 )/(pow(kAprime1 ,nAprime1 )+pow(Aprime1,nAprime1 )))*Burst1_off_targ +onbasal_a1 *Burst1_off_targ;
   //update propensity for Burst1_on_orig = Burst1_off_orig
-  propensities[9] = A_off1 *Burst1_on_targ;
+  propensities[11] = A_off1 *Burst1_on_targ;
   //update propensity for Burst1_on_para = Burst1_off_para
-  propensities[10] = Aprime_off1 *Burst1_on_para;
+  propensities[12] = Aprime_off1 *Burst1_on_para;
   //update propensity for Burst1_on_targ = Burst1_off_targ
-  propensities[11] = B_off1 *Burst1_on_orig;
-} else if (p<cumpropensities[9]) {
+  propensities[13] = B_off1 *Burst1_on_orig;
+} else if (p<cumpropensities[11]) {
   // rxn: Burst1_on_orig = Burst1_off_orig
 
   if(Burst1_on_orig == 1) {
@@ -454,31 +547,35 @@ if(Burst1_off_para == 1) {
   //Burst1_on_orig=Burst1_on_orig + -1;
   //Burst1_off_orig=Burst1_off_orig + 1;
 
-  //update propensity for = A1 
-  propensities[0] = A_prod1 *A_proddiff1 *Burst1_on_orig+A_prod1 *Burst1_off_orig;
+    //update propensity for = A1 
+  propensities[0] = Burst1_not_mutated*(A_prod1 *A_proddiff1 *Burst1_on_orig+A_prod1 *Burst1_off_orig);
+  //update propensity for = A1_nonsense 
+  propensities[1] = Burst1_is_mutated*(Anonsense_prod1 *A_proddiff1 *Burst1_on_orig+Anonsense_prod1 *Burst1_off_orig);
   //update propensity for = Aprime1 
-  propensities[1] = Aprime_prod1 *Aprime_proddiff1 *Burst1_on_para+Aprime_prod1 *Burst1_on_para;
+  propensities[2] = Aprime_prod1 *Aprime_proddiff1 *Burst1_on_para+Aprime_prod1 *Burst1_on_para;
   //update propensity for = B1 
-  propensities[2] = B_prod1 *B_proddiff1 *Burst1_on_targ+B_prod1 *Burst1_on_targ;
+  propensities[3] = B_prod1 *B_proddiff1 *Burst1_on_targ+B_prod1 *Burst1_on_targ;
   //update propensity for A1 = 
-  propensities[3] = A_deg1 *A1;
+  propensities[4] = A_deg1 *A1;
+  //update propensity for A1_nonsense = 
+  propensities[5] = Anonsense_deg1 *A1_nonsense;
   //update propensity for Aprime1 = 
-  propensities[4] = Aprime_deg1 *Aprime1;
+  propensities[6] = Aprime_deg1 *Aprime1;
   //update propensity for B1 = 
-  propensities[5] = B_deg1 *B1;
+  propensities[7] = B_deg1 *B1;
   //update propensity for Burst1_off_orig = Burst1_on_orig
-  propensities[6] = onbasal_aprime1 *Burst1_off_orig;
+  propensities[8] = onbasal_aprime1 *Burst1_off_orig;
   //update propensity for Burst1_off_para = Burst1_on_para
-  propensities[7] = Aprimenitc1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_para+onbasal_aprime1 *Burst1_off_para;
+  propensities[9] = Aprimenitc1 *(pow(A1_nonsense,nA1_nonsense )/(pow(kA1_nonsense ,nA1_nonsense )+pow(A1_nonsense,nA1_nonsense )))*Burst1_off_para+onbasal_aprime1 *Burst1_off_para;
   //update propensity for Burst1_off_targ = Burst1_on_targ
-  propensities[8] = B_ondep1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_targ+ B_ondep_prime *(pow(Aprime1,nAprime1 )/(pow(kAprime1 ,nAprime1 )+pow(Aprime1,nAprime1 )))*Burst1_off_targ +onbasal_a1 *Burst1_off_targ;
+  propensities[10] = B_ondep1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_targ+ B_ondep_prime *(pow(Aprime1,nAprime1 )/(pow(kAprime1 ,nAprime1 )+pow(Aprime1,nAprime1 )))*Burst1_off_targ +onbasal_a1 *Burst1_off_targ;
   //update propensity for Burst1_on_orig = Burst1_off_orig
-  propensities[9] = A_off1 *Burst1_on_targ;
+  propensities[11] = A_off1 *Burst1_on_targ;
   //update propensity for Burst1_on_para = Burst1_off_para
-  propensities[10] = Aprime_off1 *Burst1_on_para;
+  propensities[12] = Aprime_off1 *Burst1_on_para;
   //update propensity for Burst1_on_targ = Burst1_off_targ
-  propensities[11] = B_off1 *Burst1_on_orig;
-} else if (p<cumpropensities[10]) {
+  propensities[13] = B_off1 *Burst1_on_orig;
+} else if (p<cumpropensities[12]) {
   // rxn: Burst1_on_para = Burst1_off_para
   
   if(Burst1_on_para == 1) {
@@ -488,31 +585,35 @@ if(Burst1_off_para == 1) {
   //Burst1_off_para=Burst1_off_para + 1;
   //Burst1_on_para=Burst1_on_para + -1;
 
-  //update propensity for = A1 
-  propensities[0] = A_prod1 *A_proddiff1 *Burst1_on_orig+A_prod1 *Burst1_off_orig;
+    //update propensity for = A1 
+  propensities[0] = Burst1_not_mutated*(A_prod1 *A_proddiff1 *Burst1_on_orig+A_prod1 *Burst1_off_orig);
+  //update propensity for = A1_nonsense 
+  propensities[1] = Burst1_is_mutated*(Anonsense_prod1 *A_proddiff1 *Burst1_on_orig+Anonsense_prod1 *Burst1_off_orig);
   //update propensity for = Aprime1 
-  propensities[1] = Aprime_prod1 *Aprime_proddiff1 *Burst1_on_para+Aprime_prod1 *Burst1_on_para;
+  propensities[2] = Aprime_prod1 *Aprime_proddiff1 *Burst1_on_para+Aprime_prod1 *Burst1_on_para;
   //update propensity for = B1 
-  propensities[2] = B_prod1 *B_proddiff1 *Burst1_on_targ+B_prod1 *Burst1_on_targ;
+  propensities[3] = B_prod1 *B_proddiff1 *Burst1_on_targ+B_prod1 *Burst1_on_targ;
   //update propensity for A1 = 
-  propensities[3] = A_deg1 *A1;
+  propensities[4] = A_deg1 *A1;
+  //update propensity for A1_nonsense = 
+  propensities[5] = Anonsense_deg1 *A1_nonsense;
   //update propensity for Aprime1 = 
-  propensities[4] = Aprime_deg1 *Aprime1;
+  propensities[6] = Aprime_deg1 *Aprime1;
   //update propensity for B1 = 
-  propensities[5] = B_deg1 *B1;
+  propensities[7] = B_deg1 *B1;
   //update propensity for Burst1_off_orig = Burst1_on_orig
-  propensities[6] = onbasal_aprime1 *Burst1_off_orig;
+  propensities[8] = onbasal_aprime1 *Burst1_off_orig;
   //update propensity for Burst1_off_para = Burst1_on_para
-  propensities[7] = Aprimenitc1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_para+onbasal_aprime1 *Burst1_off_para;
+  propensities[9] = Aprimenitc1 *(pow(A1_nonsense,nA1_nonsense )/(pow(kA1_nonsense ,nA1_nonsense )+pow(A1_nonsense,nA1_nonsense )))*Burst1_off_para+onbasal_aprime1 *Burst1_off_para;
   //update propensity for Burst1_off_targ = Burst1_on_targ
-  propensities[8] = B_ondep1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_targ+ B_ondep_prime *(pow(Aprime1,nAprime1 )/(pow(kAprime1 ,nAprime1 )+pow(Aprime1,nAprime1 )))*Burst1_off_targ +onbasal_a1 *Burst1_off_targ;
+  propensities[10] = B_ondep1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_targ+ B_ondep_prime *(pow(Aprime1,nAprime1 )/(pow(kAprime1 ,nAprime1 )+pow(Aprime1,nAprime1 )))*Burst1_off_targ +onbasal_a1 *Burst1_off_targ;
   //update propensity for Burst1_on_orig = Burst1_off_orig
-  propensities[9] = A_off1 *Burst1_on_targ;
+  propensities[11] = A_off1 *Burst1_on_targ;
   //update propensity for Burst1_on_para = Burst1_off_para
-  propensities[10] = Aprime_off1 *Burst1_on_para;
+  propensities[12] = Aprime_off1 *Burst1_on_para;
   //update propensity for Burst1_on_targ = Burst1_off_targ
-  propensities[11] = B_off1 *Burst1_on_orig;
-} else if (p<cumpropensities[11]) {
+  propensities[13] = B_off1 *Burst1_on_orig;
+} else if (p<cumpropensities[13]) {
   // rxn: Burst1_on_targ = Burst1_off_targ
 
   if(Burst1_on_targ == 1) {
@@ -522,30 +623,34 @@ if(Burst1_off_para == 1) {
   //Burst1_off_targ=Burst1_off_targ + 1;
   //Burst1_on_targ=Burst1_on_targ + -1;
 
-  //update propensity for = A1 
-  propensities[0] = A_prod1 *A_proddiff1 *Burst1_on_orig+A_prod1 *Burst1_off_orig;
+    //update propensity for = A1 
+  propensities[0] = Burst1_not_mutated*(A_prod1 *A_proddiff1 *Burst1_on_orig+A_prod1 *Burst1_off_orig);
+  //update propensity for = A1_nonsense 
+  propensities[1] = Burst1_is_mutated*(Anonsense_prod1 *A_proddiff1 *Burst1_on_orig+Anonsense_prod1 *Burst1_off_orig);
   //update propensity for = Aprime1 
-  propensities[1] = Aprime_prod1 *Aprime_proddiff1 *Burst1_on_para+Aprime_prod1 *Burst1_on_para;
+  propensities[2] = Aprime_prod1 *Aprime_proddiff1 *Burst1_on_para+Aprime_prod1 *Burst1_on_para;
   //update propensity for = B1 
-  propensities[2] = B_prod1 *B_proddiff1 *Burst1_on_targ+B_prod1 *Burst1_on_targ;
+  propensities[3] = B_prod1 *B_proddiff1 *Burst1_on_targ+B_prod1 *Burst1_on_targ;
   //update propensity for A1 = 
-  propensities[3] = A_deg1 *A1;
+  propensities[4] = A_deg1 *A1;
+  //update propensity for A1_nonsense = 
+  propensities[5] = Anonsense_deg1 *A1_nonsense;
   //update propensity for Aprime1 = 
-  propensities[4] = Aprime_deg1 *Aprime1;
+  propensities[6] = Aprime_deg1 *Aprime1;
   //update propensity for B1 = 
-  propensities[5] = B_deg1 *B1;
+  propensities[7] = B_deg1 *B1;
   //update propensity for Burst1_off_orig = Burst1_on_orig
-  propensities[6] = onbasal_aprime1 *Burst1_off_orig;
+  propensities[8] = onbasal_aprime1 *Burst1_off_orig;
   //update propensity for Burst1_off_para = Burst1_on_para
-  propensities[7] = Aprimenitc1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_para+onbasal_aprime1 *Burst1_off_para;
+  propensities[9] = Aprimenitc1 *(pow(A1_nonsense,nA1_nonsense )/(pow(kA1_nonsense ,nA1_nonsense )+pow(A1_nonsense,nA1_nonsense )))*Burst1_off_para+onbasal_aprime1 *Burst1_off_para;
   //update propensity for Burst1_off_targ = Burst1_on_targ
-  propensities[8] = B_ondep1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_targ+ B_ondep_prime *(pow(Aprime1,nAprime1 )/(pow(kAprime1 ,nAprime1 )+pow(Aprime1,nAprime1 )))*Burst1_off_targ +onbasal_a1 *Burst1_off_targ;
+  propensities[10] = B_ondep1 *(pow(A1,nA1 )/(pow(kA1 ,nA1 )+pow(A1,nA1 )))*Burst1_off_targ+ B_ondep_prime *(pow(Aprime1,nAprime1 )/(pow(kAprime1 ,nAprime1 )+pow(Aprime1,nAprime1 )))*Burst1_off_targ +onbasal_a1 *Burst1_off_targ;
   //update propensity for Burst1_on_orig = Burst1_off_orig
-  propensities[9] = A_off1 *Burst1_on_targ;
+  propensities[11] = A_off1 *Burst1_on_targ;
   //update propensity for Burst1_on_para = Burst1_off_para
-  propensities[10] = Aprime_off1 *Burst1_on_para;
+  propensities[12] = Aprime_off1 *Burst1_on_para;
   //update propensity for Burst1_on_targ = Burst1_off_targ
-  propensities[11] = B_off1 *Burst1_on_orig;
+  propensities[13] = B_off1 *Burst1_on_orig;
 }
   //}
   }
