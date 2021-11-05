@@ -78,13 +78,15 @@ for iname = 1:1
     set_onbasal_b{iname} = sprintf('onbasal_b%d', iname);           %basal on-rate of burst of downstream target
     set_ondep_prime{iname} = sprintf('ondep_prime', iname);                %additional on-rate of target due to dependency on paralog
     set_nitc{iname} = sprintf('nitc%d', iname);                            %additional on-rate of paralog due to dependency on NITC after mutation
-    set_spec_para{iname} = sprintf('Aprime%d', iname);
-    set_spec_targ{iname} = sprintf('B%d', iname); 
+    set_spec_nons{iname} = sprintf('A%d_nonsense', iname);              %nonsense species
+    set_spec_para{iname} = sprintf('Aprime%d', iname);              % paralog species
+    set_spec_targ{iname} = sprintf('B%d', iname);                   % target species
     set_Burston_para{iname} = sprintf('Burst%d_on_para', iname);                      %burst 'on' paralog
     set_Burstoff_para{iname} = sprintf('Burst%d_off_para', iname);                    %burst 'off' paralog
     set_Burston_targ{iname} = sprintf('Burst%d_on_targ', iname);                      %burst 'on' target
     set_Burstoff_targ{iname} = sprintf('Burst%d_off_targ', iname);                    %burst 'off' target
-
+    set_ismutated_orig{iname} = sprintf('Burst%d_is_mutated', iname);
+    set_notmutated_orig{iname} = sprintf('Burst%d_not_mutated', iname);
 end
 
 %set the initial values for Burst_off
@@ -287,6 +289,10 @@ for istruc = 1:nstruc
             fprintf(fileID,'A_%s = %f : = %s \n', set_prod{prod_txt}, latinhyp_prod(iruns,prod_txt), set_spec_orig{prod_txt}) ;
         end
         
+        for prod_txt = 1:n_species_upstr
+            fprintf(fileID,'Anonsense_%s = %f : = %s \n', set_prod{prod_txt}, latinhyp_prod(iruns,prod_txt), set_spec_orig{prod_txt}) ;
+        end
+        
         for prod_txt = 1:n_species_paralog
             fprintf(fileID,'Aprime_%s = %f : = %s \n', set_prod{prod_txt}, latinhyp_prod(iruns,prod_txt), set_spec_para{prod_txt}) ;
         end
@@ -298,6 +304,10 @@ for istruc = 1:nstruc
 %         set_deg for each species
         for deg_txt = 1:n_species_upstr
             fprintf(fileID,'A_%s = %f : %s = \n', set_deg{deg_txt}, latinhyp_deg(iruns,deg_txt), set_spec_orig{deg_txt}) ;
+        end
+        
+        for deg_txt = 1:n_species_upstr
+            fprintf(fileID,'Anonsense_%s = %f : %s = \n', set_deg{deg_txt}, latinhyp_deg(iruns,deg_txt), set_spec_orig{deg_txt}) ;
         end
         
         for deg_txt = 1:n_species_paralog
@@ -320,12 +330,12 @@ for istruc = 1:nstruc
             fprintf(fileID,'B_%s = %f : %s = %s\n', set_ondep_prime{ondep_txt}, latinhyp_ondep_prime(iruns,ondep_txt), set_Burstoff_targ{ondep_txt}, set_Burston_targ{ondep_txt});
         end
         
-%         NITC-based ondep for Aprime regulated by NITC-type A
+%         NITC-based ondep for Aprime regulated by Anonsense
         for nitc_txt = 1:n_species_paralog
             fprintf(fileID,'Aprime%s = %f : %s = %s\n', set_nitc{nitc_txt}, latinhyp_nitc(iruns,nitc_txt), set_Burstoff_para{ondep_txt}, set_Burston_para{ondep_txt});
         end
         
-%         off for each species
+%         off for each species/locus
         for on_txt = 1:n_species_upstr
             fprintf(fileID,'A_%s = %f : %s = %s\n', set_off{on_txt}, latinhyp_off(iruns,on_txt), set_Burston_orig{on_txt}, set_Burstoff_orig{on_txt});
         end
@@ -375,6 +385,10 @@ for istruc = 1:nstruc
             fprintf(fileID,'k%s = %d\n', set_spec_orig{spec_txt}, k(iruns,spec_txt));
         end
         
+        for spec_txt = 1:n_species_upstr
+            fprintf(fileID,'k%s = %d\n', set_spec_orig{spec_txt}, k(iruns,spec_txt));
+        end
+        
         for spec_txt = 1:n_species_paralog
             fprintf(fileID,'k%s = %d\n', set_spec_para{spec_txt}, k(iruns,spec_txt));
         end
@@ -384,6 +398,10 @@ for istruc = 1:nstruc
         end
         
         fprintf(fileID,'%s\n', 'Hill function n');
+        
+        for n_txt = 1:n_species_upstr
+            fprintf(fileID,'n%s = %d\n', set_spec_orig{n_txt}, latinhyp_n(iruns,n_txt));
+        end
         
         for n_txt = 1:n_species_upstr
             fprintf(fileID,'n%s = %d\n', set_spec_orig{n_txt}, latinhyp_n(iruns,n_txt));
@@ -402,6 +420,10 @@ for istruc = 1:nstruc
         
         for initspec_txt = 1:n_species_upstr
             fprintf(fileID,'%s = %d\n', set_spec_orig{initspec_txt}, init.spec_A(initspec_txt));
+        end
+        
+        for initspec_txt = 1:n_species_upstr
+            fprintf(fileID,'%s = %d\n', set_spec_nons{initspec_txt}, init.spec_Anonsense(initspec_txt));
         end
         
         for initspec_txt = 1:n_species_paralog
@@ -425,6 +447,12 @@ for istruc = 1:nstruc
         for initB_txt = 1:n_species_downstr
             fprintf(fileID,'%s = %d\n', set_Burstoff_targ{initB_txt}, init.Burstoff_B(initB_txt));
             fprintf(fileID,'%s = %d\n', set_Burston_targ{initB_txt}, init.Burston_B(initB_txt));
+        end
+        
+        % set mutation status
+        for initB_txt = 1:n_species_upstr
+            fprintf(fileID,'%s = %d\n', set_ismutated_orig{initB_txt}, init.Burstoff_B(initB_txt));
+            fprintf(fileID,'%s = %d\n', set_notmutated_orig{initB_txt}, init.Burston_B(initB_txt));
         end
         
         fprintf(fileID,'%s\n', 'Network');
