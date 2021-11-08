@@ -245,9 +245,9 @@ for istruc = 1:nstruc
 %     S = zeros(nruns,3*n_species);
 %     R = zeros(nruns,8*n_species);
 %     P = zeros(nruns,4*n_species);
-    S = zeros(nruns,3*n_species);
-    R = zeros(nruns,8*n_species);
-    P = zeros(nruns,4*n_species);
+    S = zeros(nruns,3*n_species + 3*n_species_upstr);
+    R = zeros(nruns,8*n_species + 4*n_species_upstr);
+    P = zeros(nruns,4*n_species + 2*n_species_upstr);
     
     for iruns = 1:nruns
         
@@ -268,6 +268,7 @@ for istruc = 1:nstruc
             set_onbasal_b set_ondep_prime set_nitc set_spec_para...
             set_spec_targ set_Burston_para set_Burstoff_para...
             set_Burston_targ set_Burstoff_targ M_iso nstruc...
+            set_spec_nons set_ismutated_orig set_notmutated_orig...
             M_orig_targ M_para_targ M_nitc_para...
             latinhyp_prod latinhyp_deg latinhyp_onbasal latinhyp_n...
             latinhyp_ondep latinhyp_off latinhyp_proddiff k...
@@ -528,7 +529,7 @@ for istruc = 1:nstruc
             par_prop = P(100*kmem-100+jruns,:);
             
 %             [times,savespecies] = gillespie_burstshistomex(0,par_spec,par_rates_manual,par_prop,sum(clock*100),maxgillespie,maxgillespie);
-            [times,savespecies_ns] = gillespie_burstshistomex_nonsenseSpecies(0,par_spec,par_rates_ns,par_prop_ns,sum(clock*100),maxgillespie,maxgillespie);
+            [times,savespecies_ns2] = gillespie_burstshistomex_nonsenseSpecies(0,par_spec,par_rates_ns2,par_prop_ns,sum(clock*100),maxgillespie,maxgillespie);
             
             S_outpar{jruns} = savespecies;
             
