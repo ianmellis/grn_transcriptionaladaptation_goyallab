@@ -520,7 +520,11 @@ for istruc = 1:nstruc
     save(P_save,'P');%,'-v1.0');
     
     for kmem = 1:1
-        
+%%  initial lhs of 100 parameter sets, manually ordered to work with prototype  
+
+Burst1_is_mutated = 0;
+Burst1_not_mutated = 1;
+
         S = [repmat(A1,nruns,1),...
             repmat(A1,nruns,1),...
             repmat(Aprime1,nruns,1),...
@@ -559,7 +563,17 @@ for istruc = 1:nstruc
             latinhyp_n(:,2),...
             latinhyp_n(:,3),...
             ];
+            
+        P = [ones(nruns,1), zeros(nruns,13)]; % temporary; force first reaction to be A1+1 - propensities will then all update
         
+        R_save = sprintf('./nitc_3node_v1.1/R_outpar_NITC_%d_%d_%d',n_species_upstr,n_species_paralog,n_species_downstr);
+        S_save = sprintf('./nitc_3node_v1.1/S_outpar_NITC_%d_%d_%d',n_species_upstr,n_species_paralog,n_species_downstr);
+        P_save = sprintf('./nitc_3node_v1.1/P_outpar_NITC_%d_%d_%d',n_species_upstr,n_species_paralog,n_species_downstr);
+        
+        save(R_save,'R');%,'-v1.0');
+        save(S_save,'S');%,'-v1.0');
+        save(P_save,'P');%,'-v1.0');
+%%        
         parfor jruns = 1:nruns
             %         for jruns = 1:nruns
             
@@ -568,15 +582,26 @@ for istruc = 1:nstruc
             par_prop = P(100*kmem-100+jruns,:);
             
 %             [times,savespecies] = gillespie_burstshistomex(0,par_spec,par_rates_manual,par_prop,sum(clock*100),maxgillespie,maxgillespie);
-            [times,savespecies_ns2] = gillespie_burstshistomex_nonsenseSpecies(0,par_spec,par_rates_ns2,par_prop_ns,sum(clock*100),maxgillespie,maxgillespie);
+%             [times,savespecies_ns2] = gillespie_burstshistomex_nonsenseSpecies(0,par_spec,par_rates_ns2,par_prop_ns,sum(clock*100),maxgillespie,maxgillespie);
+            [times,savespecies_ns] = gillespie_burstshistomex_nonsenseSpecies(0,par_spec,par_rates,par_prop,sum(clock*100),maxgillespie,maxgillespie);
             
-            S_outpar{jruns} = savespecies;
+            S_save1 = sprintf('./nitc_3node_v1.1/S_outpar_%d.csv',jruns);
+            
+            csvwrite(S_save1, savespecies_ns)
+            
+            S_outpar{jruns} = savespecies_ns;
             
             times = [];
-            savespecies = [];
+            savespecies_ns = [];
+            
+            
             
         end
         
+        S_save = sprintf('./nitc_3node_v1.1/S_outpar_%d_%d_%d_%d',n_species_upstr,n_species_paralog,n_species_downstr,istruc);
+        
+        save(S_save,'S_outpar');%,'-v7.3');
+%%        
         if isequal(type,'normal') == 1
             %             S_save = sprintf('/Volumes/MELANOMAII/Example/S_outpar%d_%d_%d',n_species,istruc,kmem);
             S_save = sprintf('./Example/S_outpar%d_%d_%d',n_species,istruc,kmem);
