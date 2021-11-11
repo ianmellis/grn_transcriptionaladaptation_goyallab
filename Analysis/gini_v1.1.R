@@ -20,6 +20,9 @@ params[,'paramset'] <- 1:100
 samp_stats <- list()
 transition_samples <- list()
 for (i in 1:n_sets){
+  
+  cat(paste0('Working on parameter set ', as.character(i), '...\n'))
+  
   results <- t(as.matrix(read.csv(paste0('S_outpar_', as.character(i), '.csv'), header=F)))
   colnames(results) <- c('orig_1', 'nonsense_1', 'para_1', 'targ_1', 'targ_off', 'targ_on', 'para_off', 'para_on', 'orig_on', 'orig_off', 'is_mutated', 'not_mutated')
   results %<>% as.data.frame() %>% as_tibble()
@@ -63,7 +66,24 @@ for (i in 1:n_sets){
 }
 
 # plot CV and gini values for each parameter set
+epoch_levels <- c('pre', 'post imm', 'post lat')
+samp_stats$epoch1 <- factor(samp_stats$epoch, levels = epoch_levels)
+samp_stats_tall <- samp_stats %>%
+  pivot_longer(!c(epoch, epoch1, gene, paramset), names_to = 'statistic', values_to = 'value')
 
+stat_plot1 <- ggplot() +
+  facet_grid(gene ~ statistic, scales = 'free_y') +
+  geom_line(data = samp_stats_tall %>% filter(statistic != 'mean_count1'), aes(epoch1, value, group = paramset)) +
+  theme_classic()
+
+ggsave(stat_plot1, file = 'first100paramsets_CVgini.pdf', width = 7, height = 12)
+
+stat_plot2 <- ggplot() +
+  facet_grid(gene ~ statistic, scales = 'free_y') +
+  geom_line(data = samp_stats_tall %>% filter(statistic == 'mean_count1'), aes(epoch1, log(value), group = paramset)) +
+  theme_classic()
+
+ggsave(stat_plot1, file = 'first100paramsets_CVgini.pdf', width = 7, height = 12)
 
 
 # isolate any parameter sets with weird values
