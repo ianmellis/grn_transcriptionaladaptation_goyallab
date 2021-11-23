@@ -69,7 +69,8 @@ for (i in 1:n_sets){
 epoch_levels <- c('pre', 'post imm', 'post lat')
 samp_stats$epoch1 <- factor(samp_stats$epoch, levels = epoch_levels)
 samp_stats_tall <- samp_stats %>%
-  pivot_longer(!c(epoch, epoch1, gene, paramset), names_to = 'statistic', values_to = 'value')
+  pivot_longer(!c(epoch, epoch1, gene, paramset), names_to = 'statistic', values_to = 'value') %>%
+  as_tibble()
 
 stat_plot1 <- ggplot() +
   facet_grid(gene ~ statistic, scales = 'free_y') +
@@ -83,11 +84,44 @@ stat_plot2 <- ggplot() +
   geom_line(data = samp_stats_tall %>% filter(statistic == 'mean_count1'), aes(epoch1, log(value), group = paramset)) +
   theme_classic()
 
-ggsave(stat_plot1, file = 'first100paramsets_CVgini.pdf', width = 7, height = 12)
+ggsave(stat_plot2, file = 'first100paramsets_logmean.pdf', width = 4, height = 12)
+
 
 
 # isolate any parameter sets with weird values
+# look for parameter trends in sets with increasing CV/gini
+delta_stats <- samp_stats_tall %>%
+  dplyr::select(-epoch1) %>%
+  pivot_wider(names_from = c(epoch, statistic), values_from = value) %>%
+  mutate(imm_delta_CV = `post imm_CV` - pre_CV,
+         lat_delta_CV = `post lat_CV` - pre_CV,
+         imm_delta_gini = `post imm_gini` - pre_gini,
+         lat_delta_gini = `post lat_gini` - pre_gini)
 
+delta_stats_sum <- delta_stats %>%
+  dplyr::select(gene, paramset, imm_delta_CV, lat_delta_CV, imm_delta_gini, lat_delta_gini) %>%
+  pivot_longer(!c(gene, paramset), names_to = 'delta_stat', values_to = 'value') %>%
+  inner_join(params, by = 'paramset')
+
+ggplot() +
+  facet_wrap(.~gene, scales = 'free_y') +
+  geom_boxplot(data = delta_stats_sum, aes(delta_stat, value))
+
+ggplot(delta_stats_sum %>% filter(gene == 'targ_1', delta_stat == 'lat_delta_CV'),
+       aes(B_ondep_prime, value)) +
+  geom_point() +
+  geom_smooth(method = 'lm') +
+  theme_classic() +
+  xlab('target dependency on paralog') +
+  ylab('change in target CV after mutation')
+
+ggplot(delta_stats_sum %>% filter(gene == 'targ_1', delta_stat == 'lat_delta_CV'),
+       aes(B_ondep_prime, value)) +
+  geom_point() +
+  geom_smooth(method = 'lm') +
+  theme_classic() +
+  xlab('target dependency on paralog') +
+  ylab('change in target CV after mutation')
 
 orig_color = 'black'
 para_color = 'gray'
