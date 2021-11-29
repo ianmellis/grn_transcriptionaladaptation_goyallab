@@ -45,7 +45,7 @@ void zigset(unsigned long jsrseed);
 #define TOTALT_IN         prhs[6]
 
 //INCLUDE NSPECIES HERE
-#define NSPECIES 12
+#define NSPECIES 20
 
 //INCLUDE NUMRXNS HERE
 #define NUMRXNS 14
@@ -64,7 +64,7 @@ void gillespie(long m, double *times_out,double *species_out,double currT,double
   long totaliterations;
 
 //INSERT ALL VARIABLE DECLARATIONS HERE
-  long A1,A1_nonsense,Aprime1,B1,Burst1_off_targ,Burst1_on_targ,Burst1_off_para,Burst1_on_para,Burst1_on_orig,Burst1_off_orig,Burst1_is_mutated,Burst1_not_mutated;
+  long A1,A1_nonsense,Aprime1,B1,Burst1_off_targ_allele1,Burst1_on_targ_allele1,Burst1_off_para_allele1,Burst1_on_para_allele1,Burst1_on_orig_allele1,Burst1_off_orig_allele1,Burst1_is_mutated_allele1,Burst1_not_mutated_allele1,Burst1_off_targ_allele2,Burst1_on_targ_allele2,Burst1_off_para_allele2,Burst1_on_para_allele2,Burst1_on_orig_allele2,Burst1_off_orig_allele2,Burst1_is_mutated_allele2,Burst1_not_mutated_allele2;
   double A_prod1 ,Anonsense_prod1 , Aprime_prod1 ,B_prod1 ,A_deg1 ,Anonsense_deg1 ,Aprime_deg1 ,B_deg1 ,B_ondep1 ,B_ondep_prime ,Aprimenitc1 ,A_off1 ,Aprime_off1 ,B_off1 ,A_proddiff1 ,Aprime_proddiff1 ,B_proddiff1 ,onbasal_a1 ,onbasal_aprime1 ,onbasal_b1 ,kA1 ,kA1_nonsense ,kAprime1 ,kB1 ,nA1 ,nA1_nonsense ,nAprime1 ,nB1 ;
 
   long i, j, k;
@@ -129,9 +129,15 @@ void gillespie(long m, double *times_out,double *species_out,double currT,double
 
   //  for (i=0; i<m; i++) {
   while (currT<totalt) {
-    if (currT > 10000) {
-      Burst1_is_mutated = 1;
-      Burst1_not_mutated = 0;
+    if (currT > 50000) {
+      Burst1_is_mutated_allele1 = 1;
+      Burst1_not_mutated_allele1 = 0;
+    }
+    if (currT > 100000) {
+      Burst1_is_mutated_allele1 = 1;
+      Burst1_not_mutated_allele1 = 0;
+      Burst1_is_mutated_allele2 = 1;
+      Burst1_not_mutated_allele2 = 0;
     }
     totaliterations++;
     cumpropensities[0] = propensities[0];
@@ -180,7 +186,7 @@ species_out[savecount*NSPECIES+19] = Burst1_not_mutated_allele2;
 //INSERT IF STATEMENT HERE
 if (p<cumpropensities[0]) {
   // rxn: = A1 from allele1
-  if (Burst1_is_mutated == 0){ // extra check for mutation ?necessary?
+  if (Burst1_is_mutated_allele1 == 0){ // extra check for mutation ?necessary?
     A1=A1 + 1;
   }
   //update propensity for = A1 
@@ -213,7 +219,7 @@ if (p<cumpropensities[0]) {
   propensities[13] = B_off1 *Burst1_on_targ;
 } else if (p<cumpropensities[1]) {
   // rxn: = A1_nonsense 
-  if (Burst1_is_mutated == 1){
+  if (Burst1_is_mutated_allele1 == 1){
     A1_nonsense=A1_nonsense + 1;
   }
    //update propensity for = A1 
