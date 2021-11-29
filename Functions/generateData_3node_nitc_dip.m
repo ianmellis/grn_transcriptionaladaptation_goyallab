@@ -49,8 +49,10 @@ n_species = n_species_upstr + n_species_paralog + n_species_downstr;
 %overall specifications (for up to 10 species)
 set_spec_orig = cell(1,1);
 set_spec_para = cell(1,1);
-set_Burston = cell(1,1);
-set_Burstoff = cell(1,1);
+set_Burston_allele1 = cell(1,1);
+set_Burstoff_allele1 = cell(1,1);
+set_Burston_allele2 = cell(1,1);
+set_Burstoff_allele2 = cell(1,1);
 set_prod = cell(1,1);
 set_proddiff = cell(1,1);
 set_deg = cell(1,1);
@@ -66,8 +68,10 @@ set_spec_targ = cell(1,1);
 for iname = 1:1
     
     set_spec_orig{iname} = sprintf('A%d', iname);              %species
-    set_Burston_orig{iname} = sprintf('Burst%d_on_orig', iname);                      %burst 'on' original regulator
-    set_Burstoff_orig{iname} = sprintf('Burst%d_off_orig', iname);                    %burst 'off' original regulator
+    set_Burston_orig_allele1{iname} = sprintf('Burst%d_on_orig_allele1', iname);                      %burst 'on' original regulator
+    set_Burstoff_orig_allele1{iname} = sprintf('Burst%d_off_orig_allele1', iname);                    %burst 'off' original regulator
+    set_Burston_orig_allele2{iname} = sprintf('Burst%d_on_orig_allele2', iname);                      %burst 'on' original regulator
+    set_Burstoff_orig_allele2{iname} = sprintf('Burst%d_off_orig_allele2', iname);                    %burst 'off' original regulator
     set_prod{iname} = sprintf('prod%d', iname);                     %production rate
     set_proddiff{iname} = sprintf('proddiff%d', iname);             %difference in production rate between burst 'on' and burst 'off' (> 1)
     set_deg{iname} = sprintf('deg%d', iname);                       %degradation rate
@@ -81,12 +85,18 @@ for iname = 1:1
     set_spec_nons{iname} = sprintf('A%d_nonsense', iname);              %nonsense species
     set_spec_para{iname} = sprintf('Aprime%d', iname);              % paralog species
     set_spec_targ{iname} = sprintf('B%d', iname);                   % target species
-    set_Burston_para{iname} = sprintf('Burst%d_on_para', iname);                      %burst 'on' paralog
-    set_Burstoff_para{iname} = sprintf('Burst%d_off_para', iname);                    %burst 'off' paralog
-    set_Burston_targ{iname} = sprintf('Burst%d_on_targ', iname);                      %burst 'on' target
-    set_Burstoff_targ{iname} = sprintf('Burst%d_off_targ', iname);                    %burst 'off' target
-    set_ismutated_orig{iname} = sprintf('Burst%d_is_mutated', iname);
-    set_notmutated_orig{iname} = sprintf('Burst%d_not_mutated', iname);
+    set_Burston_para_allele1{iname} = sprintf('Burst%d_on_para_allele1', iname);                      %burst 'on' paralog
+    set_Burstoff_para_allele1{iname} = sprintf('Burst%d_off_para_allele1', iname);                    %burst 'off' paralog
+    set_Burston_targ_allele1{iname} = sprintf('Burst%d_on_targ_allele1', iname);                      %burst 'on' target
+    set_Burstoff_targ_allele1{iname} = sprintf('Burst%d_off_targ_allele1', iname);                    %burst 'off' target
+    set_ismutated_orig_allele1{iname} = sprintf('Burst%d_is_mutated_allele1', iname);
+    set_notmutated_orig_allele1{iname} = sprintf('Burst%d_not_mutated_allele1', iname);
+    set_Burston_para_allele2{iname} = sprintf('Burst%d_on_para_allele2', iname);                      %burst 'on' paralog
+    set_Burstoff_para_allele2{iname} = sprintf('Burst%d_off_para_allele2', iname);                    %burst 'off' paralog
+    set_Burston_targ_allele2{iname} = sprintf('Burst%d_on_targ_allele2', iname);                      %burst 'on' target
+    set_Burstoff_targ_allele2{iname} = sprintf('Burst%d_off_targ_allele2', iname);                    %burst 'off' target
+    set_ismutated_orig_allele2{iname} = sprintf('Burst%d_is_mutated_allele2', iname);
+    set_notmutated_orig_allele2{iname} = sprintf('Burst%d_not_mutated_allele2', iname);
 end
 
 %set the initial values for Burst_off
