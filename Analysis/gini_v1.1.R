@@ -128,4 +128,72 @@ para_color = 'gray'
 targ_color = 'blue'
 nt = 300
 
-## Load 
+
+#### Diploid prototype
+i=1
+results <- t(as.matrix(read.csv(paste0('S_outpar_dip_', as.character(i), '.csv'), header=F)))
+colnames(results) <- c('orig_1', 'nonsense_1', 'para_1', 'targ_1', 'targ_allele1_off', 'targ_allele1_on', 'targ_allele2_off', 'targ_allele2_on', 
+                       'para_allele1_off', 'para_allele1_on', 'para_allele2_off', 'para_allele2_on', 
+                       'orig_allele1_on', 'orig_allele1_off', 'orig_allele2_on', 'orig_allele2_off', 
+                       'allele1_is_mutated', 'allele1_not_mutated', 'allele2_is_mutated', 'allele2_not_mutated')
+results %<>% as.data.frame() %>% as_tibble()
+results[,'time'] <- 1:nrow(results)
+results[,'paramset'] <- i
+# results %<>% filter(time <= 30000)
+
+transition_samp_1 <- results %>% filter(time >= 49000, time <= 51000)
+transition_samp_2 <- results %>% filter(time >= 99000, time <= 101000)
+if(is.null(dim(transition_samples))){
+  transition_samples<-transition_samp
+} else {
+  transition_samples %<>% bind_rows(transition_samp)
+}
+
+# sample every 300 timesteps for pseudo-single-cells pre-mutation (0-10k - "pre") and post-mutation (10k-20k "post imm"; 20k-30k "post lat")
+res_samps <- results %>%
+  filter(time %% 500 == 0) %>%
+  mutate(mutated_alleles = case_when(
+    time < 50001 ~ 0,
+    time > 50001 & time < 100001 ~ 1,
+    time > 100001 ~ 2
+  ))
+
+# calculate CV and gini
+res_samps_stats <- res_samps %>%
+  dplyr::select(mutated_alleles, orig_1, nonsense_1, para_1, targ_1) %>%
+  pivot_longer(!mutated_alleles, names_to = 'gene', values_to = 'count') %>%
+  group_by(mutated_alleles, gene) %>%
+  summarise(mean_count1 = mean(count+1),
+            CV = sd(count + 1)/mean(count + 1),
+            gini = ineq(count + 1, type = 'Gini', na.rm = T)) %>%
+  mutate(paramset = i)
+
+
+orig_color = 'black'
+nons_color = 'orange'
+para_color = 'gray'
+targ_color = 'blue'
+t_start = min(transition_samp_1$time)
+t_end = max(transition_samp_1$time)
+nt = 300
+spec_plot <- ggplot() +
+  theme_classic() +
+  geom_line(data = transition_samp_1, aes(time, orig_1), color = orig_color) +
+  geom_line(data = transition_samp_1, aes(time, nonsense_1), color = nons_color) +
+  geom_line(data = transition_samp_1, aes(time, para_1), color = para_color) +
+  geom_line(data = transition_samp_1, aes(time, targ_1), color = targ_color) +
+  ylab('Abundance')
+
+burstOn_plot <- ggplot() +
+  theme_classic() +
+  geom_line(data = transition_samp_1 %>% filter(time < 50000), aes(time, orig_allele1_on + 0.1), color = orig_color) +
+  geom_line(data = transition_samp_1 %>% filter(time < 50000), aes(time, orig_allele2_on + 0.09), color = orig_color) +
+  geom_line(data = transition_samp_1 %>% filter(time >= 50000), aes(time, orig_allele1_on + 0.1), color = nons_color) +
+  geom_line(data = transition_samp_1 %>% filter(time >= 50000), aes(time, orig_allele2_on + 0.09), color = orig_color) +
+  geom_line(data = transition_samp_1, aes(time, para_allele1_on + 0.05), color = para_color) +
+  geom_line(data = transition_samp_1, aes(time, para_allele2_on + 0.04), color = para_color) +
+  geom_line(data = transition_samp_1, aes(time, targ_allele1_on + 0), color = targ_color) +
+  geom_line(data = transition_samp_1, aes(time, targ_allele2_on - 0.01), color = targ_color) +
+  geom_vline(data = transition_samp_1, aes(xintercept = 50000), color = nons_color, linetype = 2) +
+  ylab('Burst status')
+grid.arrange(spec_plot, burstOn_plot, ncol=1)

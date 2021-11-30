@@ -593,11 +593,12 @@ Burst1_not_mutated = 1;
             
 %             [times,savespecies] = gillespie_burstshistomex(0,par_spec,par_rates_manual,par_prop,sum(clock*100),maxgillespie,maxgillespie);
 %             [times,savespecies_ns2] = gillespie_burstshistomex_nonsenseSpecies(0,par_spec,par_rates_ns2,par_prop_ns,sum(clock*100),maxgillespie,maxgillespie);
-            [times,savespecies_ns] = gillespie_burstshistomex_nonsenseSpecies(0,par_spec,par_rates,par_prop,sum(clock*100),maxgillespie,maxgillespie);
+%             [times,savespecies_ns] = gillespie_burstshistomex_nonsenseSpecies(0,par_spec,par_rates,par_prop,sum(clock*100),maxgillespie,maxgillespie);
+            [times,savespecies_ns_dip] = gillespie_burstshistomex_nonsenseSpecies_diploid(0,s_dip_test,r_dip_test,p_dip_test,sum(clock*100),maxgillespie,maxgillespie);
             
-            S_save1 = sprintf('./nitc_3node_v1.1/S_outpar_%d.csv',jruns);
+            S_save1 = sprintf('./nitc_3node_v1.1/S_outpar_dip_%d.csv',jruns);
             
-            csvwrite(S_save1, savespecies_ns)
+            csvwrite(S_save1, savespecies_ns_dip)
             
             S_outpar{jruns} = savespecies_ns;
             

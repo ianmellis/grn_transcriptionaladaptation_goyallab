@@ -448,7 +448,7 @@ if (p<cumpropensities[0]) {
   propensities[22] = B_off1 *Burst1_on_targ_allele1;
   //update propensity for Burst1_on_targ = Burst1_off_targ for allele2
   propensities[23] = B_off1 *Burst1_on_targ_allele2;
-  else if (p<cumpropensities[5]) {
+} else if (p<cumpropensities[5]) {
   // rxn: = Aprime1 from allele2
   Aprime1=Aprime1 + 1;
 
