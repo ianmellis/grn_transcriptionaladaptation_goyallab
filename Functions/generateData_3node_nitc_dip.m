@@ -161,7 +161,7 @@ M_iso{3} = M_nitc_para;
 nstruc = length(M_iso);
 
 if isequal(gen,'yes') == 1                  %generate new parameters by latin hypercube sampling method
-    rng('shuffle');                         %receive different values upon new start
+%     rng('shuffle');                         %receive different values upon new start
     
     min_range = [repmat(0.01,1,1),...       %production rate - same for all genes
         repmat(0.001,1,1),...               %degradation rate - same for all genes
@@ -255,9 +255,9 @@ for istruc = 1:nstruc
 %     S = zeros(nruns,3*n_species);
 %     R = zeros(nruns,8*n_species);
 %     P = zeros(nruns,4*n_species);
-    S = zeros(nruns,3*n_species + 3*n_species_upstr);
-    R = zeros(nruns,8*n_species + 4*n_species_upstr);
-    P = zeros(nruns,4*n_species + 2*n_species_upstr);
+%     S = zeros(nruns,3*n_species + 3*n_species_upstr);
+%     R = zeros(nruns,8*n_species + 4*n_species_upstr);
+%     P = zeros(nruns,4*n_species + 2*n_species_upstr);
     
     for iruns = 1:nruns
         
@@ -489,9 +489,9 @@ for istruc = 1:nstruc
         
         gillespie_burstsparams  %load parameters set by txt
         
-        S(iruns,:) = transpose(species);
-        R(iruns,:) = transpose(rates);
-        P(iruns,:) = transpose(propensity);
+%         S(iruns,:) = transpose(species);
+%         R(iruns,:) = transpose(rates);
+%         P(iruns,:) = transpose(propensity);
         
     end
     
@@ -520,14 +520,14 @@ for istruc = 1:nstruc
         %         R_save = sprintf('/Volumes/MELANOMAII/Example/R_outparC%d_%d',n_species,istruc);
         %         S_save = sprintf('/Volumes/MELANOMAII/Example/S_outparC%d_%d',n_species,istruc);
         %         P_save = sprintf('/Volumes/MELANOMAII/Example/P_outparC%d_%d',n_species,istruc);
-        R_save = sprintf('./nitc_3node_v1/R_outpar_NITC_%d_%d_%d',n_species_upstr,n_species_paralog,n_species_downstr);
-        S_save = sprintf('./nitc_3node_v1/S_outpar_NITC_%d_%d_%d',n_species_upstr,n_species_paralog,n_species_downstr);
-        P_save = sprintf('./nitc_3node_v1/P_outpar_NITC_%d_%d_%d',n_species_upstr,n_species_paralog,n_species_downstr);
+        R_save = sprintf('./nitc_3node_v1.1/R_outpar_NITC_dip_%d_%d_%d',n_species_upstr,n_species_paralog,n_species_downstr);
+        S_save = sprintf('./nitc_3node_v1.1/S_outpar_NITC_dip_%d_%d_%d',n_species_upstr,n_species_paralog,n_species_downstr);
+        P_save = sprintf('./nitc_3node_v1.1/P_outpar_NITC_dip_%d_%d_%d',n_species_upstr,n_species_paralog,n_species_downstr);
     end
     
-    save(R_save,'R');%,'-v1.0');
-    save(S_save,'S');%,'-v1.0');
-    save(P_save,'P');%,'-v1.0');
+%     save(R_save,'R');%,'-v1.0');
+%     save(S_save,'S');%,'-v1.0');
+%     save(P_save,'P');%,'-v1.0');
     
     for kmem = 1:1
 %%  initial lhs of 100 parameter sets, manually ordered to work with prototype  
@@ -598,13 +598,16 @@ Burst1_not_mutated_allele2 = 1;
             
         P = [ones(nruns,1), zeros(nruns,23)]; % temporary; force first reaction to be A1+1 - propensities will then all update
         
-        R_save = sprintf('./nitc_3node_v1.1/R_outpar_NITC_%d_%d_%d',n_species_upstr,n_species_paralog,n_species_downstr);
-        S_save = sprintf('./nitc_3node_v1.1/S_outpar_NITC_%d_%d_%d',n_species_upstr,n_species_paralog,n_species_downstr);
-        P_save = sprintf('./nitc_3node_v1.1/P_outpar_NITC_%d_%d_%d',n_species_upstr,n_species_paralog,n_species_downstr);
+        R_save = sprintf('./nitc_3node_v1.1/R_outpar_NITC_dip_%d_%d_%d',n_species_upstr,n_species_paralog,n_species_downstr);
+        S_save = sprintf('./nitc_3node_v1.1/S_outpar_NITC_dip_%d_%d_%d',n_species_upstr,n_species_paralog,n_species_downstr);
+        P_save = sprintf('./nitc_3node_v1.1/P_outpar_NITC_dip_%d_%d_%d',n_species_upstr,n_species_paralog,n_species_downstr);
         
         save(R_save,'R');%,'-v1.0');
         save(S_save,'S');%,'-v1.0');
         save(P_save,'P');%,'-v1.0');
+        
+        R_save_csv = sprintf('./nitc_3node_v1.1/R_outpar_NITC_dip_%d_%d_%d.csv',n_species_upstr,n_species_paralog,n_species_downstr);
+        csvwrite(R_save_csv, R)
 %%        
         parfor jruns = 1:nruns
             %         for jruns = 1:nruns
@@ -616,24 +619,40 @@ Burst1_not_mutated_allele2 = 1;
 %             [times,savespecies] = gillespie_burstshistomex(0,par_spec,par_rates_manual,par_prop,sum(clock*100),maxgillespie,maxgillespie);
 %             [times,savespecies_ns2] = gillespie_burstshistomex_nonsenseSpecies(0,par_spec,par_rates_ns2,par_prop_ns,sum(clock*100),maxgillespie,maxgillespie);
 %             [times,savespecies_ns] = gillespie_burstshistomex_nonsenseSpecies(0,par_spec,par_rates,par_prop,sum(clock*100),maxgillespie,maxgillespie);
-            [times,savespecies_ns_dip] = gillespie_burstshistomex_nonsenseSpecies_diploid(0,s_dip_test,r_dip_test,p_dip_test,sum(clock*100),maxgillespie,maxgillespie);
+            [times,savespecies_ns_dip] = gillespie_burstshistomex_nonsenseSpecies_diploid(0,par_spec,par_rates,par_prop,sum(clock*100),maxgillespie,maxgillespie);
             
             S_save1 = sprintf('./nitc_3node_v1.1/S_outpar_dip_%d.csv',jruns);
             
             csvwrite(S_save1, savespecies_ns_dip)
             
-            S_outpar{jruns} = savespecies_ns;
+            S_save2 = sprintf('./nitc_3node_v1.1/S_outpar_dip_%d_q500.csv',jruns);
+            
+            savespecies_ns_dip_q500 = savespecies_ns_dip(:,500:500:150000);
+            
+            csvwrite(S_save2, savespecies_ns_dip_q500)
+            
+            S_outpar{jruns} = savespecies_ns_dip;
+            
+            S_save3 = sprintf('./nitc_3node_v1.1/S_outpar_dip_%d_transitions.csv',jruns);
+            
+            savespecies_ns_dip_transitions = savespecies_ns_dip(:,[49000:51000,99000:101000]);
+            
+            csvwrite(S_save3, savespecies_ns_dip_transitions)
+            
+%             S_outpar{jruns} = savespecies_ns_dip;
             
             times = [];
-            savespecies_ns = [];
+            savespecies_ns_dip = [];
+            savespecies_ns_dip_q500 = [];
+            savespecies_ns_dip_transitions = [];
             
             
             
         end
         
-        S_save = sprintf('./nitc_3node_v1.1/S_outpar_%d_%d_%d_%d',n_species_upstr,n_species_paralog,n_species_downstr,istruc);
+        S_save = sprintf('./nitc_3node_v1.1/S_outpar_dip_%d_%d_%d_%d',n_species_upstr,n_species_paralog,n_species_downstr,istruc);
         
-        save(S_save,'S_outpar');%,'-v7.3');
+%         save(S_save,'S_outpar');%,'-v7.3');
 %%        
         if isequal(type,'normal') == 1
             %             S_save = sprintf('/Volumes/MELANOMAII/Example/S_outpar%d_%d_%d',n_species,istruc,kmem);
