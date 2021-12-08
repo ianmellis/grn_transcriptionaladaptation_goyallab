@@ -145,18 +145,26 @@ for (i in 1:n_sets){
   
   cat(paste0('Working on parameter set ', as.character(i), '...\n'))
   
-  results <- t(as.matrix(read.csv(paste0('S_outpar_dip_', as.character(i), '.csv'), header=F)))
+  results <- t(as.matrix(read.csv(paste0('S_outpar_dip_', as.character(i), '_q500.csv'), header=F)))
   colnames(results) <- c('orig_1', 'nonsense_1', 'para_1', 'targ_1', 'targ_allele1_off', 'targ_allele1_on', 'targ_allele2_off', 'targ_allele2_on', 
                          'para_allele1_off', 'para_allele1_on', 'para_allele2_off', 'para_allele2_on', 
                          'orig_allele1_on', 'orig_allele1_off', 'orig_allele2_on', 'orig_allele2_off', 
                          'allele1_is_mutated', 'allele1_not_mutated', 'allele2_is_mutated', 'allele2_not_mutated')
   results %<>% as.data.frame() %>% as_tibble()
-  results[,'time'] <- 1:nrow(results)
+  results[,'time'] <- seq(500,150000, by = 500)
   results[,'paramset'] <- i
   # results %<>% filter(time <= 30000)
   
-  transition_samp_1 <- results %>% filter(time >= 49000, time <= 51000)
-  transition_samp_2 <- results %>% filter(time >= 99000, time <= 101000)
+  transition_results <- t(as.matrix(read.csv(paste0('S_outpar_dip_', as.character(i), '_transitions.csv'), header=F)))
+  colnames(transition_results) <- c('orig_1', 'nonsense_1', 'para_1', 'targ_1', 'targ_allele1_off', 'targ_allele1_on', 'targ_allele2_off', 'targ_allele2_on', 
+                         'para_allele1_off', 'para_allele1_on', 'para_allele2_off', 'para_allele2_on', 
+                         'orig_allele1_on', 'orig_allele1_off', 'orig_allele2_on', 'orig_allele2_off', 
+                         'allele1_is_mutated', 'allele1_not_mutated', 'allele2_is_mutated', 'allele2_not_mutated')
+  transition_results %<>% as.data.frame() %>% as_tibble()
+  transition_results[,'time'] <- c(49000:51000,99000:101000)
+  transition_results[,'paramset'] <- i
+  transition_samp_1 <- transition_results %>% filter(time <= 51000)
+  transition_samp_2 <- transition_results %>% filter(time >= 99000)
   if(is.null(dim(transition_samples))){
     transition_samples<-transition_samp
   } else {
@@ -165,7 +173,6 @@ for (i in 1:n_sets){
   
   # sample every 500 timesteps for pseudo-single-cells
   res_samps <- results %>%
-    filter(time %% 500 == 0) %>%
     mutate(mutated_alleles = case_when(
       time < 50001 ~ 0,
       time > 50001 & time < 100001 ~ 1,
@@ -218,3 +225,29 @@ burstOn_plot <- ggplot() +
   geom_vline(data = transition_samp_1, aes(xintercept = 50000), color = nons_color, linetype = 2) +
   ylab('Burst status')
 grid.arrange(spec_plot, burstOn_plot, ncol=1)
+
+
+meanVsCV_targ <- ggplot()+
+  theme_classic() + 
+  geom_point(data = samp_stats %>% filter(gene == 'targ_1'), aes(log(mean_count1), CV)) +
+  facet_wrap(~mutated_alleles)
+
+samp_stats_wide <- samp_stats %>% 
+  pivot_wider(names_from = mutated_alleles, values_from = c(mean_count1, CV, gini)) %>%
+  mutate(deltalogMean_01 = log(mean_count1_1) - log(mean_count1_0),
+         deltalogMean_02 = log(mean_count1_2) - log(mean_count1_1),
+         deltalogMean_12 = log(mean_count1_2) - log(mean_count1_0),
+         deltaCV_01 = CV_1 - CV_0,
+         deltaCV_02 = CV_2 - CV_0,
+         deltaCV_12 = CV_2 - CV_1,
+         gini_01 = gini_1 - gini_0,
+         gini_02 = gini_2 - gini_0,
+         gini_12 = gini_2 - gini_1)
+
+deltaMeanVsdeltaCVtarg_0_1mut <- ggplot()+
+  theme_classic() + 
+  geom_point(data = samp_stats_wide %>% filter(gene == 'targ_1'), aes(deltalogMean_01, deltaCV_01))
+
+deltaMeanVsdeltaginitarg_0_1mut <- ggplot()+
+  theme_classic() + 
+  geom_point(data = samp_stats_wide %>% filter(gene == 'targ_1'), aes(deltalogMean_01, gini_01))
