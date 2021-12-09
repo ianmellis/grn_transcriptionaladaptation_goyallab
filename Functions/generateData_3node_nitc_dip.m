@@ -172,7 +172,7 @@ if isequal(gen,'yes') == 1                  %generate new parameters by latin hy
         repmat(2,1,1),...                   %proddiff
         repmat(0.0001,1,1),...               %basal on-rate of burst - paralogs
         repmat(0.0001,1,1),...               %basal on-rate of burst - targets
-        repmat(0.1,1,1),...                 %additional on-rate due to dependency to other node - paralog
+        repmat(0.01,1,1),...                 %additional on-rate due to dependency to other node - paralog
         repmat(0.1,1,1)];                   %additional on-rate of paralog due to NITC
     
     max_range = [repmat(1,1,1),...          %production rate - same for all genes
@@ -532,6 +532,10 @@ for istruc = 1:nstruc
     for kmem = 1:1
 %%  initial lhs of 100 parameter sets, manually ordered to work with prototype  
 
+A1 = 0;
+A1_nonsense = 0;
+Aprime1 = 0;
+B1 = 0;
 Burst1_off_targ_allele1 = 1;
 Burst1_on_targ_allele1 = 0;
 Burst1_off_targ_allele2 = 1;
@@ -550,7 +554,7 @@ Burst1_is_mutated_allele2 = 0;
 Burst1_not_mutated_allele2 = 1;
 
         S = [repmat(A1,nruns,1),...
-            repmat(A1,nruns,1),...
+            repmat(A1_nonsense,nruns,1),...
             repmat(Aprime1,nruns,1),...
             repmat(B1,nruns,1),...
             repmat(Burst1_off_targ_allele1,nruns,1),...
@@ -598,15 +602,15 @@ Burst1_not_mutated_allele2 = 1;
             
         P = [ones(nruns,1), zeros(nruns,23)]; % temporary; force first reaction to be A1+1 - propensities will then all update
         
-        R_save = sprintf('./nitc_3node_v1.1/R_outpar_NITC_dip_%d_%d_%d',n_species_upstr,n_species_paralog,n_species_downstr);
-        S_save = sprintf('./nitc_3node_v1.1/S_outpar_NITC_dip_%d_%d_%d',n_species_upstr,n_species_paralog,n_species_downstr);
-        P_save = sprintf('./nitc_3node_v1.1/P_outpar_NITC_dip_%d_%d_%d',n_species_upstr,n_species_paralog,n_species_downstr);
+        R_save = sprintf('./nitc_3node_v1.2/R_outpar_NITC_dip_%d_%d_%d',n_species_upstr,n_species_paralog,n_species_downstr);
+        S_save = sprintf('./nitc_3node_v1.2/S_outpar_NITC_dip_%d_%d_%d',n_species_upstr,n_species_paralog,n_species_downstr);
+        P_save = sprintf('./nitc_3node_v1.2/P_outpar_NITC_dip_%d_%d_%d',n_species_upstr,n_species_paralog,n_species_downstr);
         
         save(R_save,'R');%,'-v1.0');
         save(S_save,'S');%,'-v1.0');
         save(P_save,'P');%,'-v1.0');
         
-        R_save_csv = sprintf('./nitc_3node_v1.1/R_outpar_NITC_dip_%d_%d_%d.csv',n_species_upstr,n_species_paralog,n_species_downstr);
+        R_save_csv = sprintf('./nitc_3node_v1.2/R_outpar_NITC_dip_%d_%d_%d.csv',n_species_upstr,n_species_paralog,n_species_downstr);
         csvwrite(R_save_csv, R)
 %%        
         parfor jruns = 1:nruns
@@ -621,11 +625,11 @@ Burst1_not_mutated_allele2 = 1;
 %             [times,savespecies_ns] = gillespie_burstshistomex_nonsenseSpecies(0,par_spec,par_rates,par_prop,sum(clock*100),maxgillespie,maxgillespie);
             [times,savespecies_ns_dip] = gillespie_burstshistomex_nonsenseSpecies_diploid(0,par_spec,par_rates,par_prop,sum(clock*100),maxgillespie,maxgillespie);
             
-            S_save1 = sprintf('./nitc_3node_v1.1/S_outpar_dip_%d.csv',jruns);
+            S_save1 = sprintf('./nitc_3node_v1.2/S_outpar_dip_%d.csv',jruns);
             
             csvwrite(S_save1, savespecies_ns_dip)
             
-            S_save2 = sprintf('./nitc_3node_v1.1/S_outpar_dip_%d_q500.csv',jruns);
+            S_save2 = sprintf('./nitc_3node_v1.2/S_outpar_dip_%d_q500.csv',jruns);
             
             savespecies_ns_dip_q500 = savespecies_ns_dip(:,500:500:150000);
             
@@ -633,7 +637,7 @@ Burst1_not_mutated_allele2 = 1;
             
             S_outpar{jruns} = savespecies_ns_dip;
             
-            S_save3 = sprintf('./nitc_3node_v1.1/S_outpar_dip_%d_transitions.csv',jruns);
+            S_save3 = sprintf('./nitc_3node_v1.2/S_outpar_dip_%d_transitions.csv',jruns);
             
             savespecies_ns_dip_transitions = savespecies_ns_dip(:,[49000:51000,99000:101000]);
             
@@ -650,7 +654,7 @@ Burst1_not_mutated_allele2 = 1;
             
         end
         
-        S_save = sprintf('./nitc_3node_v1.1/S_outpar_dip_%d_%d_%d_%d',n_species_upstr,n_species_paralog,n_species_downstr,istruc);
+        S_save = sprintf('./nitc_3node_v1.2/S_outpar_dip_%d_%d_%d_%d',n_species_upstr,n_species_paralog,n_species_downstr,istruc);
         
 %         save(S_save,'S_outpar');%,'-v7.3');
 %%        
