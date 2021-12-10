@@ -59,8 +59,8 @@ set_deg = cell(1,1);
 set_onbasal = cell(1,1);
 set_ondep = cell(1,1);
 set_off = cell(1,1);
-set_onbasal_aprime = cell(1,1);
-set_onbasal_b = cell(1,1);
+set_onbasal_aprime_multiple = cell(1,1);
+set_onbasal_b_multiple = cell(1,1);
 set_ondep_prime_multiple = cell(1,1);
 set_nitc = cell(1,1);
 set_spec_targ = cell(1,1);
@@ -78,9 +78,9 @@ for iname = 1:1
     set_onbasal{iname} = sprintf('onbasal_a%d', iname);               %basal on-rate of burst
     set_ondep{iname} = sprintf('ondep%d', iname);                   %additional on-rate of target due to dependency to original regulator
     set_off{iname} = sprintf('off%d', iname);                       %off rate of burst
-    set_onbasal_aprime{iname} = sprintf('onbasal_aprime%d', iname); %basal on-rate of burst of paralog
-    set_onbasal_b{iname} = sprintf('onbasal_b%d', iname);           %basal on-rate of burst of downstream target
-    set_ondep_prime_multiple{iname} = sprintf('ondep_prime_multiple', iname);                %additional on-rate of target due to dependency on paralog relative to ondep1, a scalar multiple
+    set_onbasal_aprime_multiple{iname} = sprintf('onbasal_aprime_multiple_%d', iname); %basal on-rate of burst of paralog
+    set_onbasal_b_multiple{iname} = sprintf('onbasal_b_multiple_%d', iname);           %basal on-rate of burst of downstream target
+    set_ondep_prime_multiple{iname} = sprintf('ondep_prime_multiple_%d', iname);                %additional on-rate of target due to dependency on paralog relative to ondep1, a scalar multiple
     set_nitc{iname} = sprintf('nitc%d', iname);                            %additional on-rate of paralog due to dependency on NITC after mutation
     set_spec_nons{iname} = sprintf('A%d_nonsense', iname);              %nonsense species
     set_spec_para{iname} = sprintf('Aprime%d', iname);              % paralog species
@@ -170,10 +170,10 @@ if isequal(gen,'yes') == 1                  %generate new parameters by latin hy
         repmat(0.1,1,1),...                 %additional on-rate due to dependency to other node
         repmat(0.01,1,1),...                %off rate of burst
         repmat(2,1,1),...                   %proddiff
-        repmat(0.0001,1,1),...               %basal on-rate of burst - paralogs
-        repmat(0.0001,1,1),...               %basal on-rate of burst - targets
-        repmat(0.01,1,1),...                 %additional on-rate due to dependency to other node - paralog
-        repmat(0.1,1,1)];                   %additional on-rate of paralog due to NITC
+        repmat(0.001,1,1),...               %basal on-rate of burst - paralogs; a multiple of the basal on-rate of original gene
+        repmat(0.001,1,1),...               %basal on-rate of burst - targets; a multiple of the basal on-rate of original regulator gene
+        repmat(0.001,1,1),...               %additional on-rate due to dependency to other node - paralog; a multiple of the r_add of original gene
+        repmat(0.01,1,1)];                  %additional on-rate of paralog due to NITC
     
     max_range = [repmat(1,1,1),...          %production rate - same for all genes
         repmat(0.1,1,1),...                 %degradation rate - same for all genes
@@ -182,9 +182,9 @@ if isequal(gen,'yes') == 1                  %generate new parameters by latin hy
         repmat(1,1,1),...                   %additional on-rate due to dependency to other node
         repmat(0.1,1,1),...                 %off rate of burst
         repmat(100,1,1),...                 %proddiff
-        repmat(0.01,1,1),...                 %basal on-rate of burst - paralogs
-        repmat(0.01,1,1),...                 %basal on-rate of burst - targets
-        repmat(1,1,1),...                   %additional on-rate due to dependency to other node - paralog
+        repmat(1,1,1),...                   %basal on-rate of burst - paralogs; a multiple of the basal on-rate of original gene
+        repmat(1,1,1),...                   %basal on-rate of burst - targets; a multiple of the basal on-rate of original regulator gene
+        repmat(2,1,1),...                   %additional on-rate due to dependency to other node - paralog; a multiple of the r_add of original gene
         repmat(1,1,1)];                     %additional on-rate of paralog due to NITC
     
     
@@ -199,9 +199,9 @@ if isequal(gen,'yes') == 1                  %generate new parameters by latin hy
     latinhyp_proddiff = repmat(latinhyp(:,7),1,n_species);
     
 %     new parameters
-    latinhyp_onbasal_aprime = repmat(latinhyp(:,8),1,n_species_paralog); % change this to only apply to paralogs
-    latinhyp_onbasal_b = repmat(latinhyp(:,9),1,n_species_downstr);
-    latinhyp_ondep_prime = repmat(latinhyp(:,10),1,n_species_downstr);
+    latinhyp_onbasal_multiple_aprime = repmat(latinhyp(:,8),1,n_species_paralog); % change this to only apply to paralogs
+    latinhyp_onbasal_multiple_b = repmat(latinhyp(:,9),1,n_species_downstr);
+    latinhyp_ondep_multiple_prime = repmat(latinhyp(:,10),1,n_species_downstr);
     latinhyp_nitc = repmat(latinhyp(:,11),1,n_species_paralog);
     
     x = 0.5;
@@ -230,9 +230,9 @@ else
     k = repmat(R_outpar_par(:,7),1,n_species);
     
     %     new parameters
-    latinhyp_onbasal_aprime = repmat(R_outpar_par(:,9),1,n_species);
-    latinhyp_onbasal_b = repmat(R_outpar_par(:,10),1,n_species);
-    latinhyp_ondep_prime = repmat(R_outpar_par(:,11),1,n_species);
+    latinhyp_onbasal_multiple_aprime = repmat(R_outpar_par(:,9),1,n_species);
+    latinhyp_onbasal_multiple_b = repmat(R_outpar_par(:,10),1,n_species);
+    latinhyp_ondep_multiple_prime = repmat(R_outpar_par(:,11),1,n_species);
     latinhyp_nitc = repmat(R_outpar_par(:,11),1,n_species);
     
 end
@@ -338,7 +338,7 @@ for istruc = 1:nstruc
         
 %         ondep for each downstream target B regulated by Aprime
         for ondep_txt = 1:n_species_downstr
-            fprintf(fileID,'B_%s = %f : %s = %s\n', set_ondep_prime{ondep_txt}, latinhyp_ondep_prime(iruns,ondep_txt), set_Burstoff_targ{ondep_txt}, set_Burston_targ{ondep_txt});
+            fprintf(fileID,'B_%s = %f : %s = %s\n', set_ondep_prime{ondep_txt}, latinhyp_ondep_multiple_prime(iruns,ondep_txt), set_Burstoff_targ{ondep_txt}, set_Burston_targ{ondep_txt});
         end
         
 %         NITC-based ondep for Aprime regulated by Anonsense
@@ -382,11 +382,11 @@ for istruc = 1:nstruc
         end
         
         for onbasal_aprime_txt = 1:n_species_paralog
-            fprintf(fileID,'%s = %d\n', set_onbasal_aprime{onbasal_aprime_txt}, latinhyp_onbasal_aprime(iruns,onbasal_aprime_txt));
+            fprintf(fileID,'%s = %d\n', set_onbasal_aprime_multiple{onbasal_aprime_txt}, latinhyp_onbasal_multiple_aprime(iruns,onbasal_aprime_txt));
         end
         
         for onbasal_b_txt = 1:n_species_downstr
-            fprintf(fileID,'%s = %d\n', set_onbasal_b{onbasal_b_txt}, latinhyp_onbasal_b(iruns,onbasal_b_txt));
+            fprintf(fileID,'%s = %d\n', set_onbasal_b_multiple{onbasal_b_txt}, latinhyp_onbasal_multiple_b(iruns,onbasal_b_txt));
         end
         
         
@@ -583,13 +583,13 @@ Burst1_not_mutated_allele2 = 1;
             latinhyp_deg(:,2),...
             latinhyp_deg(:,3),...
             latinhyp_ondep,...
-            latinhyp_ondep_prime,...
+            latinhyp_ondep_multiple_prime,...
             latinhyp_nitc,...
             latinhyp_off,...
             latinhyp_proddiff,...
             latinhyp_onbasal,...
-            latinhyp_onbasal_aprime,...
-            latinhyp_onbasal_b,...
+            latinhyp_onbasal_multiple_aprime*latinhyp_onbasal,...
+            latinhyp_onbasal_multiple_b*latinhyp_onbasal,...
             k(:,1),...
             k(:,1),... % nonsense with same k as unmutated
             k(:,2),...
