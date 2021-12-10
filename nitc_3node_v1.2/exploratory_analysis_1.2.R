@@ -121,7 +121,8 @@ samp_stats_wide <- samp_stats %>%
 
 deltaMeanVsdeltaCVtarg_0_1mut <- ggplot()+
   theme_classic() + 
-  geom_point(data = samp_stats_wide %>% inner_join(params) %>% filter(gene == 'targ_1', deltalogMean_01 > -0.8, B_ondep_prime/B_ondep1 < 2), aes(deltalogMean_01, deltaCV_01, color = log2(B_ondep_prime/B_ondep1)))
+  geom_point(data = samp_stats_wide %>% inner_join(params) %>% filter(gene == 'targ_1', deltalogMean_01 > -0.8, B_ondep_prime/B_ondep1 < 2), aes(deltalogMean_01, deltaCV_01, color = log2(B_ondep_prime/B_ondep1))) +
+  scale_color_continuous(type = "viridis")
 
 deltaMeanVsdeltaginitarg_0_1mut <- ggplot()+
   theme_classic() + 
