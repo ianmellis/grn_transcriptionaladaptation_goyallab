@@ -1,6 +1,7 @@
 library(tidyverse)
 library(magrittr)
 library(ineq)
+library(Hmisc)
 
 setwd('~/code/grn_nitc/nitc_3node_v1.2/')
 
@@ -127,3 +128,29 @@ deltaMeanVsdeltaCVtarg_0_1mut <- ggplot()+
 deltaMeanVsdeltaginitarg_0_1mut <- ggplot()+
   theme_classic() + 
   geom_point(data = samp_stats_wide %>% filter(gene == 'targ_1'), aes(deltalogMean_01, gini_01))
+
+deltaMeanVsNITC_0_1mut <- ggplot()+
+  theme_classic() + 
+  geom_point(data = samp_stats_wide %>% filter(gene == 'targ_1') %>% inner_join(params), aes(deltalogMean_01, Aprimenitc1))
+
+
+## correlations between parameters and pseudo-single-cell gene expression
+flattenCorrMatrix <- function(cormat, pmat) { # from http://www.sthda.com/english/wiki/correlation-matrix-a-quick-start-guide-to-analyze-format-and-visualize-a-correlation-matrix-using-r-software
+  ut <- upper.tri(cormat)
+  data.frame(
+    row = rownames(cormat)[row(cormat)[ut]],
+    column = rownames(cormat)[col(cormat)[ut]],
+    cor  =(cormat)[ut],
+    p = pmat[ut]
+  )
+}
+
+total_results <- samp_stats_wide %>% inner_join(params)
+cors_targ<-rcorr(as.matrix(total_results %>% filter(gene == 'targ_1') %>% dplyr::select(-gene)))
+cors_targ_tall<-flattenCorrMatrix(cors_targ$r, cors_targ$P)
+
+var_intr <- 'deltaCV_01'
+cors_targ_tall %>% filter(row == var_intr | column == var_intr) %>% arrange(-abs(cor))
+cors_targ_tall %>% filter(row == 'deltalogMean_01' | column == 'deltalogMean_01') %>% arrange(-abs(cor))
+
+lm()
