@@ -73,6 +73,44 @@ for (i in 1:n_sets){
   }
 }
 
+## autocorrelation of target values at 500-unit timesteps
+autocor_targ <- list()
+for (i in 1:n_sets){
+  
+  cat(paste0('Working on parameter set ', as.character(i), '...\n'))
+  
+  results <- t(as.matrix(read.csv(paste0('S_outpar_dip_', as.character(i), '_q500.csv'), header=F)))
+  colnames(results) <- c('orig_1', 'nonsense_1', 'para_1', 'targ_1', 'targ_allele1_off', 'targ_allele1_on', 'targ_allele2_off', 'targ_allele2_on', 
+                         'para_allele1_off', 'para_allele1_on', 'para_allele2_off', 'para_allele2_on', 
+                         'orig_allele1_on', 'orig_allele1_off', 'orig_allele2_on', 'orig_allele2_off', 
+                         'allele1_is_mutated', 'allele1_not_mutated', 'allele2_is_mutated', 'allele2_not_mutated')
+  results %<>% as.data.frame() %>% as_tibble()
+  results[,'time'] <- seq(500,150000, by = 500)
+  results[,'paramset'] <- i
+  # results %<>% filter(time <= 30000)
+  
+  autocor<-acf(results$targ_1, pl=F)
+  
+  tempacf <- tibble(
+    acf = autocor$acf,
+    lag = autocor$lag,
+    paramset = i
+  )
+  
+  if(is.null(dim(autocor_targ))){
+    autocor_targ = tempacf
+  } else {
+    autocor_targ %<>% bind_rows(tempacf)
+  }
+}
+
+autocor_plot_targ1_q500<-ggplot(autocor_targ, aes(lag, paramset, fill = acf)) +
+  geom_tile() +
+  theme_classic() +
+  ggtitle('Autocorrelation of samples taken every 500 time steps') +
+  ylab('Parameter set ID (arbitrary)') +
+  scale_fill_continuous(type = 'viridis')
+
 orig_color = 'black'
 nons_color = 'orange'
 para_color = 'gray'
