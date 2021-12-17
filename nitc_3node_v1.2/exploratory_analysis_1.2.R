@@ -16,6 +16,7 @@ colnames(params) <- c('A_prod1', 'Anonsense_prod1','Aprime_prod1','B_prod1',
                       'nA1','nA1_nonsense','nAprime1','nB1')
 params[,'paramset'] <- 1:100
 samp_stats <- list()
+samp_stats_q1000 <- list()
 transition_samples <- list()
 for (i in 1:n_sets){
   
@@ -71,6 +72,24 @@ for (i in 1:n_sets){
   } else {
     samp_stats %<>% bind_rows(res_samps_stats)
   }
+  
+  # calculate CV and gini q1000
+  res_samps_stats_q1000 <- res_samps %>%
+    filter(mod(time, 1000) == 0) %>%
+    dplyr::select(mutated_alleles, orig_1, nonsense_1, para_1, targ_1) %>%
+    pivot_longer(!mutated_alleles, names_to = 'gene', values_to = 'count') %>%
+    group_by(mutated_alleles, gene) %>%
+    summarise(mean_count1 = mean(count+1),
+              CV = sd(count + 1)/mean(count + 1),
+              gini = ineq(count + 1, type = 'Gini', na.rm = T)) %>%
+    mutate(paramset = i)
+  
+  # store
+  if(is.null(dim(samp_stats_q1000))){
+    samp_stats_q1000 <- res_samps_stats_q1000
+  } else {
+    samp_stats_q1000 %<>% bind_rows(res_samps_stats_q1000)
+  }
 }
 
 ## autocorrelation of target values at 500-unit timesteps
@@ -110,6 +129,12 @@ autocor_plot_targ1_q500<-ggplot(autocor_targ, aes(lag, paramset, fill = acf)) +
   ggtitle('Autocorrelation of samples taken every 500 time steps') +
   ylab('Parameter set ID (arbitrary)') +
   scale_fill_continuous(type = 'viridis')
+
+autocor_plot_targ1_q500_lag1<-ggplot(autocor_targ %>% filter(lag == 1), aes(acf)) +
+  geom_histogram() +
+  theme_classic() +
+  ggtitle('Autocorrelation of samples taken every 500 time steps') +
+  xlab('Autocor at lag=1') 
 
 orig_color = 'black'
 nons_color = 'orange'
@@ -158,6 +183,18 @@ samp_stats_wide <- samp_stats %>%
          gini_02 = gini_2 - gini_0,
          gini_12 = gini_2 - gini_1)
 
+samp_stats_q1000_wide <- samp_stats_q1000 %>% 
+  pivot_wider(names_from = mutated_alleles, values_from = c(mean_count1, CV, gini)) %>%
+  mutate(deltalogMean_01 = log(mean_count1_1) - log(mean_count1_0),
+         deltalogMean_02 = log(mean_count1_2) - log(mean_count1_1),
+         deltalogMean_12 = log(mean_count1_2) - log(mean_count1_0),
+         deltaCV_01 = CV_1 - CV_0,
+         deltaCV_02 = CV_2 - CV_0,
+         deltaCV_12 = CV_2 - CV_1,
+         gini_01 = gini_1 - gini_0,
+         gini_02 = gini_2 - gini_0,
+         gini_12 = gini_2 - gini_1)
+
 deltaMeanVsdeltaCVtarg_0_1mut <- ggplot()+
   theme_classic() + 
   geom_point(data = samp_stats_wide %>% inner_join(params) %>% filter(gene == 'targ_1', deltalogMean_01 > -0.8, B_ondep_prime/B_ondep1 < 2), aes(deltalogMean_01, deltaCV_01, color = log2(B_ondep_prime/B_ondep1))) +
@@ -184,6 +221,7 @@ flattenCorrMatrix <- function(cormat, pmat) { # from http://www.sthda.com/englis
 }
 
 total_results <- samp_stats_wide %>% inner_join(params)
+total_results_q1000 <- samp_stats_q1000_wide %>% inner_join(params)
 cors_targ<-rcorr(as.matrix(total_results %>% filter(gene == 'targ_1') %>% dplyr::select(-gene)))
 cors_targ_tall<-flattenCorrMatrix(cors_targ$r, cors_targ$P)
 
@@ -191,4 +229,27 @@ var_intr <- 'deltaCV_01'
 cors_targ_tall %>% filter(row == var_intr | column == var_intr) %>% arrange(-abs(cor))
 cors_targ_tall %>% filter(row == 'deltalogMean_01' | column == 'deltalogMean_01') %>% arrange(-abs(cor))
 
-lm()
+# linear model removing deltaMean
+for (var in colnames(total_results)[21:48]) {
+  tempDat <- total_results %>% 
+    filter(gene == 'targ_1') %>% 
+    dplyr::select(-c(gene, paramset)) %>%
+    dplyr::select(deltaCV_01, deltalogMean_01, var)
+  tres1<-lm(data = tempDat, formula = deltaCV_01 ~ . + deltalogMean_01)
+  if(summary(tres1)$coefficients[var,'Pr(>|t|)'] < 0.05){
+    cat(paste0(var , ' has significant beta ', as.character(summary(tres1)$coefficients[var,'Estimate']), '\n'))
+  }
+  
+}
+
+for (var in colnames(total_results_q1000)[21:48]) {
+  tempDat <- total_results_q1000 %>% 
+    filter(gene == 'targ_1') %>% 
+    dplyr::select(-c(gene, paramset)) %>%
+    dplyr::select(deltaCV_01, deltalogMean_01, var)
+  tres1<-lm(data = tempDat, formula = deltaCV_01 ~ . + deltalogMean_01)
+  if(summary(tres1)$coefficients[var,'Pr(>|t|)'] < 0.05){
+    cat(paste0(var , ' has significant beta ', as.character(summary(tres1)$coefficients[var,'Estimate']), '\n'))
+  }
+  
+}
