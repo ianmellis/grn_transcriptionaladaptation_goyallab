@@ -18,6 +18,8 @@ params[,'paramset'] <- 1:100
 samp_stats <- list()
 samp_stats_q1000 <- list()
 transition_samples <- list()
+autocor_targ <- list()
+autocor_targ_q1000 <- list()
 for (i in 1:n_sets){
   
   cat(paste0('Working on parameter set ', as.character(i), '...\n'))
@@ -31,6 +33,35 @@ for (i in 1:n_sets){
   results[,'time'] <- seq(500,150000, by = 500)
   results[,'paramset'] <- i
   # results %<>% filter(time <= 30000)
+  
+  autocor<-acf(results$targ_1, pl=F)
+  
+  tempacf <- tibble(
+    acf = autocor$acf,
+    lag = autocor$lag,
+    paramset = i
+  )
+  
+  if(is.null(dim(autocor_targ))){
+    autocor_targ = tempacf
+  } else {
+    autocor_targ %<>% bind_rows(tempacf)
+  }
+  
+  resultsT <- results %>% filter(mod(time, 1000)==0)
+  autocor1000<-acf(resultsT$targ_1, pl=F)
+  
+  tempacf1000 <- tibble(
+    acf = autocor$acf,
+    lag = autocor$lag,
+    paramset = i
+  )
+  
+  if(is.null(dim(autocor_targ_q1000))){
+    autocor_targ_q1000 = tempacf1000
+  } else {
+    autocor_targ_q1000 %<>% bind_rows(tempacf1000)
+  }
   
   transition_results <- t(as.matrix(read.csv(paste0('S_outpar_dip_', as.character(i), '_transitions.csv'), header=F)))
   colnames(transition_results) <- c('orig_1', 'nonsense_1', 'para_1', 'targ_1', 'targ_allele1_off', 'targ_allele1_on', 'targ_allele2_off', 'targ_allele2_on', 
@@ -229,6 +260,18 @@ var_intr <- 'deltaCV_01'
 cors_targ_tall %>% filter(row == var_intr | column == var_intr) %>% arrange(-abs(cor))
 cors_targ_tall %>% filter(row == 'deltalogMean_01' | column == 'deltalogMean_01') %>% arrange(-abs(cor))
 
+deltaMeanVsdeltaCVtarg_0_1mut <- ggplot()+
+  theme_classic() + 
+  geom_point(data = total_results_q1000 %>% filter(gene == 'targ_1'), aes(deltalogMean_01, deltaCV_01)) +
+  xlab("Change in log(mean abundance)\nafter 1 allele mutated") +
+  ylab("Change in CV\nafter 1 allele mutated") 
+
+deltaMeanVsdeltaginitarg_0_1mut <- ggplot()+
+  theme_classic() + 
+  geom_point(data = total_results_q1000 %>% filter(gene == 'targ_1'), aes(deltalogMean_01, gini_01)) +
+  xlab("Change in log(mean abundance)\nafter 1 allele mutated") +
+  ylab("Change in gini coefficient\nafter 1 allele mutated") 
+
 # linear model removing deltaMean
 for (var in colnames(total_results)[21:48]) {
   tempDat <- total_results %>% 
@@ -239,7 +282,6 @@ for (var in colnames(total_results)[21:48]) {
   if(summary(tres1)$coefficients[var,'Pr(>|t|)'] < 0.05){
     cat(paste0(var , ' has significant beta ', as.character(summary(tres1)$coefficients[var,'Estimate']), '\n'))
   }
-  
 }
 
 for (var in colnames(total_results_q1000)[21:48]) {
@@ -251,5 +293,27 @@ for (var in colnames(total_results_q1000)[21:48]) {
   if(summary(tres1)$coefficients[var,'Pr(>|t|)'] < 0.05){
     cat(paste0(var , ' has significant beta ', as.character(summary(tres1)$coefficients[var,'Estimate']), '\n'))
   }
-  
+}
+
+
+for (var in colnames(total_results_q1000)[21:48]) {
+  tempDat <- total_results_q1000 %>% 
+    filter(gene == 'targ_1', paramset != 90) %>% 
+    dplyr::select(-c(gene, paramset)) %>%
+    dplyr::select(deltaCV_01, deltalogMean_01, var)
+  tres1<-lm(data = tempDat, formula = deltaCV_01 ~ . + deltalogMean_01)
+  if(summary(tres1)$coefficients[var,'Pr(>|t|)'] < 0.05){
+    cat(paste0(var , ' has significant beta ', as.character(summary(tres1)$coefficients[var,'Estimate']), '\n'))
+  }
+}
+
+for (var in colnames(total_results_q1000)[21:48]) {
+  tempDat <- total_results_q1000 %>% 
+    filter(gene == 'targ_1', paramset != 90) %>% 
+    dplyr::select(-c(gene, paramset)) %>%
+    dplyr::select(gini_01, var)
+  tres1<-lm(data = tempDat, formula = gini_01 ~ .)
+  if(summary(tres1)$coefficients[var,'Pr(>|t|)'] < 0.05){
+    cat(paste0(var , ' has significant beta ', as.character(summary(tres1)$coefficients[var,'Estimate']), '\n'))
+  }
 }
