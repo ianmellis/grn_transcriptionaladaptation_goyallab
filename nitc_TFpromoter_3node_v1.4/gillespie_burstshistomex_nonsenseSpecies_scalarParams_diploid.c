@@ -73,6 +73,22 @@ void gillespie(long m, double *times_out,double *species_out,double currT,double
   A1_nonsense = (long)species[1];
   Aprime1 = (long)species[2];
   B1 = (long)species[3];
+  
+  Promoter1_unbound_targ_allele1 = (long)species[4];
+  Promoter1_boundbyorig_targ_allele1 = (long)species[4];
+  Promoter1_boundbypara_targ_allele1 = (long)species[4];
+  Promoter1_unbound_targ_allele2 = (long)species[4];
+  Promoter1_boundbyorig_targ_allele2 = (long)species[4];
+  Promoter1_boundbypara_targ_allele2 = (long)species[4];
+  Promoter1_unbound_para_allele1 = (long)species[4];
+  Promoter1_boundbynonsense_para_allele1 = (long)species[4];
+  Promoter1_unbound_para_allele2 = (long)species[4];
+  Promoter1_boundbynonsense_para_allele2 = (long)species[4];
+  Promoter1_unbound_orig_allele1 = (long)species[4];
+  Promoter1_boundbynonsense_orig_allele1 = (long)species[4];
+  Promoter1_unbound_orig_allele2 = (long)species[4];
+  Promoter1_boundbynonsense_orig_allele2 = (long)species[4];
+
   Burst1_off_targ_allele1 = (long)species[4];
   Burst1_on_targ_allele1 = (long)species[5];
   Burst1_off_targ_allele2 = (long)species[6];
@@ -89,35 +105,62 @@ void gillespie(long m, double *times_out,double *species_out,double currT,double
   Burst1_not_mutated_allele1 = (long)species[17];
   Burst1_is_mutated_allele2 = (long)species[18];
   Burst1_not_mutated_allele2 = (long)species[19];
+
 //UNPACK ALL RATES HERE
-  A_prod1  = rates[0];
-  Anonsense_prod1  = rates[1];
-  Aprime_prod1  = rates[2];
-  B_prod1  = rates[3];
-  A_deg1  = rates[4];
-  Anonsense_deg1  = rates[5];
-  Aprime_deg1  = rates[6];
-  B_deg1  = rates[7];
-  B_ondep1  = rates[8];
-  B_ondep_prime  = rates[9]*rates[8];
-  Aprimenitc1  = rates[10];
-  A_off1  = rates[11];
-  Aprime_off1  = rates[12];
-  B_off1  = rates[13];
-  A_proddiff1  = rates[14];
-  Aprime_proddiff1  = rates[15];
-  B_proddiff1  = rates[16];
-  onbasal_a1  = rates[17];
-  onbasal_aprime1  = rates[18]*rates[17];
-  onbasal_b1  = rates[19]*rates[17];
-  kA1  = rates[20];
-  kA1_nonsense  = rates[21];
-  kAprime1  = rates[22];
-  kB1  = rates[23];
-  nA1  = rates[24];
-  nA1_nonsense  = rates[25];
-  nAprime1  = rates[26];
-  nB1  = rates[27];
+  r_prod_A1 = rates[0]
+  r_prod_Anonsense1 = rates[1]
+  r_prod_Aprime1 = rates[2]
+  r_prod_B1 = rates[3]
+  
+  d_on_A1 = rates[4]
+  d_on_Anonsense1 = rates[5]
+  d_on_Aprime1 = rates[6]
+  d_on_B1 = rates[7]
+
+  r_deg_A1 = rates[8]
+  r_deg_Anonsense1 = rates[9]
+  r_deg_Aprime1 = rates[10]
+  r_deg_B1 = rates[11]
+
+  r_onbasal_A1 = rates[12]
+  r_onbasal_Anonsense1 = rates[13]
+  r_onbasal_Aprime1 = rates[14]
+  r_onbasal_B1 = rates[15]
+
+  d_bound_byAnonsense1_A1 = rates[16]
+  d_bound_byAnonsense1_Anonsense1 = rates[17]
+  d_bound_byAnonsense1_Aprime1 = rates[18]
+  d_bound_byA1_B1 = rates[19] 
+  d_bound_byAprime1_B1 = rates[20] 
+
+  r_off_A1 = rates[21]
+  r_off_Anonsense1 = rates[22]
+  r_off_Aprime1 = rates[23]
+  r_off_B1 = rates[24]
+
+  r_bind_byAnonsense1_A1 = rates[25]
+  r_bind_byAnonsense1_Anonsense1 = rates[26]
+  r_bind_byAnonsense1_Aprime1 = rates[27]
+  r_bind_byA1_B1 = rates[28] 
+  r_bind_byAprime1_B1 = rates[29] 
+
+  k_A1  = rates[30];
+  k_Anonsense1  = rates[31];
+  k_Aprime1  = rates[32];
+  k_B1  = rates[33];
+
+  n_A1  = rates[34];
+  n_Anonsense1  = rates[35];
+  n_Aprime1  = rates[36];
+  n_B1  = rates[37];
+
+  r_unbind_byAnonsense1_A1 = rates[38]
+  r_unbind_byAnonsense1_Anonsense1 = rates[39]
+  r_unbind_byAnonsense1_Aprime1 = rates[40]
+  r_unbind_byA1_B1 = rates[41] 
+  r_unbind_byAprime1_B1 = rates[42] 
+
+ 
 
   zigset(seed);
   totaliterations = 0;
