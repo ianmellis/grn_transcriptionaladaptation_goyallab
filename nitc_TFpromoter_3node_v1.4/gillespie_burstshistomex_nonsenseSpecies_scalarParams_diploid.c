@@ -282,9 +282,9 @@ if (p<cumpropensities[0]) {
   propensities[23] = Burst1_on_targ_allele2*r_off_B1;
 
   //update propensity for Promoter1_unbound_orig_allele1 = Promoter1_boundbynonsense_orig_allele1
-  propensities[24] = Promoter1_unbound_orig_allele1 * (1-Burst1_is_mutated_allele1) * r_bind_byAnonsense1_A1 * (pow(A1_nonsense,nA1_nonsense )/(pow(kA1_nonsense ,nA1_nonsense )+pow(A1_nonsense,nA1_nonsense ))) + Burst1_is_mutated_allele1 * r_bind_byAnonsense1_Anonsense1 * (pow(A1_nonsense,nA1_nonsense )/(pow(kA1_nonsense ,nA1_nonsense )+pow(A1_nonsense,nA1_nonsense ))));
+  propensities[24] = Promoter1_unbound_orig_allele1 * ((1-Burst1_is_mutated_allele1) * r_bind_byAnonsense1_A1 * (pow(A1_nonsense,nA1_nonsense )/(pow(kA1_nonsense ,nA1_nonsense )+pow(A1_nonsense,nA1_nonsense ))) + Burst1_is_mutated_allele1 * r_bind_byAnonsense1_Anonsense1 * (pow(A1_nonsense,nA1_nonsense )/(pow(kA1_nonsense ,nA1_nonsense )+pow(A1_nonsense,nA1_nonsense ))));
   //update propensity for Promoter1_unbound_orig_allele2 = Promoter1_boundbynonsense_orig_allele2
-  propensities[25] = Promoter1_unbound_orig_allele2 * (1-Burst1_is_mutated_allele2) * r_bind_byAnonsense1_A1 * (pow(A1_nonsense,nA1_nonsense )/(pow(kA1_nonsense ,nA1_nonsense )+pow(A1_nonsense,nA1_nonsense ))) + Burst1_is_mutated_allele2 * r_bind_byAnonsense1_Anonsense1 * (pow(A1_nonsense,nA1_nonsense )/(pow(kA1_nonsense ,nA1_nonsense )+pow(A1_nonsense,nA1_nonsense ))));
+  propensities[25] = Promoter1_unbound_orig_allele2 * ((1-Burst1_is_mutated_allele2) * r_bind_byAnonsense1_A1 * (pow(A1_nonsense,nA1_nonsense )/(pow(kA1_nonsense ,nA1_nonsense )+pow(A1_nonsense,nA1_nonsense ))) + Burst1_is_mutated_allele2 * r_bind_byAnonsense1_Anonsense1 * (pow(A1_nonsense,nA1_nonsense )/(pow(kA1_nonsense ,nA1_nonsense )+pow(A1_nonsense,nA1_nonsense ))));
   //update propensity for Promoter1_unbound_para_allele1 = Promoter1_boundbynonsense_para_allele1
   propensities[26] = Promoter1_unbound_para_allele1 * r_bind_byAnonsense1_Aprime1 * (pow(A1_nonsense,nA1_nonsense )/(pow(kA1_nonsense ,nA1_nonsense )+pow(A1_nonsense,nA1_nonsense )));
   //update propensity for Promoter1_unbound_para_allele2 = Promoter1_boundbynonsense_para_allele2
