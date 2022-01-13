@@ -48,7 +48,7 @@ void zigset(unsigned long jsrseed);
 #define NSPECIES 18
 
 //INCLUDE NUMRXNS HERE
-#define NUMRXNS 40
+#define NUMRXNS 32
 
 
 //void gillespie(long m, double *times_out,double *species_out,double currT,double *species,double *rates,double *propensities,double *rand1,double *rand2)
@@ -121,21 +121,21 @@ void gillespie(long m, double *times_out,double *species_out,double currT,double
   r_off_Aprime1 = rates[23];
   r_off_B1 = rates[24];
 
-  r_bind_byA1_B1 = rates[28];
-  r_bind_byAprime1_B1 = rates[29]; 
+  r_bind_byA1_B1 = rates[25];
+  r_bind_byAprime1_B1 = rates[26]; 
 
-  k_A1  = rates[30];
-  k_Anonsense1  = rates[31];
-  k_Aprime1  = rates[32];
-  k_B1  = rates[33];
+  k_A1  = rates[27];
+  k_Anonsense1  = rates[28];
+  k_Aprime1  = rates[29];
+  k_B1  = rates[30];
 
-  n_A1  = rates[34];
-  n_Anonsense1  = rates[35];
-  n_Aprime1  = rates[36];
-  n_B1  = rates[37];
+  n_A1  = rates[31];
+  n_Anonsense1  = rates[32];
+  n_Aprime1  = rates[33];
+  n_B1  = rates[34];
 
-  r_unbind_byA1_B1 = rates[41];
-  r_unbind_byAprime1_B1 = rates[42];
+  r_unbind_byA1_B1 = rates[35];
+  r_unbind_byAprime1_B1 = rates[36];
 
  
 
