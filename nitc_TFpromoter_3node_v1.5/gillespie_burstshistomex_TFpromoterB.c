@@ -1086,13 +1086,14 @@ if (p<cumpropensities[0]) {
   propensities[31] = Promoter1_boundbypara_targ_allele2 * r_unbind_byAprime1_B1;
 } else if (p<cumpropensities[12]) {
   // rxn: Burst1_off_orig_allele1 = Burst1_on_orig_allele1
-  
+
+  if(Burst1_on_orig_allele1 == 1) { // this should never happen, so a value of 2 is an error flag
+    Burst1_on_orig_allele1 = 2; 
+  }  
   if(Burst1_on_orig_allele1 == 0) {
     Burst1_on_orig_allele1 = 1;
   }
-  if(Burst1_on_orig_allele1 == 1) { // this should never happen, so a value of 2 is an error flag
-    Burst1_on_orig_allele1 = 2; 
-  }
+
 
   //update propensity for = A1 from allele1
   propensities[0] = (1-Burst1_is_mutated_allele1)*(r_prodon_A1 * Burst1_on_orig_allele1 + r_prodbasal_A1 * (1-Burst1_on_orig_allele1));
@@ -1166,12 +1167,13 @@ if (p<cumpropensities[0]) {
 } else if (p<cumpropensities[13]) {
   // rxn: Burst1_off_orig_allele2 = Burst1_on_orig_allele2
   
-  if(Burst1_on_orig_allele2 == 0) {
-    Burst1_on_orig_allele2 = 1;
-  }
   if(Burst1_on_orig_allele2 == 1) { // this should never happen, so a value of 2 is an error flag
     Burst1_on_orig_allele2 = 2; 
   }
+  if(Burst1_on_orig_allele2 == 0) {
+    Burst1_on_orig_allele2 = 1;
+  }
+
   //update propensity for = A1 from allele1
   propensities[0] = (1-Burst1_is_mutated_allele1)*(r_prodon_A1 * Burst1_on_orig_allele1 + r_prodbasal_A1 * (1-Burst1_on_orig_allele1));
   //update propensity for = A1_nonsense from allele1
@@ -1244,12 +1246,13 @@ if (p<cumpropensities[0]) {
 } else if (p<cumpropensities[14]) {
   // rxn: Burst1_off_para_allele1 = Burst1_on_para_allele1
   
+  if(Burst1_on_para_allele1 == 1) { // this should never happen, so a value of 2 is an error flag
+    Burst1_on_para_allele1 = 2; 
+  }  
   if(Burst1_on_para_allele1 == 0) {
     Burst1_on_para_allele1 = 1;
   }
-  if(Burst1_on_para_allele1 == 1) { // this should never happen, so a value of 2 is an error flag
-    Burst1_on_para_allele1 = 2; 
-  }
+
   //update propensity for = A1 from allele1
   propensities[0] = (1-Burst1_is_mutated_allele1)*(r_prodon_A1 * Burst1_on_orig_allele1 + r_prodbasal_A1 * (1-Burst1_on_orig_allele1));
   //update propensity for = A1_nonsense from allele1
@@ -1321,13 +1324,14 @@ if (p<cumpropensities[0]) {
   propensities[31] = Promoter1_boundbypara_targ_allele2 * r_unbind_byAprime1_B1;
 } else if (p<cumpropensities[15]) {
   // rxn: Burst1_off_para_allele2 = Burst1_on_para_allele2
-  
+
+  if(Burst1_on_para_allele2 == 1) { // this should never happen, so a value of 2 is an error flag
+    Burst1_on_para_allele2 = 2; 
+  }  
   if(Burst1_on_para_allele2 == 0) {
     Burst1_on_para_allele2 = 1;
   }
-  if(Burst1_on_para_allele2 == 1) { // this should never happen, so a value of 2 is an error flag
-    Burst1_on_para_allele2 = 2; 
-  }
+
   //update propensity for = A1 from allele1
   propensities[0] = (1-Burst1_is_mutated_allele1)*(r_prodon_A1 * Burst1_on_orig_allele1 + r_prodbasal_A1 * (1-Burst1_on_orig_allele1));
   //update propensity for = A1_nonsense from allele1
@@ -1399,13 +1403,14 @@ if (p<cumpropensities[0]) {
   propensities[31] = Promoter1_boundbypara_targ_allele2 * r_unbind_byAprime1_B1;
 } else if (p<cumpropensities[16]) {
   // rxn: Burst1_off_targ_allele1 = Burst1_on_targ_allele1
-  
+ 
+  if(Burst1_on_targ_allele1 == 1) { // this should never happen, so a value of 2 is an error flag
+    Burst1_on_targ_allele1 = 2; 
+  } 
   if(Burst1_on_targ_allele1 == 0) {
     Burst1_on_targ_allele1 = 1;
   }
-  if(Burst1_on_targ_allele1 == 1) { // this should never happen, so a value of 2 is an error flag
-    Burst1_on_targ_allele1 = 2; 
-  }
+
   //update propensity for = A1 from allele1
   propensities[0] = (1-Burst1_is_mutated_allele1)*(r_prodon_A1 * Burst1_on_orig_allele1 + r_prodbasal_A1 * (1-Burst1_on_orig_allele1));
   //update propensity for = A1_nonsense from allele1
@@ -1478,12 +1483,13 @@ if (p<cumpropensities[0]) {
 } else if (p<cumpropensities[17]) {
   // rxn: Burst1_off_targ_allele2 = Burst1_on_targ_allele2
   
-  if(Burst1_on_targ_allele2 == 0) {
-    Burst1_on_targ_allele2 = 1;
-  }
   if(Burst1_on_targ_allele2 == 1) { // this should never happen, so a value of 2 is an error flag
     Burst1_on_targ_allele2 = 2; 
   }
+  if(Burst1_on_targ_allele2 == 0) {
+    Burst1_on_targ_allele2 = 1;
+  }
+
   //update propensity for = A1 from allele1
   propensities[0] = (1-Burst1_is_mutated_allele1)*(r_prodon_A1 * Burst1_on_orig_allele1 + r_prodbasal_A1 * (1-Burst1_on_orig_allele1));
   //update propensity for = A1_nonsense from allele1
@@ -1556,12 +1562,13 @@ if (p<cumpropensities[0]) {
 } else if (p<cumpropensities[18]) {
   // rxn: Burst1_on_orig_allele1   = Burst1_off_orig_allele1
 
-  if(Burst1_on_orig_allele1 == 1) {
-    Burst1_on_orig_allele1 = 0;
-  }
   if(Burst1_on_orig_allele1 == 0) {
     Burst1_on_orig_allele1 = 2; // should never happen, so a 2 value is an error flag
   }
+  if(Burst1_on_orig_allele1 == 1) {
+    Burst1_on_orig_allele1 = 0;
+  }
+
   //update propensity for = A1 from allele1
   propensities[0] = (1-Burst1_is_mutated_allele1)*(r_prodon_A1 * Burst1_on_orig_allele1 + r_prodbasal_A1 * (1-Burst1_on_orig_allele1));
   //update propensity for = A1_nonsense from allele1
@@ -1634,12 +1641,13 @@ if (p<cumpropensities[0]) {
   } else if (p<cumpropensities[19]) {
   // rxn: Burst1_on_orig_allele2   = Burst1_off_orig_allele2
 
-  if(Burst1_on_orig_allele2 == 1) {
-    Burst1_on_orig_allele2 = 0;
-  }
   if(Burst1_on_orig_allele2 == 0) {
     Burst1_on_orig_allele2 = 2; // should never happen, so a 2 value is an error flag
   }
+  if(Burst1_on_orig_allele2 == 1) {
+    Burst1_on_orig_allele2 = 0;
+  }
+
   //update propensity for = A1 from allele1
   propensities[0] = (1-Burst1_is_mutated_allele1)*(r_prodon_A1 * Burst1_on_orig_allele1 + r_prodbasal_A1 * (1-Burst1_on_orig_allele1));
   //update propensity for = A1_nonsense from allele1
@@ -1711,13 +1719,14 @@ if (p<cumpropensities[0]) {
   propensities[31] = Promoter1_boundbypara_targ_allele2 * r_unbind_byAprime1_B1;
 } else if (p<cumpropensities[20]) {
   // rxn: Burst1_on_para_allele1  = Burst1_off_para_allele1
-  
+
+  if(Burst1_on_para_allele1 == 0) {
+    Burst1_on_para_allele1 = 2; // should never happen, so a 2 value is an error flag
+  }  
   if(Burst1_on_para_allele1 == 1) {
     Burst1_on_para_allele1 = 0;
   }
-  if(Burst1_on_para_allele1 == 0) {
-    Burst1_on_para_allele1 = 2; // should never happen, so a 2 value is an error flag
-  }
+
   //update propensity for = A1 from allele1
   propensities[0] = (1-Burst1_is_mutated_allele1)*(r_prodon_A1 * Burst1_on_orig_allele1 + r_prodbasal_A1 * (1-Burst1_on_orig_allele1));
   //update propensity for = A1_nonsense from allele1
@@ -1790,12 +1799,13 @@ if (p<cumpropensities[0]) {
 } else if (p<cumpropensities[21]) {
   // rxn: Burst1_on_para_allele2  = Burst1_off_para_allele2
   
-  if(Burst1_on_para_allele2 == 1) {
-    Burst1_on_para_allele2 = 0;
-  }
   if(Burst1_on_para_allele2 == 0) {
     Burst1_on_para_allele2 = 2; // should never happen, so a 2 value is an error flag
   }
+  if(Burst1_on_para_allele2 == 1) {
+    Burst1_on_para_allele2 = 0;
+  }
+
   //update propensity for = A1 from allele1
   propensities[0] = (1-Burst1_is_mutated_allele1)*(r_prodon_A1 * Burst1_on_orig_allele1 + r_prodbasal_A1 * (1-Burst1_on_orig_allele1));
   //update propensity for = A1_nonsense from allele1
@@ -1868,12 +1878,13 @@ if (p<cumpropensities[0]) {
 } else if (p<cumpropensities[22]) {
   // rxn: Burst1_on_targ_allele1 = Burst1_off_targ_allele1
 
-  if(Burst1_on_targ_allele1 == 1) {
-    Burst1_on_targ_allele1 = 0;
-  }
   if(Burst1_on_targ_allele1 == 0) {
     Burst1_on_targ_allele1 = 2; // should never happen, so a 2 value is an error flag
   }
+  if(Burst1_on_targ_allele1 == 1) {
+    Burst1_on_targ_allele1 = 0;
+  }
+
   //update propensity for = A1 from allele1
   propensities[0] = (1-Burst1_is_mutated_allele1)*(r_prodon_A1 * Burst1_on_orig_allele1 + r_prodbasal_A1 * (1-Burst1_on_orig_allele1));
   //update propensity for = A1_nonsense from allele1
@@ -1946,12 +1957,13 @@ if (p<cumpropensities[0]) {
 } else if (p<cumpropensities[23]) {
   // rxn: Burst1_on_targ_allele2 = Burst1_off_targ_allele2
 
-  if(Burst1_on_targ_allele2 == 1) {
-    Burst1_on_targ_allele2 = 0;
-  }
   if(Burst1_on_targ_allele2 == 0) {
     Burst1_on_targ_allele2 = 2; // should never happen, so a 2 value is an error flag
   }
+  if(Burst1_on_targ_allele2 == 1) {
+    Burst1_on_targ_allele2 = 0;
+  }
+
   //update propensity for = A1 from allele1
   propensities[0] = (1-Burst1_is_mutated_allele1)*(r_prodon_A1 * Burst1_on_orig_allele1 + r_prodbasal_A1 * (1-Burst1_on_orig_allele1));
   //update propensity for = A1_nonsense from allele1
