@@ -6,9 +6,9 @@ library(gridExtra)
 
 setwd('~/code/grn_nitc/nitc_TFpromoter_3node_v1.5/')
 
-params<-read.csv('initialsim_rates.csv',header = T)
+params<-read.csv('initialsim_rates1.csv',header = T)
 
-species<-t(as.matrix(read.csv('initialsim_species.csv', header = F)))
+species<-t(as.matrix(read.csv('initialsim_species1.csv', header = F)))
 colnames(species)<-c('A1',
                      'Anonsense1',
                      'Aprime1',

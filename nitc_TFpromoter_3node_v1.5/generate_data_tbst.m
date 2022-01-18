@@ -41,7 +41,7 @@ r_deg_Anonsense1 = r_deg;
 r_deg_Aprime1 = r_deg;
 r_deg_B1 = r_deg;
 r_onbasal_A1 = r_onbasal_A1;
-r_onbasal_Anonsense1 = r_onbasal_other;
+r_onbasal_Anonsense1 = r_onbasal_A1;
 r_onbasal_Aprime1 = r_onbasal_other;
 r_onbasal_B1 = r_onbasal_other;
 r_nitc_byAnonsense1_A1 = r_nitc_byAnonsense1_A1;
@@ -191,6 +191,7 @@ pr_1 = [1,zeros(1,31)];
 
 
 %% Run sim
+% runs infinitely when both alleles mutated
 
 maxgillespie = 300000;
 
@@ -199,8 +200,8 @@ maxgillespie = 300000;
 %% Save results
 extn = './nitc_TFpromoter_3node_v1.5/';
 
-sp_f = [extn, 'initialsim_species.csv'];
-ra_f = [extn, 'initialsim_rates.csv'];
+sp_f = [extn, 'initialsim_species1.csv'];
+ra_f = [extn, 'initialsim_rates1.csv'];
 
 csvwrite(sp_f, savespecies)
 writetable(ra_1_s,ra_f,'Delimiter',',')
