@@ -11,19 +11,19 @@ rng(8574);
 r_prod_basal = 0;
 r_prod_on = 10;
 r_deg = 0.1;
-r_onbasal_A1 = 0.1;
+r_onbasal_A1 = 1;
 r_onbasal_other = 0;
-r_nitc_byAnonsense1_A1 = 0.05;
+r_nitc_byAnonsense1_A1 = 0.5;
 r_nitc_byAnonsense1_Anonsense1 = r_nitc_byAnonsense1_A1;
 r_nitc_byAnonsense1_Aprime1 = r_nitc_byAnonsense1_A1;
-r_bound_byA1_B1 = 0.1;
-r_bound_byAprime1_B1 = 0.02;
+r_bound_byA1_B1 = 1;
+r_bound_byAprime1_B1 = 0.2;
 r_off = 1;
 n_all = 3;
 x = 0.5;
-r_bind_byA1_B1 = 0.1;
-r_bind_byAprime1_B1 = 0.02;
-r_unbind_byA1_B1 = 0.5;
+r_bind_byA1_B1 = 10;
+r_bind_byAprime1_B1 = 1;
+r_unbind_byA1_B1 = 0.1;
 r_unbind_byAprime1_B1 = r_unbind_byA1_B1;
 
 k_all = x*(r_prod_basal + r_prod_on)/r_deg;
@@ -143,7 +143,8 @@ ra_1_s.Properties.VariableNames = {'r_prodbasal_A1',...
   'n_B1',...
   'r_unbind_byA1_B1',...
   'r_unbind_byAprime1_B1'};
-%% Initialize species
+
+% Initialize species
 
 A1 = 0;
 Anonsense1 = 0;
@@ -185,7 +186,7 @@ sp_1 = [A1,...
     Burst1_is_mutated_allele1,...
     Burst1_is_mutated_allele2];
 
-%% Initialize propensities
+% Initialize propensities
 % force production of ancestral gene as first reaction, arbitrarily
 pr_1 = [1,zeros(1,31)];
 
@@ -200,8 +201,8 @@ maxgillespie = 300000;
 %% Save results
 extn = './nitc_TFpromoter_3node_v1.5/';
 
-sp_f = [extn, 'initialsim_species1.csv'];
-ra_f = [extn, 'initialsim_rates1.csv'];
+sp_f = [extn, 'initialsim_species.csv'];
+ra_f = [extn, 'initialsim_rates.csv'];
 
 csvwrite(sp_f, savespecies)
 writetable(ra_1_s,ra_f,'Delimiter',',')

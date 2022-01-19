@@ -242,9 +242,9 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_off_para = Burst1_on_para for allele2
   propensities[15] = (1-Burst1_on_para_allele2)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele1
-  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
+  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele2
-  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
+  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
 
   //update propensity for Burst1_on_orig = Burst1_off_orig for allele1
   propensities[18] = Burst1_on_orig_allele1*(Burst1_is_mutated_allele1*r_off_Anonsense1 + (1-Burst1_is_mutated_allele1)*r_off_A1);
@@ -317,9 +317,9 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_off_para = Burst1_on_para for allele2
   propensities[15] = (1-Burst1_on_para_allele2)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele1
-  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
+  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele2
-  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
+  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
 
   //update propensity for Burst1_on_orig = Burst1_off_orig for allele1
   propensities[18] = Burst1_on_orig_allele1*(Burst1_is_mutated_allele1*r_off_Anonsense1 + (1-Burst1_is_mutated_allele1)*r_off_A1);
@@ -391,9 +391,9 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_off_para = Burst1_on_para for allele2
   propensities[15] = (1-Burst1_on_para_allele2)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele1
-  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
+  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele2
-  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
+  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
 
   //update propensity for Burst1_on_orig = Burst1_off_orig for allele1
   propensities[18] = Burst1_on_orig_allele1*(Burst1_is_mutated_allele1*r_off_Anonsense1 + (1-Burst1_is_mutated_allele1)*r_off_A1);
@@ -466,9 +466,9 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_off_para = Burst1_on_para for allele2
   propensities[15] = (1-Burst1_on_para_allele2)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele1
-  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
+  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele2
-  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
+  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
 
   //update propensity for Burst1_on_orig = Burst1_off_orig for allele1
   propensities[18] = Burst1_on_orig_allele1*(Burst1_is_mutated_allele1*r_off_Anonsense1 + (1-Burst1_is_mutated_allele1)*r_off_A1);
@@ -539,9 +539,9 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_off_para = Burst1_on_para for allele2
   propensities[15] = (1-Burst1_on_para_allele2)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele1
-  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
+  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele2
-  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
+  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
 
   //update propensity for Burst1_on_orig = Burst1_off_orig for allele1
   propensities[18] = Burst1_on_orig_allele1*(Burst1_is_mutated_allele1*r_off_Anonsense1 + (1-Burst1_is_mutated_allele1)*r_off_A1);
@@ -612,9 +612,9 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_off_para = Burst1_on_para for allele2
   propensities[15] = (1-Burst1_on_para_allele2)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele1
-  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
+  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele2
-  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
+  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
 
   //update propensity for Burst1_on_orig = Burst1_off_orig for allele1
   propensities[18] = Burst1_on_orig_allele1*(Burst1_is_mutated_allele1*r_off_Anonsense1 + (1-Burst1_is_mutated_allele1)*r_off_A1);
@@ -685,9 +685,9 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_off_para = Burst1_on_para for allele2
   propensities[15] = (1-Burst1_on_para_allele2)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele1
-  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
+  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele2
-  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
+  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
 
   //update propensity for Burst1_on_orig = Burst1_off_orig for allele1
   propensities[18] = Burst1_on_orig_allele1*(Burst1_is_mutated_allele1*r_off_Anonsense1 + (1-Burst1_is_mutated_allele1)*r_off_A1);
@@ -758,9 +758,9 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_off_para = Burst1_on_para for allele2
   propensities[15] = (1-Burst1_on_para_allele2)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele1
-  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
+  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele2
-  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
+  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
 
   //update propensity for Burst1_on_orig = Burst1_off_orig for allele1
   propensities[18] = Burst1_on_orig_allele1*(Burst1_is_mutated_allele1*r_off_Anonsense1 + (1-Burst1_is_mutated_allele1)*r_off_A1);
@@ -831,9 +831,9 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_off_para = Burst1_on_para for allele2
   propensities[15] = (1-Burst1_on_para_allele2)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele1
-  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
+  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele2
-  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
+  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
 
   //update propensity for Burst1_on_orig = Burst1_off_orig for allele1
   propensities[18] = Burst1_on_orig_allele1*(Burst1_is_mutated_allele1*r_off_Anonsense1 + (1-Burst1_is_mutated_allele1)*r_off_A1);
@@ -904,9 +904,9 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_off_para = Burst1_on_para for allele2
   propensities[15] = (1-Burst1_on_para_allele2)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele1
-  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
+  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele2
-  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
+  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
 
   //update propensity for Burst1_on_orig = Burst1_off_orig for allele1
   propensities[18] = Burst1_on_orig_allele1*(Burst1_is_mutated_allele1*r_off_Anonsense1 + (1-Burst1_is_mutated_allele1)*r_off_A1);
@@ -977,9 +977,9 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_off_para = Burst1_on_para for allele2
   propensities[15] = (1-Burst1_on_para_allele2)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele1
-  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
+  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele2
-  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
+  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
 
   //update propensity for Burst1_on_orig = Burst1_off_orig for allele1
   propensities[18] = Burst1_on_orig_allele1*(Burst1_is_mutated_allele1*r_off_Anonsense1 + (1-Burst1_is_mutated_allele1)*r_off_A1);
@@ -1050,9 +1050,9 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_off_para = Burst1_on_para for allele2
   propensities[15] = (1-Burst1_on_para_allele2)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele1
-  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
+  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele2
-  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
+  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
 
   //update propensity for Burst1_on_orig = Burst1_off_orig for allele1
   propensities[18] = Burst1_on_orig_allele1*(Burst1_is_mutated_allele1*r_off_Anonsense1 + (1-Burst1_is_mutated_allele1)*r_off_A1);
@@ -1130,9 +1130,9 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_off_para = Burst1_on_para for allele2
   propensities[15] = (1-Burst1_on_para_allele2)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele1
-  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
+  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele2
-  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
+  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
 
   //update propensity for Burst1_on_orig = Burst1_off_orig for allele1
   propensities[18] = Burst1_on_orig_allele1*(Burst1_is_mutated_allele1*r_off_Anonsense1 + (1-Burst1_is_mutated_allele1)*r_off_A1);
@@ -1209,9 +1209,9 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_off_para = Burst1_on_para for allele2
   propensities[15] = (1-Burst1_on_para_allele2)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele1
-  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
+  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele2
-  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
+  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
 
   //update propensity for Burst1_on_orig = Burst1_off_orig for allele1
   propensities[18] = Burst1_on_orig_allele1*(Burst1_is_mutated_allele1*r_off_Anonsense1 + (1-Burst1_is_mutated_allele1)*r_off_A1);
@@ -1288,9 +1288,9 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_off_para = Burst1_on_para for allele2
   propensities[15] = (1-Burst1_on_para_allele2)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele1
-  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
+  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele2
-  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
+  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
 
   //update propensity for Burst1_on_orig = Burst1_off_orig for allele1
   propensities[18] = Burst1_on_orig_allele1*(Burst1_is_mutated_allele1*r_off_Anonsense1 + (1-Burst1_is_mutated_allele1)*r_off_A1);
@@ -1367,9 +1367,9 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_off_para = Burst1_on_para for allele2
   propensities[15] = (1-Burst1_on_para_allele2)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele1
-  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
+  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele2
-  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
+  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
 
   //update propensity for Burst1_on_orig = Burst1_off_orig for allele1
   propensities[18] = Burst1_on_orig_allele1*(Burst1_is_mutated_allele1*r_off_Anonsense1 + (1-Burst1_is_mutated_allele1)*r_off_A1);
@@ -1446,9 +1446,9 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_off_para = Burst1_on_para for allele2
   propensities[15] = (1-Burst1_on_para_allele2)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele1
-  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
+  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele2
-  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
+  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
 
   //update propensity for Burst1_on_orig = Burst1_off_orig for allele1
   propensities[18] = Burst1_on_orig_allele1*(Burst1_is_mutated_allele1*r_off_Anonsense1 + (1-Burst1_is_mutated_allele1)*r_off_A1);
@@ -1525,9 +1525,9 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_off_para = Burst1_on_para for allele2
   propensities[15] = (1-Burst1_on_para_allele2)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele1
-  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
+  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele2
-  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
+  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
 
   //update propensity for Burst1_on_orig = Burst1_off_orig for allele1
   propensities[18] = Burst1_on_orig_allele1*(Burst1_is_mutated_allele1*r_off_Anonsense1 + (1-Burst1_is_mutated_allele1)*r_off_A1);
@@ -1604,9 +1604,9 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_off_para = Burst1_on_para for allele2
   propensities[15] = (1-Burst1_on_para_allele2)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele1
-  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
+  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele2
-  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
+  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
 
   //update propensity for Burst1_on_orig = Burst1_off_orig for allele1
   propensities[18] = Burst1_on_orig_allele1*(Burst1_is_mutated_allele1*r_off_Anonsense1 + (1-Burst1_is_mutated_allele1)*r_off_A1);
@@ -1683,9 +1683,9 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_off_para = Burst1_on_para for allele2
   propensities[15] = (1-Burst1_on_para_allele2)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele1
-  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
+  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele2
-  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
+  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
 
   //update propensity for Burst1_on_orig = Burst1_off_orig for allele1
   propensities[18] = Burst1_on_orig_allele1*(Burst1_is_mutated_allele1*r_off_Anonsense1 + (1-Burst1_is_mutated_allele1)*r_off_A1);
@@ -1762,9 +1762,9 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_off_para = Burst1_on_para for allele2
   propensities[15] = (1-Burst1_on_para_allele2)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele1
-  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
+  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele2
-  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
+  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
 
   //update propensity for Burst1_on_orig = Burst1_off_orig for allele1
   propensities[18] = Burst1_on_orig_allele1*(Burst1_is_mutated_allele1*r_off_Anonsense1 + (1-Burst1_is_mutated_allele1)*r_off_A1);
@@ -1841,9 +1841,9 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_off_para = Burst1_on_para for allele2
   propensities[15] = (1-Burst1_on_para_allele2)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele1
-  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
+  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele2
-  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
+  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
 
   //update propensity for Burst1_on_orig = Burst1_off_orig for allele1
   propensities[18] = Burst1_on_orig_allele1*(Burst1_is_mutated_allele1*r_off_Anonsense1 + (1-Burst1_is_mutated_allele1)*r_off_A1);
@@ -1920,9 +1920,9 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_off_para = Burst1_on_para for allele2
   propensities[15] = (1-Burst1_on_para_allele2)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele1
-  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
+  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele2
-  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
+  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
 
   //update propensity for Burst1_on_orig = Burst1_off_orig for allele1
   propensities[18] = Burst1_on_orig_allele1*(Burst1_is_mutated_allele1*r_off_Anonsense1 + (1-Burst1_is_mutated_allele1)*r_off_A1);
@@ -1999,9 +1999,9 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_off_para = Burst1_on_para for allele2
   propensities[15] = (1-Burst1_on_para_allele2)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele1
-  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
+  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele2
-  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
+  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
 
   //update propensity for Burst1_on_orig = Burst1_off_orig for allele1
   propensities[18] = Burst1_on_orig_allele1*(Burst1_is_mutated_allele1*r_off_Anonsense1 + (1-Burst1_is_mutated_allele1)*r_off_A1);
@@ -2077,9 +2077,9 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_off_para = Burst1_on_para for allele2
   propensities[15] = (1-Burst1_on_para_allele2)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele1
-  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
+  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele2
-  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
+  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
 
   //update propensity for Burst1_on_orig = Burst1_off_orig for allele1
   propensities[18] = Burst1_on_orig_allele1*(Burst1_is_mutated_allele1*r_off_Anonsense1 + (1-Burst1_is_mutated_allele1)*r_off_A1);
@@ -2155,9 +2155,9 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_off_para = Burst1_on_para for allele2
   propensities[15] = (1-Burst1_on_para_allele2)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele1
-  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
+  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele2
-  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
+  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
 
   //update propensity for Burst1_on_orig = Burst1_off_orig for allele1
   propensities[18] = Burst1_on_orig_allele1*(Burst1_is_mutated_allele1*r_off_Anonsense1 + (1-Burst1_is_mutated_allele1)*r_off_A1);
@@ -2233,9 +2233,9 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_off_para = Burst1_on_para for allele2
   propensities[15] = (1-Burst1_on_para_allele2)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele1
-  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
+  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele2
-  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
+  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
 
   //update propensity for Burst1_on_orig = Burst1_off_orig for allele1
   propensities[18] = Burst1_on_orig_allele1*(Burst1_is_mutated_allele1*r_off_Anonsense1 + (1-Burst1_is_mutated_allele1)*r_off_A1);
@@ -2311,9 +2311,9 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_off_para = Burst1_on_para for allele2
   propensities[15] = (1-Burst1_on_para_allele2)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele1
-  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
+  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele2
-  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
+  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
 
   //update propensity for Burst1_on_orig = Burst1_off_orig for allele1
   propensities[18] = Burst1_on_orig_allele1*(Burst1_is_mutated_allele1*r_off_Anonsense1 + (1-Burst1_is_mutated_allele1)*r_off_A1);
@@ -2388,9 +2388,9 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_off_para = Burst1_on_para for allele2
   propensities[15] = (1-Burst1_on_para_allele2)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele1
-  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
+  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele2
-  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
+  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
 
   //update propensity for Burst1_on_orig = Burst1_off_orig for allele1
   propensities[18] = Burst1_on_orig_allele1*(Burst1_is_mutated_allele1*r_off_Anonsense1 + (1-Burst1_is_mutated_allele1)*r_off_A1);
@@ -2465,9 +2465,9 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_off_para = Burst1_on_para for allele2
   propensities[15] = (1-Burst1_on_para_allele2)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele1
-  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
+  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele2
-  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
+  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
 
   //update propensity for Burst1_on_orig = Burst1_off_orig for allele1
   propensities[18] = Burst1_on_orig_allele1*(Burst1_is_mutated_allele1*r_off_Anonsense1 + (1-Burst1_is_mutated_allele1)*r_off_A1);
@@ -2542,9 +2542,9 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_off_para = Burst1_on_para for allele2
   propensities[15] = (1-Burst1_on_para_allele2)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele1
-  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
+  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele2
-  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
+  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
 
   //update propensity for Burst1_on_orig = Burst1_off_orig for allele1
   propensities[18] = Burst1_on_orig_allele1*(Burst1_is_mutated_allele1*r_off_Anonsense1 + (1-Burst1_is_mutated_allele1)*r_off_A1);
@@ -2619,9 +2619,9 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_off_para = Burst1_on_para for allele2
   propensities[15] = (1-Burst1_on_para_allele2)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele1
-  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
+  propensities[16] = (1-Burst1_on_targ_allele1)*(r_onbasal_B1*Promoter1_unbound_targ_allele1 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele1 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele1);
   //update propensity for Burst1_off_targ = Burst1_on_targ for allele2
-  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_onbasal_B1*r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_onbasal_B1*r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
+  propensities[17] = (1-Burst1_on_targ_allele2)*(r_onbasal_B1*Promoter1_unbound_targ_allele2 + r_bound_byA1_B1*Promoter1_boundbyorig_targ_allele2 + r_bound_byAprime1_B1*Promoter1_boundbypara_targ_allele2);
 
   //update propensity for Burst1_on_orig = Burst1_off_orig for allele1
   propensities[18] = Burst1_on_orig_allele1*(Burst1_is_mutated_allele1*r_off_Anonsense1 + (1-Burst1_is_mutated_allele1)*r_off_A1);
