@@ -6,23 +6,47 @@
 
 rng(8574);
 
-%% First rate parameter set
+% rate parameter set
 
+% rate ratios
+% r_onbasal_A1/r_nitc = relative on-rates of wt A1 and NITC-regulated
+% alleles
+basal_nitc_on_ratio = 10;
+
+% r_onbasal_A1/r_off = on-off ratio, for speed of burst-off. Assume same
+% off rate for all other alleles
+onbasalA1_off_ratio = 1;
+
+% r_bound_byA1_B1/r_bound_byAprime1_B1 = relative B1 on-rates caused by bound
+% A1 vs Aprime1
+A1_Aprime1_boundOn_ratio = 5;
+
+% r_bind_byA1_B1/r_bind_byAprime1_B1 = relative promoter-binding rates of
+% A1 vs Aprime1
+A1_Aprime_binding_ratio = 5;
+
+% r_bind_byA1_B1/r_unbind_byA1_B1 = relative bind-unbind rates. Assume same
+% unbind rate for Aprime regardless of Aprime bind rate
+bindbyA1_unbindbyA1_ratio = 10;
+
+paramsetnum = 5;
+
+% rates
 r_prod_basal = 0;
 r_prod_on = 10;
 r_deg = 0.1;
 r_onbasal_A1 = 1;
 r_onbasal_other = 0;
-r_nitc_byAnonsense1_A1 = 0.5;
+r_nitc_byAnonsense1_A1 = r_onbasal_A1/basal_nitc_on_ratio;
 r_nitc_byAnonsense1_Anonsense1 = r_nitc_byAnonsense1_A1;
 r_nitc_byAnonsense1_Aprime1 = r_nitc_byAnonsense1_A1;
 r_bound_byA1_B1 = 1;
-r_bound_byAprime1_B1 = 0.2;
+r_bound_byAprime1_B1 = r_bound_byA1_B1/A1_Aprime1_boundOn_ratio;
 r_off = 1;
 n_all = 3;
 x = 0.5;
 r_bind_byA1_B1 = 10;
-r_bind_byAprime1_B1 = 1;
+r_bind_byAprime1_B1 = r_bind_byA1_B1/A1_Aprime_binding_ratio;
 r_unbind_byA1_B1 = 0.1;
 r_unbind_byAprime1_B1 = r_unbind_byA1_B1;
 
@@ -201,8 +225,8 @@ maxgillespie = 300000;
 %% Save results
 extn = './nitc_TFpromoter_3node_v1.5/';
 
-sp_f = [extn, 'initialsim_species.csv'];
-ra_f = [extn, 'initialsim_rates.csv'];
+sp_f = [extn, 'initialsim_species', num2str(paramsetnum), '.csv'];
+ra_f = [extn, 'initialsim_rates', num2str(paramsetnum), '.csv'];
 
 csvwrite(sp_f, savespecies)
 writetable(ra_1_s,ra_f,'Delimiter',',')
