@@ -261,11 +261,11 @@ if (p<cumpropensities[0]) {
 
   //update propensity for Promoter1_unbound_targ_allele1 = Promoter1_boundbyorig_targ_allele1
   propensities[24] = Promoter1_unbound_targ_allele1 * r_bind_byA1_B1 * (pow(A1,n_A1)/(pow(k_A1,n_A1)+pow(A1,n_A1)));
+  //update propensity for Promoter1_unbound_targ_allele2 = Promoter1_boundbyorig_targ_allele2
+  propensities[25] = Promoter1_unbound_targ_allele2 * r_bind_byA1_B1 * (pow(A1,n_A1)/(pow(k_A1,n_A1)+pow(A1,n_A1)));
   //update propensity for Promoter1_unbound_targ_allele1 = Promoter1_boundbypara_targ_allele1
-  propensities[25] = Promoter1_unbound_targ_allele1 * r_bind_byAprime1_B1 * (pow(A1,n_A1)/(pow(k_A1,n_A1)+pow(A1,n_A1)));
-  //update propensity for Promoter1_unbound_targ_allele1 = Promoter1_boundbyorig_targ_allele2
-  propensities[26] = Promoter1_unbound_targ_allele2 * r_bind_byA1_B1 * (pow(Aprime1,n_Aprime1)/(pow(k_Aprime1,n_Aprime1)+pow(Aprime1,n_Aprime1)));
-  //update propensity for Promoter1_unbound_targ_allele1 = Promoter1_boundbypara_targ_allele2
+  propensities[26] = Promoter1_unbound_targ_allele1 * r_bind_byAprime1_B1 * (pow(Aprime1,n_Aprime1)/(pow(k_Aprime1,n_Aprime1)+pow(Aprime1,n_Aprime1)));
+  //update propensity for Promoter1_unbound_targ_allele2 = Promoter1_boundbypara_targ_allele2
   propensities[27] = Promoter1_unbound_targ_allele2 * r_bind_byAprime1_B1 * (pow(Aprime1,n_Aprime1)/(pow(k_Aprime1,n_Aprime1)+pow(Aprime1,n_Aprime1)));
   
   //update propensity for Promoter1_boundbyorig_targ_allele1 = Promoter1_unbound_targ_allele1
