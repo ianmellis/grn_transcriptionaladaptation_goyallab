@@ -42,9 +42,9 @@ transition_samp_2 <- species %>%
 
 
 orig_color = 'black'
-nons_color = 'orange'
+nons_color = 'firebrick2'
 para_color = 'gray'
-targ_color = 'blue'
+targ_color = 'dodgerblue2'
 t_start = min(transition_samp_1$time)
 t_end = max(transition_samp_1$time)
 spec_plot <- ggplot() +
