@@ -40,6 +40,24 @@ transition_samp_1 <- species %>%
 transition_samp_2 <- species %>%
   filter(time > 197000, time < 203000)
 
+steady_state_sample_wtwt <- species %>%
+  filter(time > 400, time < 100000, time %% 500 == 499) 
+
+steady_state_wtmut <- species %>%
+  filter(time > 100400, time < 200000)
+
+steady_state_mutmut <- species %>%
+  filter(time > 200400)
+
+
+
+autocor<-acf(results$targ_1, pl=F)
+
+tempacf <- tibble(
+  acf = autocor$acf,
+  lag = autocor$lag,
+  paramset = i
+)
 
 orig_color = 'black'
 nons_color = 'firebrick2'
@@ -76,7 +94,7 @@ spec_plot2 <- ggplot() +
   geom_line(data = transition_samp_2, aes(time, Anonsense1), color = nons_color) +
   geom_line(data = transition_samp_2, aes(time, Aprime1), color = para_color) +
   geom_line(data = transition_samp_2, aes(time, B1), color = targ_color) +
-  ylab('Abundance')
+  ylab('Abundance')+ theme_classic()
 
 burstOn_plot2 <- ggplot() +
   theme_classic() +
@@ -89,8 +107,28 @@ burstOn_plot2 <- ggplot() +
   geom_line(data = transition_samp_2, aes(time, Burst1_on_targ_allele1 + 0), color = targ_color) +
   geom_line(data = transition_samp_2, aes(time, Burst1_on_targ_allele2 - 0.01), color = targ_color) +
   geom_vline(data = transition_samp_2, aes(xintercept = 200000), color = nons_color, linetype = 2) +
-  ylab('Burst status')
-grid.arrange(spec_plot2, burstOn_plot2, ncol=1)
+  ylab('Burst status')+ theme_classic()
+
+transition_samp_2_pro <- transition_samp_2 %>% 
+  mutate(promoter1_state = case_when(
+    Promoter1_unbound_targ_allele1 == 1 ~ 'unbound',
+    Promoter1_boundbyorig_targ_allele1 == 1 ~ 'orig',
+    Promoter1_boundbypara_targ_allele1 == 1 ~ 'para'
+  ),
+  promoter2_state = case_when(
+    Promoter1_unbound_targ_allele2 == 1 ~ 'unbound',
+    Promoter1_boundbyorig_targ_allele2 == 1 ~ 'orig',
+    Promoter1_boundbypara_targ_allele2 == 1 ~ 'para'
+  ))
+promoter_plot2 <- ggplot() +
+  geom_linerange(data = transition_samp_2_pro, stat = 'identity', aes(time, ymin = 0.7, ymax = 1.3, color = promoter1_state)) +
+  geom_linerange(data = transition_samp_2_pro, stat = 'identity', aes(time, ymin = 1.7, ymax = 2.3, color = promoter2_state)) +
+  scale_color_manual(values = c('orig' = orig_color, 'para' = para_color, 'unbound' = 'white')) + theme_classic() + theme(legend.position = 'none') +
+  ylab('Target allele promoter')
+
+t2_plot <- grid.arrange(spec_plot2, burstOn_plot2, promoter_plot2, ncol=1)
+
+
 
  ggplot() +
   theme_classic() +
