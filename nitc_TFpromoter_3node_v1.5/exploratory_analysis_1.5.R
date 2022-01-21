@@ -6,32 +6,34 @@ library(gridExtra)
 
 setwd('~/code/grn_nitc/nitc_TFpromoter_3node_v1.5/')
 
-paramset = 1
+paramset = 5
 
 params<-read.csv(paste0('initialsim_rates',as.character(paramset),'.csv'),header = T)
 
-species<-t(as.matrix(read.csv(paste0('initialsim_species',as.character(paramset),'.csv'), header = F)))
-colnames(species)<-c('A1',
-                     'Anonsense1',
-                     'Aprime1',
-                     'B1',
-                     'Promoter1_unbound_targ_allele1',
-                     'Promoter1_boundbyorig_targ_allele1',
-                     'Promoter1_boundbypara_targ_allele1',
-                     'Promoter1_unbound_targ_allele2',
-                     'Promoter1_boundbyorig_targ_allele2',
-                     'Promoter1_boundbypara_targ_allele2',
-                     'Burst1_on_targ_allele1',
-                     'Burst1_on_targ_allele2',
-                     'Burst1_on_para_allele1',
-                     'Burst1_on_para_allele2',
-                     'Burst1_on_orig_allele1',
-                     'Burst1_on_orig_allele2',
-                     'Burst1_is_mutated_allele1',
-                     'Burst1_is_mutated_allele2')
-species %<>% as_tibble() %>%
+species<-as_tibble(read.csv(paste0('initialsim_species',as.character(paramset),'.csv'), header = T))%>%
   mutate(time = 1:nrow(species),
          paramset = paramset)
+# colnames(species)<-c('A1',
+#                      'Anonsense1',
+#                      'Aprime1',
+#                      'B1',
+#                      'Promoter1_unbound_targ_allele1',
+#                      'Promoter1_boundbyorig_targ_allele1',
+#                      'Promoter1_boundbypara_targ_allele1',
+#                      'Promoter1_unbound_targ_allele2',
+#                      'Promoter1_boundbyorig_targ_allele2',
+#                      'Promoter1_boundbypara_targ_allele2',
+#                      'Burst1_on_targ_allele1',
+#                      'Burst1_on_targ_allele2',
+#                      'Burst1_on_para_allele1',
+#                      'Burst1_on_para_allele2',
+#                      'Burst1_on_orig_allele1',
+#                      'Burst1_on_orig_allele2',
+#                      'Burst1_is_mutated_allele1',
+#                      'Burst1_is_mutated_allele2')
+# species %<>% as_tibble() %>%
+#   mutate(time = 1:nrow(species),
+#          paramset = paramset)
 
 
 transition_samp_1 <- species %>%
@@ -40,18 +42,26 @@ transition_samp_1 <- species %>%
 transition_samp_2 <- species %>%
   filter(time > 197000, time < 203000)
 
+steady_state_wtwt <- species %>%
+  filter(time > 400, time < 100000) 
+
+
 steady_state_sample_wtwt <- species %>%
-  filter(time > 400, time < 100000, time %% 500 == 499) 
+  filter(time > 400, time < 100000, (time + 1) %% 100 == 0) 
 
-steady_state_wtmut <- species %>%
-  filter(time > 100400, time < 200000)
+steady_state_sample_wtmut <- species %>%
+  filter(time > 100400, time < 200000, (time + 1) %% 100 == 0)
 
-steady_state_mutmut <- species %>%
-  filter(time > 200400)
+steady_state_sample_mutmut <- species %>%
+  filter(time > 200400, (time + 1) %% 100 == 0)
 
+autocor_ww<-acf(steady_state_wtwt$B1, lag.max = 1000)
 
+autocor_wws<-acf(steady_state_sample_wtwt$B1)
+autocor_wms<-acf(steady_state_sample_wtmut$B1)
+autocor_mms<-acf(steady_state_sample_mutmut$B1)
 
-autocor<-acf(results$targ_1, pl=F)
+grid.arrange(plot(autocor_wws), plot(autocor_wms), plot(autocor_mms))
 
 tempacf <- tibble(
   acf = autocor$acf,
