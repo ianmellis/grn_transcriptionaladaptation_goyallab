@@ -6,7 +6,7 @@ library(gridExtra)
 
 setwd('~/code/grn_nitc/nitc_TFpromoter_3node_v1.5/')
 
-paramset = 3
+paramset = 1
 
 params<-read.csv(paste0('initialsim_rates',as.character(paramset),'.csv'),header = T)
 
