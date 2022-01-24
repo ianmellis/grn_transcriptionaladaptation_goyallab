@@ -57,17 +57,17 @@ steady_state_sample_mutmut <- species %>%
 
 autocor_ww<-acf(steady_state_wtwt$B1, lag.max = 1000)
 
+pdf('autocor_steadstatesamples_q100.pdf')
 autocor_wws<-acf(steady_state_sample_wtwt$B1)
 autocor_wms<-acf(steady_state_sample_wtmut$B1)
 autocor_mms<-acf(steady_state_sample_mutmut$B1)
+dev.off()
 
-grid.arrange(plot(autocor_wws), plot(autocor_wms), plot(autocor_mms))
-
-tempacf <- tibble(
-  acf = autocor$acf,
-  lag = autocor$lag,
-  paramset = i
-)
+pdf('autocor_steadstatesamples.pdf')
+a1<-plot(autocor_wws)
+a2<-plot(autocor_wms)
+a3<-plot(autocor_mms)
+dev.off()
 
 orig_color = 'black'
 nons_color = 'firebrick2'
