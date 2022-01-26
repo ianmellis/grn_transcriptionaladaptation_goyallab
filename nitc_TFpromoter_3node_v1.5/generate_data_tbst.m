@@ -249,6 +249,7 @@ for i = 1:5
     [times,savespecies] = gillespie_burstshistomex_TFpromoterB(0,sp_1,ra_1,pr_1,sum(clock*100),maxgillespie,maxgillespie);
     
     sp_q300 = savespecies(:,[600:300:100000, 100600:300:200000, 200600:300:300000]);
+    sp_q300(19,:) = [600:300:100000, 100600:300:200000, 200600:300:300000];
     
     % Save results
     ddir = './nitc_TFpromoter_3node_v1.5/';
@@ -294,7 +295,8 @@ for i = 1:5
         'Burst1_on_orig_allele1',...
         'Burst1_on_orig_allele2',...
         'Burst1_is_mutated_allele1',...
-        'Burst1_is_mutated_allele2'}), sp_q300_f, 'Delimiter', ',') 
+        'Burst1_is_mutated_allele2',...
+        'time'}), sp_q300_f, 'Delimiter', ',') 
     writetable(ra_1_s,ra_f,'Delimiter',',')
     toc;
 end
