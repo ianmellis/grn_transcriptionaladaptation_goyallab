@@ -13,7 +13,7 @@ if(!dir.exists(plotdir)){
 }
 
 paramsets <- 1:5
-
+allstats <- list()
 for (paramset in paramsets){
 
   params<-as_tibble(read.csv(paste0('initialsim_rates',as.character(paramset),'.csv'), header = T)) %>%
