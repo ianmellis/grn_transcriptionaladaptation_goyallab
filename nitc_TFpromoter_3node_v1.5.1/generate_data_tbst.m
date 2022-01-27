@@ -2,7 +2,11 @@
 % diploid, alleles independent, NITC affects ancestral and paralog
 % substrate competition between ancestral and paralog at target promoter
 
-outdir = '/Users/ian/code/grn_nitc'
+outdir = '/Volumes/IAMYG1/grn_nitc_data/v1.5.1/';
+
+if ~exist(outdir, 'dir')
+    mkdir(outdir)
+end
 
 %% LHS
 % Fixed parameter values: r_deg = 0.1, r_onbasal_A1 = 1, x= 0.5
@@ -87,13 +91,14 @@ lhs_1_s.Properties.VariableNames = {'basal_nitc_on_ratio',...
     'r_prod_on',...
     'r_bound_byA1_B1',...
     'r_bind_byA1_B1',...
-    'Hill coefficient n'};
+    'Hill_coefficient_n'};
 writetable(lhs_1_s,lhs_1_f,'Delimiter',',')
 %%
+tic
 for i = 1:nruns
-    tic
+    
     % Set seed
-    %%
+    %
     rng(8574);
     
     % rate ratios
@@ -307,19 +312,19 @@ for i = 1:nruns
     
     maxgillespie = 300000;
     
-    %%
+    %
     
     [times,savespecies] = gillespie_burstshistomex_TFpromoterB(0,sp_1,ra_1,pr_1,sum(clock*100),maxgillespie,maxgillespie);
     
-    sp_q300 = savespecies(:,[600:300:100000, 100600:300:200000, 200600:300:300000]);
-    sp_q300(19,:) = [600:300:100000, 100600:300:200000, 200600:300:300000];
+    sp_q300 = savespecies(:,[599:300:100000, 100599:300:200000, 200599:300:300000]);
+    sp_q300(19,:) = [599:300:100000, 100599:300:200000, 200599:300:300000];
     
     % Save results
-    ddir = './nitc_TFpromoter_3node_v1.5/';
+%     ddir = './nitc_TFpromoter_3node_v1.5/';
     
-    sp_f = [ddir, 'initialsim_species', num2str(paramsetnum), '.csv'];
-    sp_q300_f = [ddir, 'initialsim_species', num2str(paramsetnum), '_q300.csv'];
-    ra_f = [ddir, 'initialsim_rates', num2str(paramsetnum), '.csv'];
+    sp_f = [outdir, 'initialsim_species', num2str(paramsetnum), '.csv'];
+    sp_q300_f = [outdir, 'initialsim_species', num2str(paramsetnum), '_q300.csv'];
+    ra_f = [outdir, 'initialsim_rates', num2str(paramsetnum), '.csv'];
     
     writetable(array2table(transpose(savespecies),'VariableNames',{'A1',...
         'Anonsense1',...
@@ -360,9 +365,10 @@ for i = 1:nruns
         'Burst1_is_mutated_allele1',...
         'Burst1_is_mutated_allele2',...
         'time'}), sp_q300_f, 'Delimiter', ',') 
-    writetable(ra_1_s,ra_f,'Delimiter',',')
-    toc;
+    %
+    
 end
+toc;
 %% LHS
 % search over: r_prod, r_deg
 min_range = [repmat(0.01,1,1),...       %production rate - same for all genes
