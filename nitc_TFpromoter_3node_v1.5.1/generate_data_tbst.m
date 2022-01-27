@@ -2,6 +2,8 @@
 % diploid, alleles independent, NITC affects ancestral and paralog
 % substrate competition between ancestral and paralog at target promoter
 
+outdir = '/Users/ian/code/grn_nitc'
+
 %% LHS
 % Fixed parameter values: r_deg = 0.1, r_onbasal_A1 = 1, x= 0.5
 % 
@@ -9,9 +11,11 @@
 % A1_Aprime1_boundOn_ratio, A1_Aprime_binding_ratio,
 % bindbyA1_unbindbyA1_ratio, r_prod_on, r_bound_byA1_B1, r_bind_byA1_B1, 
 % r_unbind_byA1_B1
+rng(8734);
+
 nruns = 100;
 
-min_range = [repmat(0.05,1,1),...       %basal_nitc_on_ratio
+min_range = [repmat(0.5,1,1),...       %basal_nitc_on_ratio
     repmat(0.1,1,1),...                 %onbasalA1_off_ratio
     repmat(1,1,1),...                   %A1_Aprime1_boundOn_ratio
     repmat(0.1,1,1),...                 %A1_Aprime_binding_ratio
@@ -21,7 +25,7 @@ min_range = [repmat(0.05,1,1),...       %basal_nitc_on_ratio
     repmat(0.5,1,1),...                 %r_bind_byA1_B1
     repmat(0.1,1,1)];                   %n (Hill coefficient n)
 
-max_range = [repmat(1,1,1),...          %basal_nitc_on_ratio
+max_range = [repmat(25,1,1),...          %basal_nitc_on_ratio
     repmat(10,1,1),...                  %onbasalA1_off_ratio
     repmat(25,1,1),...                  %A1_Aprime1_boundOn_ratio
     repmat(10,1,1),...                  %A1_Aprime_binding_ratio
@@ -72,11 +76,24 @@ latinhyp = lhsdesign_modified(nruns, min_range, max_range);
 % % r_bind_byA1_B1/r_unbind_byA1_B1 = relative bind-unbind rates. Assume same
 % % unbind rate for Aprime regardless of Aprime bind rate
 % bindbyA1_unbindbyA1_ratios = [100, 100, 100, 100, 10];
+lhs_1_f = [outdir, 'latinhyp_sampledSets.csv'];
+
+lhs_1_s = array2table(latinhyp);
+lhs_1_s.Properties.VariableNames = {'basal_nitc_on_ratio',...
+    'onbasalA1_off_ratio',...
+    'A1_Aprime1_boundOn_ratio',...
+    'A1_Aprime_binding_ratio',...
+    'bindbyA1_unbindbyA1_ratio',...
+    'r_prod_on',...
+    'r_bound_byA1_B1',...
+    'r_bind_byA1_B1',...
+    'Hill coefficient n'};
+writetable(lhs_1_s,lhs_1_f,'Delimiter',',')
 %%
 for i = 1:nruns
     tic
     % Set seed
-    
+    %%
     rng(8574);
     
     % rate ratios
@@ -289,6 +306,8 @@ for i = 1:nruns
     % runs infinitely when both alleles mutated
     
     maxgillespie = 300000;
+    
+    %%
     
     [times,savespecies] = gillespie_burstshistomex_TFpromoterB(0,sp_1,ra_1,pr_1,sum(clock*100),maxgillespie,maxgillespie);
     
