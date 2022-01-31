@@ -3,6 +3,7 @@ library(magrittr)
 library(ineq)
 library(Hmisc)
 library(gridExtra)
+source('~/code/grn_nitc/Functions/grn_analysis_utilities.R')
 
 datadir <- '/Volumes/IAMYG1/grn_nitc_data/v1.5.1/'
 plotdir <- '~/code/grn_nitc/nitc_TFpromoter_3node_v1.5.1/exploratory_analysis/'
@@ -48,7 +49,9 @@ for (paramset in paramsets){
               sd_product = sd(abundance),
               cv_product = sd_product/(mean_product + 0.01),
               fano_product = sd_product^2/(mean_product + 0.01),
-              gini_product = ineq(abundance + 1, type = 'Gini', na.rm = T))
+              gini_product = ineq(abundance + 1, type = 'Gini', na.rm = T),
+              bimodality_coef = calculate_bimodality(abundance),
+              HDTpval = dip.test(abundance)$p.value)
   
   if(is.null(dim(allstats))) {
     allstats <- spstats
