@@ -83,6 +83,7 @@ for (st in unistats) {
   
   p1 <- ggplot(compared_stats %>% filter(stat == st | stat == 'mean_product') %>% pivot_wider(names_from = stat, values_from = diff), aes(mean_product, eval(as.symbol(st)))) + 
     geom_point() + 
+    geom_text(aes(label = paramset)) +
     facet_grid(product~compare, scales = 'free') +
     theme_bw() +
     ggtitle(paste0('Change in ', st, ' vs. change in mean')) +
