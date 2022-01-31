@@ -62,3 +62,32 @@ for (paramset in paramsets){
 }
 
 write.csv(allstats, file = paste0(plotdir, 'summarystats.csv'))
+
+# compare summary stats
+compared_stats <- allstats %>% 
+  group_by(paramset, product, mutated_alleles) %>% 
+  pivot_longer(names_to = 'stat', values_to = 'value', cols = mean_product:HDTpval) %>% 
+  pivot_wider(names_from = mutated_alleles, values_from = value) %>% 
+  mutate(lfc10 = log2(`1`/`0`), 
+         delta10 = `1`-`0`,
+         lfc21 = log2(`2`/`1`), 
+         delta21 = `2`-`1`,
+         lfc20 = log2(`2`/`0`), 
+         delta20 = `2`-`0`) %>%
+  dplyr::select(-c(`0`:`2`)) %>% 
+  pivot_longer(names_to = 'compare', values_to = 'diff', cols = lfc10:delta20) 
+
+unistats<-unique(compared_stats$stat)
+
+for (st in unistats) {
+  
+  p1 <- ggplot(compared_stats %>% filter(stat == st | stat == 'mean_product') %>% pivot_wider(names_from = stat, values_from = diff), aes(mean_product, eval(as.symbol(st)))) + 
+    geom_point() + 
+    facet_grid(product~compare, scales = 'free') +
+    theme_bw() +
+    ggtitle(paste0('Change in ', st, ' vs. change in mean')) +
+    ylab(paste0('Change in ', st)) +
+    xlab('Change in mean')
+  ggsave(p1, file = paste0(plotdir, 'changein_', st, '_vs_mean.pdf'), width = 16, height = 8)
+  
+}
