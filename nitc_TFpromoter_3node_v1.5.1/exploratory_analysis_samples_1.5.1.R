@@ -15,12 +15,18 @@ if(!dir.exists(plotdir)){
 
 paramsets <- 1:100
 allstats <- list()
+allparams <- list()
 for (paramset in paramsets){
   
   cat(paste0('Working on ', as.character(paramset), '\n'))
   
   params<-as_tibble(read.csv(paste0('initialsim_rates',as.character(paramset),'.csv'), header = T)) %>%
-    mutate(paramset = paramset)
+    mutate(paramset = paramset,
+           ssA_wt = 2*r_onbasal_A1*r_prodon_A1/(r_deg_A1*(r_onbasal_A1+r_off_A1)),
+           HBA_wt = r_bind_byA1_B1*(ssA_wt^n_A1)/(k_A1^n_A1 + ssA_wt^n_A1),
+           boundA_wt = HBA_wt/(HBA_wt+r_unbind_byA1_B1),
+           onB_wt = r_bound_byA1_B1*boundA_wt/(r_bound_byA1_B1*boundA_wt + r_off_B1),
+           ssB_wt = 2*r_prodon_B1*onB_wt/r_deg_B1)
   
   species<-as_tibble(read.csv(paste0('initialsim_species',as.character(paramset),'_q300.csv'), header = T))
   
@@ -59,6 +65,12 @@ for (paramset in paramsets){
     allstats %<>% bind_rows(spstats)
   }
   
+  if(is.null(dim(allparams))) {
+    allparams <- params
+  } else {
+    allparams %<>% bind_rows(params)
+  }
+  
 }
 
 write.csv(allstats, file = paste0(plotdir, 'summarystats.csv'))
@@ -92,3 +104,24 @@ for (st in unistats) {
   ggsave(p1, file = paste0(plotdir, 'changein_', st, '_vs_mean.pdf'), width = 16, height = 8)
   
 }
+
+ssA_plot <- ggplot(inner_join(allstats %>% 
+                                dplyr::select(paramset, product, mean_product) %>% 
+                                group_by(paramset) %>% 
+                                filter(mutated_alleles == 0) %>% 
+                                pivot_wider(names_from = product, values_from = mean_product), allparams, by = 'paramset'), aes(A1, ssA_wt)) +
+  geom_point() +
+  theme_bw() +
+  ggtitle('Steady-state approximation of A1 vs simulation\nWild-type genotype, 100 parameter sets')
+
+ssB_plot <- ggplot(inner_join(allstats %>% 
+                                dplyr::select(paramset, product, mean_product) %>% 
+                                group_by(paramset) %>% 
+                                filter(mutated_alleles == 0) %>% 
+                                pivot_wider(names_from = product, values_from = mean_product), allparams, by = 'paramset'), aes(B1, ssB_wt)) +
+  geom_point() +
+  theme_bw() +
+  ggtitle('Steady-state approximation of B1 vs simulation\nWild-type genotype, 100 parameter sets')
+pdf(paste0(plotdir, 'steadystate_wt_AB.pdf'), width = 10, height = 5)
+ss_wt<-grid.arrange(ssA_plot, ssB_plot, ncol=2)
+dev.off()
