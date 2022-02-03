@@ -46,4 +46,16 @@ ic = [0;1;0;0;1;0;1;0];
 %%
 [t,y] = ode45(@(t,y) odefun1(t,y,ra_1), ts, ic);
 
+t1=t; y1=y;
 
+%% diploid wt/wt
+ts_wt = [0 100];
+ic_wt = [0;1;0;1;0;0;1;0;1;0;1;0;1;0];
+
+[t,y] = ode45(@(t,y) odefun_wtwt(t,y,ra_1), ts_wt, ic_wt);
+
+%% diploid wt/mut
+ts_wt = [0 100];
+ic_wt = [0;1;0;1;0;0;1;0;1;0;1;0;1;0];
+
+[t,y] = ode45(@(t,y) odefun_wtmut(t,y,ra_1), ts_wt, ic_wt);

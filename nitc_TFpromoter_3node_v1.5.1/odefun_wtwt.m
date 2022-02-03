@@ -44,5 +44,5 @@ dydt(10) = r_bound_byA1_B1*y(11) - r_off_B1*y(10);
 dydt(11) = -r_bound_byA1_B1*y(11) + r_off_B1*y(10);
 dydt(12) = r_bound_byA1_B1*y(13) - r_off_B1*y(12);
 dydt(13) = -r_bound_byA1_B1*y(13) + r_off_B1*y(12);
-dydt(14) = r_prodon_B1*y(6) - r_deg_B1*y(8);
+dydt(14) = r_prodon_B1*y(10) + r_prodon_B1*y(12) - r_deg_B1*y(14);
 end
