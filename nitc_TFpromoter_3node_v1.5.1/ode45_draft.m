@@ -93,7 +93,8 @@ t_wtmut = t;
 y_wtmut = y;
 
 %% het for all 100 paramsets
-ssSP = zeros(100,5);
+ssSP_wm = zeros(100,5);
+ssSP_mm = zeros(100,5);
 for i = 1:100
     
     rng(8574);
@@ -231,13 +232,25 @@ for i = 1:100
     ss_Aprim1 = real(y(size(y,1),11));
     ss_B1 = real(y(size(y,1),22));
     
-    ssSP(i,:) = [i,ss_A1,ss_Anons1,ss_Aprim1,ss_B1];
+    ssSP_wm(i,:) = [i,ss_A1,ss_Anons1,ss_Aprim1,ss_B1];
+    
+    [t,y] = ode45(@(t,y) odefun_wtmut(t,y,ra_1), ts_wt, ic_wt);
+    
+    ss_A1 = real(y(size(y,1),5));
+    ss_Anons1 = real(y(size(y,1),6));
+    ss_Aprim1 = real(y(size(y,1),11));
+    ss_B1 = real(y(size(y,1),22));
+    
+    ssSP_mm(i,:) = [i,ss_A1,ss_Anons1,ss_Aprim1,ss_B1];
+    
     
 end
 
 %%
 ss_file = 'steady_state_ODE45_wtmut.csv';
-ss_table = array2table(ssSP, 'VariableNames', {'paramset', 'ss_A1','ss_Anons1','ss_Aprim1','ss_B1'});
+ss_table = array2table(ssSP_wm, 'VariableNames', {'paramset', 'ss_A1','ss_Anons1','ss_Aprim1','ss_B1'});
 writetable(ss_table, ss_file, 'Delimiter', ',')
 
-
+ss_file = 'steady_state_ODE45_mutmut.csv';
+ss_table = array2table(ssSP_mm, 'VariableNames', {'paramset', 'ss_A1','ss_Anons1','ss_Aprim1','ss_B1'});
+writetable(ss_table, ss_file, 'Delimiter', ',')
