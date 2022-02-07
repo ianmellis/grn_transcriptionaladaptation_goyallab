@@ -87,7 +87,13 @@ compared_stats <- allstats %>%
          lfc20 = log2(`2`/`0`), 
          delta20 = `2`-`0`) %>%
   dplyr::select(-c(`0`:`2`)) %>% 
-  pivot_longer(names_to = 'compare', values_to = 'diff', cols = lfc10:delta20) 
+  pivot_longer(names_to = 'compare', values_to = 'diff', cols = lfc10:delta20) %>%
+  inner_join(allstats %>%
+               dplyr::select(mutated_alleles, product, paramset, mean_product) %>%
+               pivot_wider(names_from = mutated_alleles, values_from = mean_product), by = c('product', 'paramset')) %>%
+  mutate(mean_denom = case_when(
+    compare %in% c('lfc10', 'delta10', 'lfc20', 'delta20') ~ `0`,
+    compare %in% c('lfc21', 'delta21') ~ `1`))
 
 unistats<-unique(compared_stats$stat)
 
@@ -102,6 +108,17 @@ for (st in unistats) {
     ylab(paste0('Change in ', st)) +
     xlab('Change in mean')
   ggsave(p1, file = paste0(plotdir, 'changein_', st, '_vs_mean.pdf'), width = 16, height = 8)
+  
+  p2 <- ggplot(compared_stats %>% filter(stat == st | stat == 'mean_product') %>% pivot_wider(names_from = stat, values_from = diff), aes(mean_product, eval(as.symbol(st)))) + 
+    geom_point() + 
+    geom_text(aes(label = paramset)) +
+    facet_grid(product~compare, scales = 'free') +
+    theme_bw() +
+    ggtitle(paste0('Change in ', st, ' vs. change in mean')) +
+    ylab(paste0('Change in ', st)) +
+    xlab('Change in mean')
+  ggsave(p1, file = paste0(plotdir, 'changein_', st, '_vs_mean.pdf'), width = 16, height = 8)
+  
   
 }
 
