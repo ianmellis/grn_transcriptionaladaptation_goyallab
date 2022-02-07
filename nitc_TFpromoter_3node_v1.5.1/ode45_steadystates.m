@@ -1,101 +1,95 @@
-%% dsolve attempt
+% ODE45-based steady state analysis of NITC-TFpromoter_3node_v1.5.1
+% simulations
 
-syms ona(t) offa(t) a(t) bba(t) unb(t) onb(t) offb(t) b(t)
+% runs ode45 for finding steady-state expression values of all species in
+% all 3 ancestral genotypes (wt/wt, wt/mut, mut/mut). Uses the same 100 LHS
+% parameter sets from v1.5.1
 
-ode1 = diff(ona) == r_onbasal_A1*offa - r_off_A1*ona;
-ode2 = diff(offa) == -r_onbasal_A1*offa + r_off_A1*ona;
-ode3 = diff(a) == r_prodon_A1*ona - r_deg_A1*a;
-ode4 = diff(bba) == (r_bind_byA1_B1*a^n_A1/(k_A1^n_A1 + a^n_A1))*unb - r_unbind_byA1_B1*bba;
-ode5 = diff(unb) == -(r_bind_byA1_B1*a^n_A1/(k_A1^n_A1 + a^n_A1))*unb + r_unbind_byA1_B1*bba;
-ode6 = diff(onb) == r_bound_byA1_B1*offb - r_off_B1*onb;
-ode7 = diff(offb) == -r_bound_byA1_B1*offb + r_off_B1*onb;
-ode8 = diff(b) == r_prodon_B1*onb - r_deg_B1*b;
+%% LHS
+% Fixed parameter values: r_deg = 0.1, r_onbasal_A1 = 1, x= 0.5
+% 
+% search over: basal_nitc_on_ratio, onbasalA1_off_ratio,
+% A1_Aprime1_boundOn_ratio, A1_Aprime_binding_ratio,
+% bindbyA1_unbindbyA1_ratio, r_prod_on, r_bound_byA1_B1, r_bind_byA1_B1, 
+% r_unbind_byA1_B1
+rng(8734);
 
-%%
-odes = [ode1;ode2;ode3;ode4;ode5;ode6;ode7;ode8];
+nruns = 100;
 
-%%
-S = dsolve(odes);
-% explicit solution could not be found
+min_range = [repmat(0.5,1,1),...       %basal_nitc_on_ratio
+    repmat(0.1,1,1),...                 %onbasalA1_off_ratio
+    repmat(1,1,1),...                   %A1_Aprime1_boundOn_ratio
+    repmat(0.1,1,1),...                 %A1_Aprime_binding_ratio
+    repmat(1,1,1),...                   %bindbyA1_unbindbyA1_ratio
+    repmat(1,1,1),...                   %r_prod_on
+    repmat(0.1,1,1),...                 %r_bound_byA1_B1
+    repmat(0.5,1,1),...                 %r_bind_byA1_B1
+    repmat(0.1,1,1)];                   %n (Hill coefficient n)
 
-%% ODE45 version
+max_range = [repmat(25,1,1),...          %basal_nitc_on_ratio
+    repmat(10,1,1),...                  %onbasalA1_off_ratio
+    repmat(25,1,1),...                  %A1_Aprime1_boundOn_ratio
+    repmat(10,1,1),...                  %A1_Aprime_binding_ratio
+    repmat(100,1,1),...                 %bindbyA1_unbindbyA1_ratio
+    repmat(100,1,1),...                 %r_prod_on
+    repmat(5,1,1),...                   %r_bound_byA1_B1
+    repmat(50,1,1),...                  %r_bind_byA1_B1
+    repmat(10,1,1)];                    %n (Hill coefficient n)
 
-% vector: y: 
-% y(1) = ona
-% y(2) = offa
-% y(3) = a 
-% y(4) = bba
-% y(5) = unb
-% y(6) = onb
-% y(7) = offb 
-% y(8) = b
-% function dydt = odefun1(t,y)
-% dydt = zeros(8,1);
-% dydt(1) = r_onbasal_A1*y(2) - r_off_A1*y(1);
-% dydt(2) = -r_onbasal_A1*y(2) + r_off_A1*y(1);
-% dydt(3) = r_prodon_A1*y(1) - r_deg_A1*y(3);
-% dydt(4) = (r_bind_byA1_B1*y(3)^n_A1/(k_A1^n_A1 + y(3)^n_A1))*y(5) - r_unbind_byA1_B1*y(4);
-% dydt(5) = -(r_bind_byA1_B1*y(3)^n_A1/(k_A1^n_A1 + y(3)^n_A1))*y(5) + r_unbind_byA1_B1*y(4);
-% dydt(6) = r_bound_byA1_B1*y(7) - r_off_B1*y(6);
-% dydt(7) = -r_bound_byA1_B1*y(7) + r_off_B1*y(6);
-% dydt(8) = r_prodon_B1*y(6) - r_deg_B1*y(8);
-% end
-%%
-ts = [0 100];
-ic = [0;1;0;0;1;0;1;0];
-%%
-[t,y] = ode45(@(t,y) odefun1(t,y,ra_1), ts, ic);
+latinhyp = lhsdesign_modified(nruns, min_range, max_range);
 
-t1=t; y1=y;
+% %%
+% latinhyp_prod = repmat(latinhyp(:,1),1,n_species);
+% latinhyp_deg = repmat(latinhyp(:,2),1,n_species);
+% latinhyp_onbasal = repmat(latinhyp(:,3),1,n_species_upstr);
+% latinhyp_n = repmat(latinhyp(:,4),1,n_species);
+% latinhyp_ondep = repmat(latinhyp(:,5),1,n_species_downstr);
+% latinhyp_off = repmat(latinhyp(:,6),1,n_species);
+% latinhyp_proddiff = repmat(latinhyp(:,7),1,n_species);
+% 
+% %     new parameters
+% latinhyp_onbasal_multiple_aprime = repmat(latinhyp(:,8),1,n_species_paralog); % change this to only apply to paralogs
+% latinhyp_onbasal_multiple_b = repmat(latinhyp(:,9),1,n_species_downstr);
+% latinhyp_ondep_multiple_prime = repmat(latinhyp(:,10),1,n_species_downstr);
+% latinhyp_nitc = repmat(latinhyp(:,11),1,n_species_paralog);
+% 
+% x = 0.5;
+% 
+% %% wrap for multiple paramsets
+% 
+% % rate ratios
+% % r_onbasal_A1/r_nitc = relative on-rates of wt A1 and NITC-regulated
+% % alleles
+% basal_nitc_on_ratios = [10, 10, 10, 2, 10];
+% 
+% % r_onbasal_A1/r_off = on-off ratio, for speed of burst-off. Assume same
+% % off rate for all other alleles
+% onbasalA1_off_ratios = [1, 1, 1, 1, 1];
+% 
+% % r_bound_byA1_B1/r_bound_byAprime1_B1 = relative B1 on-rates caused by bound
+% % A1 vs Aprime1
+% A1_Aprime1_boundOn_ratios = [5, 10, 1, 5, 5];
+% 
+% % r_bind_byA1_B1/r_bind_byAprime1_B1 = relative promoter-binding rates of
+% % A1 vs Aprime1
+% A1_Aprime_binding_ratios = [5, 1, 10, 5, 5];
+% 
+% % r_bind_byA1_B1/r_unbind_byA1_B1 = relative bind-unbind rates. Assume same
+% % unbind rate for Aprime regardless of Aprime bind rate
+% bindbyA1_unbindbyA1_ratios = [100, 100, 100, 100, 10];
+lhs_1_f = [outdir, 'latinhyp_sampledSets.csv'];
 
-%% diploid wt/wt
-ts_wt = [0 100];
-ic_wt = [0;1;0;1;0;0;1;0;1;0;1;0;1;0];
+lhs_1_s = array2table(latinhyp);
+lhs_1_s.Properties.VariableNames = {'basal_nitc_on_ratio',...
+    'onbasalA1_off_ratio',...
+    'A1_Aprime1_boundOn_ratio',...
+    'A1_Aprime_binding_ratio',...
+    'bindbyA1_unbindbyA1_ratio',...
+    'r_prod_on',...
+    'r_bound_byA1_B1',...
+    'r_bind_byA1_B1',...
+    'Hill_coefficient_n'};
 
-[t,y] = ode45(@(t,y) odefun_wtwt(t,y,ra_1), ts_wt, ic_wt);
-
-%
-t_wtwt = t;
-y_wtwt = y;
-
-ss_A1 = real(y(size(y,1),5));
-ss_B1 = real(y(size(y,1),14));
-
-ssSP_ww(i,:) = [i,ss_A1,ss_B1];
-%% diploid wt/mut
-% vector: y: 
-% y(1) = ona_1 (wt)
-% y(2) = offa_1 (wt)
-% y(3) = ona_2 (mut)
-% y(4) = offa_2 (mut)
-% y(5) = a 
-% y(6) = anons
-% y(7) = onap_1 
-% y(8) = offap_1 
-% y(9) = onap_2 
-% y(10) = offap_2 
-% y(11) = aprim 
-% y(12) = bba_1
-% y(13) = bbap_1
-% y(14) = unb_1
-% y(15) = bba_2
-% y(16) = bbap_2
-% y(17) = unb_2
-% y(18) = onb_1
-% y(19) = offb_1
-% y(20) = onb_2
-% y(21) = offb_2
-% y(22) = b
-ts_wtmut = [0 1000];
-ic_wtmut = [0;1;0;1;0;0;...
-    0;1;0;1;0;...
-    0;0;1;0;0;1;...
-    0;1;0;1;0];
-
-[t,y] = ode45(@(t,y) odefun_wtmut(t,y,ra_1), ts_wt, ic_wt);
-
-t_wtmut = t;
-y_wtmut = y;
 
 %% het for all 100 paramsets
 ssSP_ww = zeros(100,5);
@@ -231,7 +225,7 @@ for i = 1:100
         0;0;1;0;0;1;...
         0;1;0;1;0];
     
-    [t,y] = ode45(@(t,y) odefun_wtwt2(t,y,ra_1), ts_wtmut, ic_wtmut);
+    [t,y] = ode45(@(t,y) odefun_wtwt2(t,y,ra_1), ts_wtmut, ic_wtmut); %odefun_wtwt was slightly different format but also worked
     
     ss_A1 = real(y(size(y,1),5));
     ss_Anons1 = real(y(size(y,1),6));
@@ -258,19 +252,7 @@ for i = 1:100
     
     ssSP_mm(i,:) = [i,ss_A1,ss_Anons1,ss_Aprim1,ss_B1];
     
-%     ts_wt = [0 500];
-%     ic_wt = [0;1;0;1;0;0;1;0;1;0;1;0;1;0];
-    
-%     [t,y] = ode45(@(t,y) odefun_wtwt(t,y,ra_1), ts_wt, ic_wt);
-%     
-%     %
-%     t_wtwt = t;
-%     y_wtwt = y;
-%     
-%     ss_A1 = real(y(size(y,1),5));
-%     ss_B1 = real(y(size(y,1),14));
-%     
-%     ssSP_ww(i,:) = [i,ss_A1,ss_B1];
+
     
 end
 
