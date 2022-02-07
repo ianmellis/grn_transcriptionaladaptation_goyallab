@@ -5,6 +5,9 @@
 % all 3 ancestral genotypes (wt/wt, wt/mut, mut/mut). Uses the same 100 LHS
 % parameter sets from v1.5.1
 
+% edit as needed
+outdir = '~/code/grn_nitc/nitc_TFpromoter_3node_v1.5.1/';
+
 %% LHS
 % Fixed parameter values: r_deg = 0.1, r_onbasal_A1 = 1, x= 0.5
 % 
@@ -77,7 +80,7 @@ latinhyp = lhsdesign_modified(nruns, min_range, max_range);
 % % r_bind_byA1_B1/r_unbind_byA1_B1 = relative bind-unbind rates. Assume same
 % % unbind rate for Aprime regardless of Aprime bind rate
 % bindbyA1_unbindbyA1_ratios = [100, 100, 100, 100, 10];
-lhs_1_f = [outdir, 'latinhyp_sampledSets.csv'];
+% lhs_1_f = [outdir, 'latinhyp_sampledSets.csv'];
 
 lhs_1_s = array2table(latinhyp);
 lhs_1_s.Properties.VariableNames = {'basal_nitc_on_ratio',...
@@ -257,14 +260,14 @@ for i = 1:100
 end
 
 %%
-ss_file = 'steady_state_ODE45_wtwt2.csv';
+ss_file = [outdir, 'steady_state_ODE45_wtwt2.csv'];
 ss_table = array2table(ssSP_ww, 'VariableNames', {'paramset', 'ss_A1','ss_Anons1','ss_Aprim1','ss_B1'});
 writetable(ss_table, ss_file, 'Delimiter', ',')
 
-ss_file = 'steady_state_ODE45_wtmut2.csv';
+ss_file = [outdir, 'steady_state_ODE45_wtmut2.csv'];
 ss_table = array2table(ssSP_wm, 'VariableNames', {'paramset', 'ss_A1','ss_Anons1','ss_Aprim1','ss_B1'});
 writetable(ss_table, ss_file, 'Delimiter', ',')
 
-ss_file = 'steady_state_ODE45_mutmut2.csv';
+ss_file = [outdir, 'steady_state_ODE45_mutmut2.csv'];
 ss_table = array2table(ssSP_mm, 'VariableNames', {'paramset', 'ss_A1','ss_Anons1','ss_Aprim1','ss_B1'});
 writetable(ss_table, ss_file, 'Delimiter', ',')
