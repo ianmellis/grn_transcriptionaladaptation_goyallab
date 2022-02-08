@@ -13,6 +13,9 @@ if(!dir.exists(plotdir)){
   dir.create(plotdir)
 }
 
+lhs_sets <- as_tibble(read.csv('../latinhyp_sampledSets.csv')) %>%
+  mutate(paramset = 1:nrow(lhs_sets))
+
 paramsets <- 1:100
 allstats <- list()
 allparams <- list()
@@ -109,7 +112,16 @@ for (st in unistats) {
     xlab('Change in mean')
   ggsave(p1, file = paste0(plotdir, 'changein_', st, '_vs_mean.pdf'), width = 16, height = 8)
   
-  p2 <- ggplot(compared_stats %>% filter(stat == st | stat == 'mean_product') %>% pivot_wider(names_from = stat, values_from = diff), aes(mean_product, eval(as.symbol(st)))) + 
+  p2 <- ggplot(compared_stats %>% filter(stat == st | stat == 'mean_product') %>% pivot_wider(names_from = stat, values_from = diff), aes(mean_denom, eval(as.symbol(st)))) + 
+    geom_point() + 
+    geom_text(aes(label = paramset)) +
+    facet_grid(product~compare, scales = 'free') +
+    theme_bw() +
+    ggtitle(paste0('Change in ', st, ' vs. change in mean')) +
+    ylab(paste0('Change in ', st)) +
+    xlab('Starting mean abundance')
+  
+  p3 <- ggplot(compared_stats %>% filter(stat == st | stat == 'mean_product') %>% pivot_wider(names_from = stat, values_from = diff), aes(mean_product, eval(as.symbol(st)), color = mean_denom)) + 
     geom_point() + 
     geom_text(aes(label = paramset)) +
     facet_grid(product~compare, scales = 'free') +
@@ -117,10 +129,20 @@ for (st in unistats) {
     ggtitle(paste0('Change in ', st, ' vs. change in mean')) +
     ylab(paste0('Change in ', st)) +
     xlab('Change in mean')
-  ggsave(p1, file = paste0(plotdir, 'changein_', st, '_vs_mean.pdf'), width = 16, height = 8)
   
+  ggsave(p1, file = paste0(plotdir, 'changein_', st, '_vs_changeinmean.pdf'), width = 16, height = 8)
+  ggsave(p2, file = paste0(plotdir, 'changein_', st, '_vs_startingmean.pdf'), width = 16, height = 8)
+  ggsave(p3, file = paste0(plotdir, 'changein_', st, '_vs_changeinmean_colorstartingmean.pdf'), width = 16, height = 8)
   
 }
+
+
+lfc10_lhs <- compared_stats %>%
+  filter(compare == 'lfc10', product %in% c('A1', 'B1')) %>%
+  dplyr::select(product, paramset, stat, diff, mean_denom) %>%
+  pivot_wider(names_from = stat, values_from = diff) %>%
+  inner_join(lhs_sets, by = 'paramset') 
+corrplot(cor(as.matrix(lfc10_lhs %>% filter(product == 'B1') %>% ungroup() %>% dplyr::select(-product))))  
 
 ssA_plot <- ggplot(inner_join(allstats %>% 
                                 dplyr::select(paramset, product, mean_product) %>% 
