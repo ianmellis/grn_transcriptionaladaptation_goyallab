@@ -136,13 +136,32 @@ for (st in unistats) {
   
 }
 
-
+# correlation analysis: parameter/ratio sweep vs summary stats
 lfc10_lhs <- compared_stats %>%
   filter(compare == 'lfc10', product %in% c('A1', 'B1')) %>%
   dplyr::select(product, paramset, stat, diff, mean_denom) %>%
   pivot_wider(names_from = stat, values_from = diff) %>%
   inner_join(lhs_sets, by = 'paramset') 
-corrplot(cor(as.matrix(lfc10_lhs %>% filter(product == 'B1') %>% ungroup() %>% dplyr::select(-product))))  
+
+cor_B1_paramratio_stats10 <- corrplot(cor(as.matrix(lfc10_lhs %>% filter(product == 'B1') %>% ungroup() %>% dplyr::select(-product))))  
+
+lfc20_lhs <- compared_stats %>%
+  filter(compare == 'lfc20', product %in% c('A1', 'B1')) %>%
+  dplyr::select(product, paramset, stat, diff, mean_denom) %>%
+  pivot_wider(names_from = stat, values_from = diff) %>%
+  inner_join(lhs_sets, by = 'paramset') 
+
+cor_B1_paramratio_stats20 <- corrplot(cor(as.matrix(lfc20_lhs %>% filter(product == 'B1') %>% ungroup() %>% dplyr::select(-product))))  
+
+lfc21_lhs <- compared_stats %>%
+  filter(compare == 'lfc21', product %in% c('A1', 'B1')) %>%
+  dplyr::select(product, paramset, stat, diff, mean_denom) %>%
+  pivot_wider(names_from = stat, values_from = diff) %>%
+  inner_join(lhs_sets, by = 'paramset') 
+
+cor_B1_paramratio_stats21 <- corrplot(cor(as.matrix(lfc21_lhs %>% filter(product == 'B1') %>% ungroup() %>% dplyr::select(-product))))  
+
+
 
 ssA_plot <- ggplot(inner_join(allstats %>% 
                                 dplyr::select(paramset, product, mean_product) %>% 

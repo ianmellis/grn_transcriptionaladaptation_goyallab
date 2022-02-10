@@ -16,6 +16,9 @@ if(!dir.exists(plotdir)){
   dir.create(plotdir)
 }
 
+lhs_sets <- as_tibble(read.csv('../latinhyp_sampledSets.csv')) %>%
+  mutate(paramset = 1:nrow(lhs_sets))
+
 paramsets <- 1:100
 allstats <- list()
 allparams <- list()
@@ -179,3 +182,33 @@ ssB_mm_plot <- ggplot(inner_join(allstats %>%
 pdf(paste0(plotdir, 'steadystate_mutmut_AB.pdf'), width = 10, height = 10)
 ss_wt<-grid.arrange(ssA_mm_plot, ssAprim_mm_plot, ssAnons_mm_plot, ssB_mm_plot, ncol=2)
 dev.off()
+
+ssB_mm_plot_params <- ggplot(inner_join(allstats %>% 
+                                   filter(mutated_alleles == 2) %>% 
+                                   dplyr::select(paramset, product, mean_product) %>% 
+                                   group_by(paramset) %>% 
+                                   pivot_wider(names_from = product, values_from = mean_product), steadystate_ode45_mutmut, by = 'paramset'), aes(B1, ss_B1)) +
+  geom_point() +
+  geom_text_repel(aes(label = ifelse(abs(log(ss_B1/B1))>0.5 & B1>20, paramset, ''))) +
+  theme_bw() +
+  ggtitle('Steady-state approximation of B1 vs simulation\nMUT/MUT genotype, 100 parameter sets') +
+  xlab('Simulated pseduo-single-cell mean B1') +
+  ylab('ODE45 steady-state B1')
+
+off_diag_ssB_mutmut <- inner_join(allstats %>% 
+             filter(mutated_alleles == 2) %>% 
+             dplyr::select(paramset, product, mean_product) %>% 
+             group_by(paramset) %>% 
+             pivot_wider(names_from = product, values_from = mean_product), steadystate_ode45_mutmut, by = 'paramset') %>%
+  filter(abs(log(ss_B1/B1))>0.5, B1>20)
+
+lhs_sets_offdiag <- lhs_sets %>%
+  mutate(off_diag_ssB_mutmut = paramset %in% off_diag_ssB_mutmut$paramset)
+
+logit1<-glm(off_diag_ssB_mutmut ~ ., data = lhs_sets_offdiag, family = 'binomial')
+
+
+lhs_sets_offdiag2 <- lhs_sets %>%
+  mutate(off_diag_ssB_mutmut = (paramset %in% off_diag_ssB_mutmut$paramset & paramset != 99))
+
+logit2<-glm(off_diag_ssB_mutmut ~ ., data = lhs_sets_offdiag2, family = 'binomial')
