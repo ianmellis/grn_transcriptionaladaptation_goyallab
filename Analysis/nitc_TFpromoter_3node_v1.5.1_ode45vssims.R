@@ -212,3 +212,74 @@ lhs_sets_offdiag2 <- lhs_sets %>%
   mutate(off_diag_ssB_mutmut = (paramset %in% off_diag_ssB_mutmut$paramset & paramset != 99))
 
 logit2<-glm(off_diag_ssB_mutmut ~ ., data = lhs_sets_offdiag2, family = 'binomial')
+
+# make traces for off_diag paramsets
+off_diag_ssB_mutmut
+on_diag_ssB_mutmut <- lhs_sets %>%
+  inner_join(allstats %>% filter(product == 'B1', mutated_alleles == 2), by = 'paramset') %>%
+  filter(!(paramset %in% off_diag_ssB_mutmut$paramset), mean_product > 24, mean_product < 107)
+
+offdiagdir <- paste0(plotdir, 'off_diagonal_B1_mutmut/')
+ondiagdir <- paste0(plotdir, 'on_diagonal_B1_mutmut/')
+
+if(!dir.exists(offdiagdir)){ dir.create(offdiagdir)}
+if(!dir.exists(ondiagdir)){ dir.create(ondiagdir)}
+orig_color = 'black'
+nons_color = 'firebrick2'
+para_color = 'gray'
+targ_color = 'dodgerblue2'
+
+maxtime = 210400
+
+setwd(datadir)
+for (pset in off_diag_ssB_mutmut$paramset) {
+  
+  species<-as_tibble(read.csv(paste0('initialsim_species',as.character(pset),'.csv'), header = T))
+  nr = nrow(species)
+  species %<>%
+    mutate(time = 1:nrow(species),
+           paramset = paramset) %>%
+    filter(time > 200400, time < maxtime)
+  
+  spec_plot <- ggplot() +
+    theme_classic() +
+    geom_line(data = species, aes(time, A1), color = orig_color, alpha = 0.2) +
+    geom_line(data = species, aes(time, Anonsense1), color = nons_color, alpha = 0.2) +
+    geom_line(data = species, aes(time, Aprime1), color = para_color, alpha = 0.3) +
+    geom_line(data = species, aes(time, B1), color = targ_color) +
+    geom_hline(data = off_diag_ssB_mutmut %>% ungroup() %>% filter(paramset == pset), aes(yintercept=B1), color = 'blue', linetype = 1) +
+    geom_hline(data = off_diag_ssB_mutmut %>% ungroup() %>% filter(paramset == pset), aes(yintercept=ss_B1), color = 'blue', linetype = 2) +
+    ylab('Abundance') +
+    ggtitle(paste0('Abundance over time, parameter set ', as.character(pset),'\nSolid line = sampled mean, Dashed line = steady state'))
+  ggsave(spec_plot, file=paste0(offdiagdir, 'species_trace_mutmut_', as.character(pset), '.pdf'), width = 10, height = 3)
+  
+}
+
+on_diag_ssB_mutmut_stats<-inner_join(allstats %>% ungroup() %>%
+             filter(mutated_alleles == 2) %>% 
+             dplyr::select(paramset, product, mean_product) %>% 
+             group_by(paramset) %>% 
+             pivot_wider(names_from = product, values_from = mean_product), steadystate_ode45_mutmut, by = 'paramset') %>%
+  filter(paramset %in% on_diag_ssB_mutmut$paramset)
+for (pset in on_diag_ssB_mutmut$paramset) {
+  
+  species<-as_tibble(read.csv(paste0('initialsim_species',as.character(pset),'.csv'), header = T))
+  nr = nrow(species)
+  species %<>%
+    mutate(time = 1:nrow(species),
+           paramset = paramset) %>%
+    filter(time > 200400, time < maxtime)
+  
+  spec_plot <- ggplot() +
+    theme_classic() +
+    geom_line(data = species, aes(time, A1), color = orig_color, alpha = 0.2) +
+    geom_line(data = species, aes(time, Anonsense1), color = nons_color, alpha = 0.2) +
+    geom_line(data = species, aes(time, Aprime1), color = para_color, alpha = 0.3) +
+    geom_line(data = species, aes(time, B1), color = targ_color) +
+    geom_hline(data = on_diag_ssB_mutmut_stats %>% ungroup() %>% filter(paramset == pset), aes(yintercept=B1), color = 'blue', linetype = 1) +
+    geom_hline(data = on_diag_ssB_mutmut_stats %>% ungroup() %>% filter(paramset == pset), aes(yintercept=ss_B1), color = 'blue', linetype = 2) +
+    ylab('Abundance') +
+    ggtitle(paste0('Abundance over time, parameter set ', as.character(pset),'\nSolid line = sampled mean, Dashed line = steady state'))
+  ggsave(spec_plot, file=paste0(ondiagdir, 'species_trace_mutmut_', as.character(pset), '.pdf'), width = 10, height = 3)
+  
+}  
