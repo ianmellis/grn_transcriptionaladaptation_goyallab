@@ -59,8 +59,8 @@ r_unbind_byAprime1_B1 = rates(37);
 % r_deg_B1 = rates(12);
 
 % vector: y: 
-% y(1) = ona_1 (wt)
-% y(2) = offa_1 (wt)
+% y(1) = ona_1 (mut)
+% y(2) = offa_1 (mut)
 % y(3) = ona_2 (mut)
 % y(4) = offa_2 (mut)
 % y(5) = a 
@@ -96,7 +96,7 @@ dydt(3) = y(4)*(r_onbasal_Anonsense1 + r_nitc_byAnonsense1_Anonsense1*y(6)^n_Ano
 dydt(4) = -y(4)*(r_onbasal_Anonsense1 + r_nitc_byAnonsense1_Anonsense1*y(6)^n_Anonsense1/(k_Anonsense1^n_Anonsense1 + y(6)^n_Anonsense1)) ...
     + r_off_Anonsense1*y(3);
 % y(5) = a 
-dydt(5) = 0;
+dydt(5) = -r_deg_A1*y(5);
 % y(6) = anons
 dydt(6) = r_prodon_Anonsense1*y(1) + r_prodon_Anonsense1*y(3) - r_deg_Anonsense1*y(6);
 % y(7) = onap_1 
