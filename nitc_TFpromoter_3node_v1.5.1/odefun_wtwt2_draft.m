@@ -1,4 +1,4 @@
-function dydt = odefun_wtwt(t,y,rates)
+function dydt = odefun_wtwt2(t,y,rates)
 % diploid, wt/wt ODE, manually excludes paralog and nonsense
 
 r_prodbasal_A1 = rates(1);
