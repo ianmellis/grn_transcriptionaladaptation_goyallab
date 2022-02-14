@@ -283,3 +283,122 @@ for (pset in on_diag_ssB_mutmut$paramset) {
   ggsave(spec_plot, file=paste0(ondiagdir, 'species_trace_mutmut_', as.character(pset), '.pdf'), width = 10, height = 3)
   
 }  
+
+
+# ode45 with consecutive starting conditions (like in sims)
+
+#wtwt ode45
+steadystate_ode45_wtwt <- as_tibble(read.csv('../steady_state_ODE45_wtwt3.csv', header = T))
+ssA_plot <- ggplot(inner_join(allstats %>% 
+                                filter(mutated_alleles == 0) %>% 
+                                dplyr::select(paramset, product, mean_product) %>% 
+                                group_by(paramset) %>% 
+                                pivot_wider(names_from = product, values_from = mean_product), steadystate_ode45_wtwt, by = 'paramset'), aes(A1, ss_A1)) +
+  geom_point() +
+  theme_bw() +
+  ggtitle('Steady-state approximation of A1 vs simulation\nWT/WT genotype, 100 parameter sets') +
+  xlab('Simulated pseduo-single-cell mean A1') +
+  ylab('ODE45 steady-state A1')
+
+ssB_plot <- ggplot(inner_join(allstats %>% 
+                                filter(mutated_alleles == 0) %>% 
+                                dplyr::select(paramset, product, mean_product) %>% 
+                                group_by(paramset) %>% 
+                                pivot_wider(names_from = product, values_from = mean_product), steadystate_ode45_wtwt, by = 'paramset'), aes(B1, ss_B1)) +
+  geom_point() +
+  theme_bw() +
+  ggtitle('Steady-state approximation of B1 vs simulation\nWT/WT genotype, 100 parameter sets') +
+  xlab('Simulated pseduo-single-cell mean B1') +
+  ylab('ODE45 steady-state B1')
+
+pdf(paste0(plotdir, 'steadystate_wtwt_AB_consecutiveIC.pdf'), width = 10, height = 5)
+ss_wt<-grid.arrange(ssA_plot, ssB_plot, ncol=2)
+dev.off()
+
+## het ode45 from matlab
+steadystate_ode45_wtmut <- as_tibble(read.csv('../steady_state_ODE45_wtmut3.csv', header = T))
+ssA_plot <- ggplot(inner_join(allstats %>% 
+                                filter(mutated_alleles == 1) %>% 
+                                dplyr::select(paramset, product, mean_product) %>% 
+                                group_by(paramset) %>% 
+                                pivot_wider(names_from = product, values_from = mean_product), steadystate_ode45_wtmut, by = 'paramset'), aes(A1, ss_A1)) +
+  geom_point() +
+  theme_bw() +
+  ggtitle('Steady-state approximation of A1 vs simulation\nWT/MUT genotype, 100 parameter sets') +
+  xlab('Simulated pseduo-single-cell mean A1') +
+  ylab('ODE45 steady-state A1')
+
+ssB_plot <- ggplot(inner_join(allstats %>% 
+                                filter(mutated_alleles == 1) %>% 
+                                dplyr::select(paramset, product, mean_product) %>% 
+                                group_by(paramset) %>% 
+                                pivot_wider(names_from = product, values_from = mean_product), steadystate_ode45_wtmut, by = 'paramset'), aes(B1, ss_B1)) +
+  geom_point() +
+  theme_bw() +
+  ggtitle('Steady-state approximation of B1 vs simulation\nWT/MUT genotype, 100 parameter sets') +
+  xlab('Simulated pseduo-single-cell mean B1') +
+  ylab('ODE45 steady-state B1')
+
+pdf(paste0(plotdir, 'steadystate_wtmut_AB_consecutiveIC.pdf'), width = 10, height = 5)
+ss_wt<-grid.arrange(ssA_plot, ssB_plot, ncol=2)
+dev.off()
+
+
+
+steadystate_ode45_mutmut <- as_tibble(read.csv('../steady_state_ODE45_mutmut3.csv', header = T))
+ssA_mm_plot <- ggplot(inner_join(allstats %>% 
+                                   filter(mutated_alleles == 2) %>% 
+                                   dplyr::select(paramset, product, mean_product) %>% 
+                                   group_by(paramset) %>% 
+                                   pivot_wider(names_from = product, values_from = mean_product), steadystate_ode45_mutmut, by = 'paramset'), aes(A1, ss_A1)) +
+  geom_point() +
+  theme_bw() +
+  ggtitle('Steady-state approximation of A1 vs simulation\nMUT/MUT genotype, 100 parameter sets') +
+  xlab('Simulated pseduo-single-cell mean A1') +
+  ylab('ODE45 steady-state A1')
+ssAnons_mm_plot <- ggplot(inner_join(allstats %>% 
+                                       filter(mutated_alleles == 2) %>% 
+                                       dplyr::select(paramset, product, mean_product) %>% 
+                                       group_by(paramset) %>% 
+                                       pivot_wider(names_from = product, values_from = mean_product), steadystate_ode45_mutmut, by = 'paramset'), aes(Anonsense1, ss_Anons1)) +
+  geom_point() +
+  theme_bw() +
+  ggtitle('Steady-state approximation of Anonsense1 vs simulation\nMUT/MUT genotype, 100 parameter sets') +
+  xlab('Simulated pseduo-single-cell mean Anonsense1') +
+  ylab('ODE45 steady-state Anonsense1')
+ssAprim_mm_plot <- ggplot(inner_join(allstats %>% 
+                                       filter(mutated_alleles == 2) %>% 
+                                       dplyr::select(paramset, product, mean_product) %>% 
+                                       group_by(paramset) %>% 
+                                       pivot_wider(names_from = product, values_from = mean_product), steadystate_ode45_mutmut, by = 'paramset'), aes(Aprime1, ss_Aprim1)) +
+  geom_point() +
+  theme_bw() +
+  ggtitle('Steady-state approximation of Aprime1 vs simulation\nMUT/MUT genotype, 100 parameter sets') +
+  xlab('Simulated pseduo-single-cell mean Aprime1') +
+  ylab('ODE45 steady-state Aprime1')
+ssB_mm_plot <- ggplot(inner_join(allstats %>% 
+                                   filter(mutated_alleles == 2) %>% 
+                                   dplyr::select(paramset, product, mean_product) %>% 
+                                   group_by(paramset) %>% 
+                                   pivot_wider(names_from = product, values_from = mean_product), steadystate_ode45_mutmut, by = 'paramset'), aes(B1, ss_B1)) +
+  geom_point() +
+  theme_bw() +
+  ggtitle('Steady-state approximation of B1 vs simulation\nMUT/MUT genotype, 100 parameter sets') +
+  xlab('Simulated pseduo-single-cell mean B1') +
+  ylab('ODE45 steady-state B1')
+
+pdf(paste0(plotdir, 'steadystate_mutmut_AB_consecutiveIC.pdf'), width = 10, height = 10)
+ss_wt<-grid.arrange(ssA_mm_plot, ssAprim_mm_plot, ssAnons_mm_plot, ssB_mm_plot, ncol=2)
+dev.off()
+
+ssB_mm_plot_params <- ggplot(inner_join(allstats %>% 
+                                          filter(mutated_alleles == 2) %>% 
+                                          dplyr::select(paramset, product, mean_product) %>% 
+                                          group_by(paramset) %>% 
+                                          pivot_wider(names_from = product, values_from = mean_product), steadystate_ode45_mutmut, by = 'paramset'), aes(B1, ss_B1)) +
+  geom_point() +
+  geom_text_repel(aes(label = ifelse(abs(log(ss_B1/B1))>0.5 & B1>20, paramset, ''))) +
+  theme_bw() +
+  ggtitle('Steady-state approximation of B1 vs simulation\nMUT/MUT genotype, 100 parameter sets') +
+  xlab('Simulated pseduo-single-cell mean B1') +
+  ylab('ODE45 steady-state B1')
