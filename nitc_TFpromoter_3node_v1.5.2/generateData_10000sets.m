@@ -24,15 +24,15 @@ rng(8734);
 nruns = 10000;
 
 min_range = [repmat(0.5,1,1),...        %basal_nitc_on_ratio (0.1,10) - is 10 high enough?
-    repmat(0.1,1,1),...                 %onbasalA1_off_ratio (0.1,10)
+    repmat(0.1,1,1),...                 %onbasalA1_off_ratio (0.01,1) - per Larsson this is the bulk of the distribution (very quick off-burst)
     repmat(1,1,1),...                   %A1_Aprime1_boundOn_ratio (0.1,10)
     repmat(0.1,1,1),...                 %A1_Aprime_binding_ratio (0.1,10)
     repmat(1,1,1),...                   %bindbyA1_unbindbyA1_ratio (1,100)
-    repmat(1,1,1),...                   %r_prod_on (1,100)
+    repmat(1,1,1),...                   %r_prod_on (1,1000)
     repmat(0.1,1,1),...                 %r_bound_byA1_B1 (0.1,10)
     repmat(0.5,1,1),...                 %r_bind_byA1_B1 (0.1,10)
     repmat(0.1,1,1)];                   %n (Hill coefficient n) (0.1,10) too large a range?
-%                                       ?r_onbasal_A1 (0.1,10)
+%                                       ?r_onbasal_A1 (0.1, 10)
 
 max_range = [repmat(25,1,1),...          %basal_nitc_on_ratio
     repmat(10,1,1),...                  %onbasalA1_off_ratio
