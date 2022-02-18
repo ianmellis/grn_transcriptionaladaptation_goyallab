@@ -64,8 +64,8 @@ void gillespie(long m, double *times_out,double *species_out,double currT,double
   long totaliterations;
 
 //INSERT ALL VARIABLE DECLARATIONS HERE
-  long A1, Anonsense1, Aprime1, B1, Promoter1_unbound_targ_allele1, Promoter1_boundbyorig_targ_allele1, Promoter1_boundbypara_targ_allele1, Promoter1_unbound_targ_allele2, Promoter1_boundbyorig_targ_allele2, Promoter1_boundbypara_targ_allele2, Burst1_on_targ_allele1, Burst1_on_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2;
-  double r_prodbasal_A1, r_prodbasal_Anonsense1, r_prodbasal_Aprime1, r_prodbasal_B1, r_prodon_A1, r_prodon_Anonsense1, r_prodon_Aprime1, r_prodon_B1, r_deg_A1, r_deg_Anonsense1, r_deg_Aprime1, r_deg_B1, r_onbasal_A1, r_onbasal_Anonsense1, r_onbasal_Aprime1, r_onbasal_B1, r_nitc_byAnonsense1_A1, r_nitc_byAnonsense1_Anonsense1, r_nitc_byAnonsense1_Aprime1, r_bound_byA1_B1, r_bound_byAprime1_B1, r_off_A1, r_off_Anonsense1, r_off_Aprime1, r_off_B1, r_bind_byA1_B1, r_bind_byAprime1_B1, k_A1, k_Anonsense1, k_Aprime1, k_B1, n_A1, n_Anonsense1, n_Aprime1, n_B1, r_unbind_byA1_B1, r_unbind_byAprime1_B1;
+  long A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2;
+  double r_prodbasal_A1, r_prodbasal_Anonsense1, r_prodbasal_Aprime1, r_prodbasal_B1, r_prodon_A1, r_prodon_Anonsense1, r_prodon_Aprime1, r_prodon_B1, d_Aprime1_B1, r_deg_A1, r_deg_Anonsense1, r_deg_Aprime1, r_deg_B1, r_onbasal_A1, r_onbasal_Anonsense1, r_onbasal_Aprime1, r_onbasal_B1, r_nitc_byAnonsense1_A1, r_nitc_byAnonsense1_Anonsense1, r_nitc_byAnonsense1_Aprime1, r_addon_byA1_B1, r_addon_byAprime1_B1, r_off_A1, r_off_Anonsense1, r_off_Aprime1, r_offorig_B1, r_offpara_B1, k_A1, k_Anonsense1, k_Aprime1, k_B1, n_A1, n_Anonsense1, n_Aprime1, n_B1;
   long i, j, k;
 //UNPACK ALL SPECIES HERE
   A1 = (long)species[0];
@@ -97,7 +97,7 @@ void gillespie(long m, double *times_out,double *species_out,double currT,double
   r_prodon_Aprime1 = rates[6];
   r_prodon_B1 = rates[7];
 
-  d_Aprime1_B1 = rates[8]
+  d_Aprime1_B1 = rates[8];
 
   r_deg_A1 = rates[9];
   r_deg_Anonsense1 = rates[10];
@@ -2070,7 +2070,7 @@ if (p<cumpropensities[0]) {
   //update propensity for Burst1_onpara_targ = Burst1_off_targ for allele2
   propensities[27] = Burst1_onpara_targ_allele2*r_offpara_B1;
 }
-
+}
   printf("Total iterations = %d\n",totaliterations);
   //printf("savecount = %d\n",savecount);
   //printf("savecountcheck = %d\n",savecountcheck);
