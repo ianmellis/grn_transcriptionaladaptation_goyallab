@@ -98,7 +98,7 @@ lhs_1_s.Properties.VariableNames = {'basal_nitc_on_ratio',...
 writetable(lhs_1_s,lhs_1_f,'Delimiter',',')
 %%
 tic
-for i = 1:10
+for i = 11:100
     
     % Set seed
     %
