@@ -1,5 +1,5 @@
-function dydt = odefun_wtmut(t,y,rates)
-% diploid, wt/wt ODE, manually excludes paralog and nonsense
+function dydt = odefun_mutmut_TFpromoterB(t,y,rates)
+% diploid, mut/mut ODE, manually excludes paralog and nonsense
 
 r_prodbasal_A1 = rates(1);
 r_prodbasal_Anonsense1 = rates(2);
@@ -59,8 +59,8 @@ r_unbind_byAprime1_B1 = rates(37);
 % r_deg_B1 = rates(12);
 
 % vector: y: 
-% y(1) = ona_1 (wt)
-% y(2) = offa_1 (wt)
+% y(1) = ona_1 (mut)
+% y(2) = offa_1 (mut)
 % y(3) = ona_2 (mut)
 % y(4) = offa_2 (mut)
 % y(5) = a 
@@ -82,13 +82,13 @@ r_unbind_byAprime1_B1 = rates(37);
 % y(21) = offb_2
 % y(22) = b
 
-dydt = zeros(14,1);
+dydt = zeros(22,1);
 % y(1) = ona_1 (wt)
-dydt(1) = y(2)*(r_onbasal_A1 + r_nitc_byAnonsense1_A1*y(6)^n_Anonsense1/(k_Anonsense1^n_Anonsense1 + y(6)^n_Anonsense1)) ...
-    - r_off_A1*y(1);
+dydt(1) = y(2)*(r_onbasal_Anonsense1 + r_nitc_byAnonsense1_A1*y(6)^n_Anonsense1/(k_Anonsense1^n_Anonsense1 + y(6)^n_Anonsense1)) ...
+    - r_off_Anonsense1*y(1);
 % y(2) = offa_1 (wt)
-dydt(2) = -y(2)*((r_onbasal_A1 + r_nitc_byAnonsense1_A1*y(6)^n_Anonsense1/(k_Anonsense1^n_Anonsense1 + y(6)^n_Anonsense1))) ...
-    + r_off_A1*y(1);
+dydt(2) = -y(2)*((r_onbasal_Anonsense1 + r_nitc_byAnonsense1_A1*y(6)^n_Anonsense1/(k_Anonsense1^n_Anonsense1 + y(6)^n_Anonsense1))) ...
+    + r_off_Anonsense1*y(1);
 % y(3) = ona_2 (mut)
 dydt(3) = y(4)*(r_onbasal_Anonsense1 + r_nitc_byAnonsense1_Anonsense1*y(6)^n_Anonsense1/(k_Anonsense1^n_Anonsense1 + y(6)^n_Anonsense1)) ...
     - r_off_Anonsense1*y(3);
@@ -96,9 +96,9 @@ dydt(3) = y(4)*(r_onbasal_Anonsense1 + r_nitc_byAnonsense1_Anonsense1*y(6)^n_Ano
 dydt(4) = -y(4)*(r_onbasal_Anonsense1 + r_nitc_byAnonsense1_Anonsense1*y(6)^n_Anonsense1/(k_Anonsense1^n_Anonsense1 + y(6)^n_Anonsense1)) ...
     + r_off_Anonsense1*y(3);
 % y(5) = a 
-dydt(5) = r_prodon_A1*y(1) - r_deg_A1*y(5);
+dydt(5) = -r_deg_A1*y(5);
 % y(6) = anons
-dydt(6) = r_prodon_Anonsense1*y(3) - r_deg_Anonsense1*y(6);
+dydt(6) = r_prodon_Anonsense1*y(1) + r_prodon_Anonsense1*y(3) - r_deg_Anonsense1*y(6);
 % y(7) = onap_1 
 dydt(7) = y(8)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_A1*y(6)^n_Anonsense1/(k_Anonsense1^n_Anonsense1 + y(6)^n_Anonsense1)) ...
     - r_off_Aprime1*y(7);
