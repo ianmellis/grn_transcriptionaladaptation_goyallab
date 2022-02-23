@@ -19,7 +19,7 @@ if(!dir.exists(plotdir)){
 lhs_sets <- as_tibble(read.csv('latinhyp_sampledSets.csv')) %>%
   mutate(paramset = 1:nrow(lhs_sets))
 
-paramsets <- 1:10
+paramsets <- 1:100
 allstats <- list()
 allparams <- list()
 for (paramset in paramsets){
@@ -87,6 +87,7 @@ ssA_plot <- ggplot(inner_join(allstats %>%
                                 dplyr::select(paramset, product, mean_product) %>% 
                                 group_by(paramset) %>% 
                                 pivot_wider(names_from = product, values_from = mean_product), steadystate_ode45_wtwt, by = 'paramset'), aes(A1, ss_A1)) +
+  geom_abline(slope = 1, intercept = 0, color = 'blue', linetype = 2) +
   geom_point() +
   theme_bw() +
   ggtitle('Steady-state approximation of A1 vs simulation\nWT/WT genotype, 100 parameter sets') +
@@ -98,6 +99,7 @@ ssB_plot <- ggplot(inner_join(allstats %>%
                                 dplyr::select(paramset, product, mean_product) %>% 
                                 group_by(paramset) %>% 
                                 pivot_wider(names_from = product, values_from = mean_product), steadystate_ode45_wtwt, by = 'paramset'), aes(B1, ss_B1)) +
+  geom_abline(slope = 1, intercept = 0, color = 'blue', linetype = 2) +
   geom_point() +
   theme_bw() +
   ggtitle('Steady-state approximation of B1 vs simulation\nWT/WT genotype, 100 parameter sets') +
@@ -108,6 +110,20 @@ pdf(paste0(plotdir, 'steadystate_wtwt_AB.pdf'), width = 10, height = 5)
 ss_wt<-grid.arrange(ssA_plot, ssB_plot, ncol=2)
 dev.off()
 
+ssB_plot_n <- ggplot(inner_join(allstats %>% 
+                                filter(mutated_alleles == 2) %>% 
+                                dplyr::select(paramset, product, mean_product) %>% 
+                                group_by(paramset) %>% 
+                                pivot_wider(names_from = product, values_from = mean_product), steadystate_ode45_mutmut, by = 'paramset') %>% inner_join(allparams %>% mutate(paramset = 1:100), by = 'paramset'), aes(B1, ss_B1)) +
+  geom_abline(slope = 1, intercept = 0, color = 'blue', linetype = 2) +
+  geom_point() +
+  # geom_text_repel(aes(label = as.character(round(n_B1,2)))) +
+  theme_bw() +
+  xlim(c(0,500)) + ylim(c(0,500)) +
+  ggtitle('Steady-state approximation of B1 vs simulation\nMUT/MUT genotype, 100 parameter sets') +
+  xlab('Simulated pseduo-single-cell mean B1') +
+  ylab('ODE45 steady-state B1')
+
 ## het ode45 from matlab
 steadystate_ode45_wtmut <- as_tibble(read.csv('../steady_state_ODE45_wtmut_B3state.csv', header = T))
 ssA_wm_plot <- ggplot(inner_join(allstats %>% 
@@ -115,6 +131,7 @@ ssA_wm_plot <- ggplot(inner_join(allstats %>%
                                 dplyr::select(paramset, product, mean_product) %>% 
                                 group_by(paramset) %>% 
                                 pivot_wider(names_from = product, values_from = mean_product), steadystate_ode45_wtmut, by = 'paramset'), aes(A1, ss_A1)) +
+  geom_abline(slope = 1, intercept = 0, color = 'blue', linetype = 2) +
   geom_point() +
   theme_bw() +
   ggtitle('Steady-state approximation of A1 vs simulation\nWT/MUT genotype, 100 parameter sets') +
@@ -126,6 +143,7 @@ ssAnons_wm_plot <- ggplot(inner_join(allstats %>%
                                        group_by(paramset) %>% 
                                        pivot_wider(names_from = product, values_from = mean_product), steadystate_ode45_wtmut, by = 'paramset'), aes(Anonsense1, ss_Anons1)) +
   geom_point() +
+  geom_abline(slope = 1, intercept = 0, color = 'blue', linetype = 2) +
   theme_bw() +
   ggtitle('Steady-state approximation of Anonsense1 vs simulation\nWT/MUT genotype, 100 parameter sets') +
   xlab('Simulated pseduo-single-cell mean Anonsense1') +
@@ -136,6 +154,7 @@ ssAprim_wm_plot <- ggplot(inner_join(allstats %>%
                                        group_by(paramset) %>% 
                                        pivot_wider(names_from = product, values_from = mean_product), steadystate_ode45_wtmut, by = 'paramset'), aes(Aprime1, ss_Aprim1)) +
   geom_point() +
+  geom_abline(slope = 1, intercept = 0, color = 'blue', linetype = 2) +
   theme_bw() +
   ggtitle('Steady-state approximation of Aprime1 vs simulation\nWT/MUT genotype, 100 parameter sets') +
   xlab('Simulated pseduo-single-cell mean Aprime1') +
@@ -146,6 +165,7 @@ ssB_wm_plot <- ggplot(inner_join(allstats %>%
                                 group_by(paramset) %>% 
                                 pivot_wider(names_from = product, values_from = mean_product), steadystate_ode45_wtmut, by = 'paramset'), aes(B1, ss_B1)) +
   geom_point() +
+  geom_abline(slope = 1, intercept = 0, color = 'blue', linetype = 2) +
   theme_bw() +
   ggtitle('Steady-state approximation of B1 vs simulation\nWT/MUT genotype, 100 parameter sets') +
   xlab('Simulated pseduo-single-cell mean B1') +
@@ -164,6 +184,7 @@ ssA_mm_plot <- ggplot(inner_join(allstats %>%
                                    group_by(paramset) %>% 
                                    pivot_wider(names_from = product, values_from = mean_product), steadystate_ode45_mutmut, by = 'paramset'), aes(A1, ss_A1)) +
   geom_point() +
+  geom_abline(slope = 1, intercept = 0, color = 'blue', linetype = 2) +
   theme_bw() +
   ggtitle('Steady-state approximation of A1 vs simulation\nMUT/MUT genotype, 100 parameter sets') +
   xlab('Simulated pseduo-single-cell mean A1') +
@@ -174,6 +195,7 @@ ssAnons_mm_plot <- ggplot(inner_join(allstats %>%
                                        group_by(paramset) %>% 
                                        pivot_wider(names_from = product, values_from = mean_product), steadystate_ode45_mutmut, by = 'paramset'), aes(Anonsense1, ss_Anons1)) +
   geom_point() +
+  geom_abline(slope = 1, intercept = 0, color = 'blue', linetype = 2) +
   theme_bw() +
   ggtitle('Steady-state approximation of Anonsense1 vs simulation\nMUT/MUT genotype, 100 parameter sets') +
   xlab('Simulated pseduo-single-cell mean Anonsense1') +
@@ -184,6 +206,7 @@ ssAprim_mm_plot <- ggplot(inner_join(allstats %>%
                                        group_by(paramset) %>% 
                                        pivot_wider(names_from = product, values_from = mean_product), steadystate_ode45_mutmut, by = 'paramset'), aes(Aprime1, ss_Aprim1)) +
   geom_point() +
+  geom_abline(slope = 1, intercept = 0, color = 'blue', linetype = 2) +
   theme_bw() +
   ggtitle('Steady-state approximation of Aprime1 vs simulation\nMUT/MUT genotype, 100 parameter sets') +
   xlab('Simulated pseduo-single-cell mean Aprime1') +
@@ -194,6 +217,7 @@ ssB_mm_plot <- ggplot(inner_join(allstats %>%
                                    group_by(paramset) %>% 
                                    pivot_wider(names_from = product, values_from = mean_product), steadystate_ode45_mutmut, by = 'paramset'), aes(B1, ss_B1)) +
   geom_point() +
+  geom_abline(slope = 1, intercept = 0, color = 'blue', linetype = 2) +
   theme_bw() +
   ggtitle('Steady-state approximation of B1 vs simulation\nMUT/MUT genotype, 100 parameter sets') +
   xlab('Simulated pseduo-single-cell mean B1') +
