@@ -45,7 +45,7 @@ min_range = [repmat(0.1,1,1),...        %basal_nitc_on_ratio (0.1,10) - is 10 hi
     repmat(0.1,1,1),...                 %A1_Aprime1_addon_ratio (0.1,10)
     repmat(0.1,1,1),...                 %A1_Aprime_prodon_ratio (0.1,10)
     repmat(1,1,1),...                   %r_prod_on (1,1000)
-    repmat(0.1,1,1),...                 %r_addon_byA1_B1 (0.1,10)
+    repmat(0.1,1,1),...                 %r_addon_byA1_B1 (0.1,5)
     repmat(0.1,1,1),...                 %n (Hill coefficient n) (0.1,10) too large a range? I think so, but having some non-linearity is good. Perhaps ok with 10000 paramsets.
     repmat(0.1,1,1)];                   %r_onbasal_A1 (0.1, 10)
 %                                       
@@ -55,7 +55,7 @@ max_range = [repmat(10,1,1),...         %basal_nitc_on_ratio (0.1,10) - is 10 hi
     repmat(10,1,1),...                  %A1_Aprime1_addon_ratio (0.1,10)
     repmat(10,1,1),...                  %A1_Aprime_prodon_ratio (0.1,10)
     repmat(1000,1,1),...                %r_prod_on (1,1000)
-    repmat(10,1,1),...                  %r_addon_byA1_B1 (0.1,10)
+    repmat(5,1,1),...                   %r_addon_byA1_B1 (0.1,5)
     repmat(10,1,1),...                  %n (Hill coefficient n) (0.1,10) too large a range?
     repmat(10,1,1)];                    %r_onbasal_A1 (0.1, 10)
 
@@ -100,7 +100,9 @@ writetable(lhs_1_s,lhs_1_f2,'Delimiter',',')
 
 %% First 3 sets. Make sure the sims are working
 
-parfor i = 1:100
+s_store = cell{100,1};
+
+parfor i = 1:3
     
     % Set seed
     %
@@ -307,6 +309,13 @@ parfor i = 1:100
     %
     
     [times,savespecies] = gillespie_burstshistomex_B3state(0,sp_1,ra_1,pr_1,sum(clock*100),maxgillespie,maxgillespie);
+    
+    s_store{i} = savespecies;
+end
+
+for i = 1:3
+    
+    savespecies = s_store{i};
     
     sp_q300 = savespecies(:,[599:300:100000, 100599:300:200000, 200599:300:300000]);
     sp_q300(17,:) = [599:300:100000, 100599:300:200000, 200599:300:300000];
