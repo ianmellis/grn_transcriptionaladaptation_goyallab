@@ -542,7 +542,7 @@ isequal(sp3r, sp3n)
 %% Next 100 sets. Get average time per sim for planning purposes.
 tic
 
-s_store = cell(100,1);
+s_store = cell(200,1);
 
 parfor i = 4:103
     
@@ -966,9 +966,18 @@ toc;
 bounds = [103,300:200:10000];
 
 tic
+
+s_store = cell(200,1);
+
 for ind = 1:(length(bounds)-1)
     
+    refind = bounds(ind);
+    
+    s_store = cell(200,1); % 2GB chunks in working memory at a time
+    
     parfor i = (bounds(ind)+1):bounds(ind+1)
+        
+        storeind = i-refind;
         
         % Set seed
         %
@@ -1176,10 +1185,13 @@ for ind = 1:(length(bounds)-1)
         
         [times,savespecies] = gillespie_burstshistomex_B3state(0,sp_1,ra_1,pr_1,sum(clock*100),maxgillespie,maxgillespie);
         
-        s_store{i} = savespecies;
+        s_store{storeind} = savespecies;
     end
     
     for i = (bounds(ind)+1):bounds(ind+1)
+        
+        storeind = i-refind;
+        
         % rate ratios
         % r_onbasal_A1/r_nitc = relative on-rates of wt A1 and NITC-regulated
         % alleles
@@ -1332,7 +1344,7 @@ for ind = 1:(length(bounds)-1)
             'n_Aprime1',...
             'n_B1'};
         
-        savespecies = s_store{i};
+        savespecies = s_store{storeind};
         
         sp_q300 = savespecies(:,[599:300:100000, 100599:300:200000, 200599:300:300000]);
         sp_q300(17,:) = [599:300:100000, 100599:300:200000, 200599:300:300000];
