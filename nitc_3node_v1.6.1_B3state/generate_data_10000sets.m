@@ -963,12 +963,12 @@ toc;
 
 %% Remainder of 10000 sets. DO NOT PROCEED WITH THIS CHUNK UNTIL REVIEWING RESULTS WITH IAM
 
-bounds = [104,300:200:10000];
+bounds = [103,300:200:10000];
 
 tic
 for ind = 1:(length(bounds)-1)
     
-    parfor i = bounds(ind):bounds(ind+1)
+    parfor i = (bounds(ind)+1):bounds(ind+1)
         
         % Set seed
         %
