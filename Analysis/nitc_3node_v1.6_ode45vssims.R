@@ -231,9 +231,11 @@ ssB_mm_plot_params <- ggplot(inner_join(allstats %>%
                                           filter(mutated_alleles == 2) %>% 
                                           dplyr::select(paramset, product, mean_product) %>% 
                                           group_by(paramset) %>% 
-                                          pivot_wider(names_from = product, values_from = mean_product), steadystate_ode45_mutmut, by = 'paramset'), aes(B1, ss_B1)) +
+                                          pivot_wider(names_from = product, values_from = mean_product), steadystate_ode45_mutmut, by = 'paramset') %>%
+                               inner_join(allparams %>% mutate(paramset = 1:100), by = 'paramset'), aes(B1, ss_B1)) +
   geom_point() +
-  geom_text_repel(aes(label = ifelse(abs(log(ss_B1/B1))>0.5 & B1>20, paramset, ''))) +
+  geom_abline(slope = 1, intercept = 0, color = 'blue', linetype = 2) +
+  geom_text_repel(aes(label = ifelse(abs(log(ss_B1/B1))>0.5 & B1>20, as.character(round(n_B1, 2)), ''))) +
   theme_bw() +
   ggtitle('Steady-state approximation of B1 vs simulation\nMUT/MUT genotype, 100 parameter sets') +
   xlab('Simulated pseduo-single-cell mean B1') +
