@@ -1,5 +1,7 @@
 # compares ode45-based steady-state analysis to simulations for 100 parameter sets
 
+install.packages('tidyverse', 'magrittr', 'ineq', 'Hmisc', 'gridExtra')
+
 library(tidyverse)
 library(magrittr)
 library(ineq)
