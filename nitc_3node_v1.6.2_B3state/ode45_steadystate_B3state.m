@@ -13,7 +13,7 @@ outdir = '~/code/grn_nitc/nitc_3node_v1.6.2_B3state/';
 
 lhs_1_f = [outdir, 'latinhyp_sampledSets.csv'];
 
-latinhyp1 = readtable(lhs_1_f);
+latinhyp = array2table(readtable(lhs_1_f));
 
 
 %% het for all 100 paramsets
