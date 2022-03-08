@@ -6,6 +6,7 @@ library(Hmisc)
 library(gridExtra)
 library(diptest)
 library(e1071)
+library(ggrepel)
 source('~/code/grn_nitc/Functions/grn_analysis_utilities.R')
 
 # edit as needed
@@ -30,8 +31,8 @@ for (paramset in paramsets){
   params<-as_tibble(read.csv(paste0('initialsim_rates',as.character(paramset),'.csv'), header = T))
 
   species<-as_tibble(read.csv(paste0('initialsim_species',as.character(paramset),'_q300.csv'), header = T))
-  
-  species_sample <- species %>% 
+
+  species_sample <- species %>%
     mutate(paramset = paramset) %>%
     filter((time > 400 & time < 100001) | (time > 100400 & time < 200001) | (time > 200400 & time < 300001)) %>%
     mutate(mutated_alleles = case_when(
@@ -41,17 +42,17 @@ for (paramset in paramsets){
     )) %>%
     dplyr::select(A1, Aprime1, Anonsense1, B1, paramset, time, mutated_alleles) %>%
     pivot_longer(cols = A1:B1, names_to = 'product', values_to = 'abundance')
-  
+
   if(paramset %% 100 == 0) {
     cat(paste0('Working on ', as.character(paramset), '\n'))
     dist_plot<-ggplot(species_sample, aes(abundance)) +
-      geom_histogram() + 
+      geom_histogram() +
       facet_grid(mutated_alleles~product) +
       ggtitle(paste0('Parameter set ', as.character(paramset))) +
       theme_classic()
     ggsave(dist_plot, file = paste0(plotdir, 'distributions_q300_paramset_', as.character(paramset), '.pdf'))
   }
-  
+
   spstats <- species_sample %>%
     group_by(mutated_alleles, product, paramset) %>%
     summarise(mean_product = mean(abundance),
@@ -61,13 +62,13 @@ for (paramset in paramsets){
               gini_product = ineq(abundance + 1, type = 'Gini', na.rm = T),
               bimodality_coef = calculate_bimodality(abundance),
               HDTpval = dip.test(abundance)$p.value, .groups = 'keep')
-  
+
   if(is.null(dim(allstats))) {
     allstats <- spstats
   } else {
     allstats %<>% bind_rows(spstats)
   }
-  
+
   if(is.null(dim(allparams))) {
     allparams <- params
   } else {
@@ -76,7 +77,6 @@ for (paramset in paramsets){
   
 }
 write.csv(allstats, file = paste0(plotdir, 'summarystats.csv'))
-
 # compare summary stats
 pseud = 0.01
 
@@ -92,7 +92,7 @@ compared_stats <- allstats %>%
          delta20 = `2`-`0`) %>%
   dplyr::select(-c(`0`:`2`)) %>% 
   pivot_longer(names_to = 'compare', values_to = 'diff', cols = lfc10:delta20) %>%
-  inner_join(allstats %>%
+  inner_join(allstats %>% 
                dplyr::select(mutated_alleles, product, paramset, mean_product) %>%
                pivot_wider(names_from = mutated_alleles, values_from = mean_product), by = c('product', 'paramset')) %>%
   mutate(mean_denom = case_when(
@@ -104,7 +104,7 @@ unistats<-unique(compared_stats$stat)
 
 for (st in unistats) {
   
-  p1 <- ggplot(compared_stats %>% filter(stat == st | stat == 'mean_product') %>% pivot_wider(names_from = stat, values_from = diff), aes(mean_product, eval(as.symbol(st)))) + 
+  p1 <- ggplot(compared_stats %>% filter(stat == st | stat == 'mean_product', grepl('delta', compare)) %>% pivot_wider(names_from = stat, values_from = diff), aes(mean_product, eval(as.symbol(st)))) + 
     geom_point() + 
     geom_text(aes(label = paramset)) +
     facet_grid(product~compare, scales = 'free') +
@@ -114,7 +114,7 @@ for (st in unistats) {
     xlab('Change in mean')
   ggsave(p1, file = paste0(plotdir, 'changein_', st, '_vs_mean.pdf'), width = 16, height = 8)
   
-  p2 <- ggplot(compared_stats %>% filter(stat == st | stat == 'mean_product') %>% pivot_wider(names_from = stat, values_from = diff), aes(mean_denom, eval(as.symbol(st)))) + 
+  p2 <- ggplot(compared_stats %>% filter(stat == st | stat == 'mean_product', grepl('delta', compare)) %>% pivot_wider(names_from = stat, values_from = diff), aes(mean_denom, eval(as.symbol(st)))) + 
     geom_point() + 
     geom_text(aes(label = paramset)) +
     facet_grid(product~compare, scales = 'free') +
@@ -123,7 +123,7 @@ for (st in unistats) {
     ylab(paste0('Change in ', st)) +
     xlab('Starting mean abundance')
   
-  p3 <- ggplot(compared_stats %>% filter(stat == st | stat == 'mean_product') %>% pivot_wider(names_from = stat, values_from = diff), aes(mean_product, eval(as.symbol(st)), color = mean_denom)) + 
+  p3 <- ggplot(compared_stats %>% filter(stat == st | stat == 'mean_product', grepl('delta', compare)) %>% pivot_wider(names_from = stat, values_from = diff), aes(mean_product, eval(as.symbol(st)), color = mean_denom)) + 
     geom_point() + 
     geom_text(aes(label = paramset)) +
     facet_grid(product~compare, scales = 'free') +
@@ -132,9 +132,41 @@ for (st in unistats) {
     ylab(paste0('Change in ', st)) +
     xlab('Change in mean')
   
-  ggsave(p1, file = paste0(plotdir, 'changein_', st, '_vs_changeinmean.pdf'), width = 16, height = 8)
-  ggsave(p2, file = paste0(plotdir, 'changein_', st, '_vs_startingmean.pdf'), width = 16, height = 8)
-  ggsave(p3, file = paste0(plotdir, 'changein_', st, '_vs_changeinmean_colorstartingmean.pdf'), width = 16, height = 8)
+  p1l <- ggplot(compared_stats %>% filter(stat == st | stat == 'mean_product', grepl('lfc', compare)) %>% pivot_wider(names_from = stat, values_from = diff), aes(mean_product, eval(as.symbol(st)))) + 
+    geom_point() + 
+    geom_text(aes(label = paramset)) +
+    facet_grid(product~compare, scales = 'free') +
+    theme_bw() +
+    ggtitle(paste0('Change in ', st, ' vs. change in mean')) +
+    ylab(paste0('Change in ', st)) +
+    xlab('Change in mean')
+  ggsave(p1, file = paste0(plotdir, 'changein_', st, '_vs_mean.pdf'), width = 16, height = 8)
+  
+  p2l <- ggplot(compared_stats %>% filter(stat == st | stat == 'mean_product', grepl('lfc', compare)) %>% pivot_wider(names_from = stat, values_from = diff), aes(mean_denom, eval(as.symbol(st)))) + 
+    geom_point() + 
+    geom_text(aes(label = paramset)) +
+    facet_grid(product~compare, scales = 'free') +
+    theme_bw() +
+    ggtitle(paste0('Change in ', st, ' vs. change in mean')) +
+    ylab(paste0('Change in ', st)) +
+    xlab('Starting mean abundance')
+  
+  p3l <- ggplot(compared_stats %>% filter(stat == st | stat == 'mean_product', grepl('lfc', compare)) %>% pivot_wider(names_from = stat, values_from = diff), aes(mean_product, eval(as.symbol(st)), color = mean_denom)) + 
+    geom_point() + 
+    geom_text(aes(label = paramset)) +
+    facet_grid(product~compare, scales = 'free') +
+    theme_bw() +
+    ggtitle(paste0('Change in ', st, ' vs. change in mean')) +
+    ylab(paste0('Change in ', st)) +
+    xlab('Change in mean')
+  
+  ggsave(p1, file = paste0(plotdir, 'Diff_changein_', st, '_vs_changeinmean.pdf'), width = 16, height = 8)
+  ggsave(p2, file = paste0(plotdir, 'Diff_changein_', st, '_vs_startingmean.pdf'), width = 16, height = 8)
+  ggsave(p3, file = paste0(plotdir, 'Diff_changein_', st, '_vs_changeinmean_colorstartingmean.pdf'), width = 16, height = 8)
+  
+  ggsave(p1l, file = paste0(plotdir, 'LFC_changein_', st, '_vs_changeinmean.pdf'), width = 16, height = 8)
+  ggsave(p2l, file = paste0(plotdir, 'LFC_changein_', st, '_vs_startingmean.pdf'), width = 16, height = 8)
+  ggsave(p3l, file = paste0(plotdir, 'LFC_changein_', st, '_vs_changeinmean_colorstartingmean.pdf'), width = 16, height = 8)
   
 }
 
@@ -168,3 +200,13 @@ cor_B1_paramratio_stats21 <- corrplot.mixed(cor(as.matrix(lfc21_lhs %>% filter(p
 dev.off()
 
 
+for (st in unistats) {
+  
+  pvs1 <- ggplot(allstats %>% filter(product == 'B1')) + 
+    geom_point(aes(mean_product, eval(as.symbol(st)))) +
+    geom_text(aes(mean_product, eval(as.symbol(st)), label = as.character(paramset))) +
+    facet_grid(~mutated_alleles) +
+    theme_classic()
+    
+  ggsave(pvs1, file = paste0(plotdir, 'PerGenotype_', st, '_vs_mean.pdf'), width = 16, height = 8) 
+}
