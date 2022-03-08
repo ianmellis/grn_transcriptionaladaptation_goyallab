@@ -202,11 +202,22 @@ dev.off()
 
 for (st in unistats) {
   
-  pvs1 <- ggplot(allstats %>% filter(product == 'B1')) + 
+  pvs1 <- ggplot(allstats %>% inner_join(lhs_sets, by = 'paramset') %>% filter(product == 'B1', Hill_coefficient_n < 5)) + 
     geom_point(aes(mean_product, eval(as.symbol(st)))) +
-    geom_text(aes(mean_product, eval(as.symbol(st)), label = as.character(paramset))) +
+    geom_vline(aes(xintercept = 10), linetype = 2) +
+    # geom_text(aes(mean_product, eval(as.symbol(st)), label = as.character(paramset))) +
     facet_grid(~mutated_alleles) +
-    theme_classic()
-    
+    theme_classic() +
+    ggtitle(paste0(st, ' vs mean, only including Hill n < 5'))
+  
+  pvs2 <- ggplot(allstats %>% inner_join(lhs_sets, by = 'paramset') %>% filter(product == 'B1', Hill_coefficient_n < 5)) + 
+    geom_point(aes(log(mean_product), eval(as.symbol(st)))) +
+    geom_vline(aes(xintercept = log(10)), linetype = 2) +
+    # geom_text(aes(log(mean_product), eval(as.symbol(st)), label = as.character(paramset))) +
+    facet_grid(~mutated_alleles) +
+    theme_classic()  +
+    ggtitle(paste0(st, ' vs mean, only including Hill n < 5'))
+  
   ggsave(pvs1, file = paste0(plotdir, 'PerGenotype_', st, '_vs_mean.pdf'), width = 16, height = 8) 
+  ggsave(pvs2, file = paste0(plotdir, 'PerGenotype_', st, '_vs_logmean.pdf'), width = 16, height = 8) 
 }
