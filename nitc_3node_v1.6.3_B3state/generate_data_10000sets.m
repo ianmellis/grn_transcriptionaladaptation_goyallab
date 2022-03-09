@@ -44,7 +44,7 @@ fseeds = 358238:4:3409332;
 simseeds = fseeds(1:nruns);
 
 min_range = [repmat(0.1,1,1),...        %basal_nitc_on_ratio (0.1,10) - is 10 high enough?
-    repmat(0.01,1,1),...                %onbasalA1_off_ratio (0.01,10) - per Larsson this is the bulk of the distribution (very quick off-burst), plus added an extra order of magnitude to enhance mean expression (Larsson data was scRNA-seq, so downsampled)
+    repmat(0.01,1,1),...                %onbasalA1_off_ratio (0.01,2) - per Larsson this is the bulk of the distribution (very quick off-burst)
     repmat(0.1,1,1),...                 %A1_Aprime1_addon_ratio (0.1,10)
     repmat(0.1,1,1),...                 %A1_Aprime_prodon_ratio (0.1,10)
     repmat(1,1,1),...                   %r_prod_on (1,1000)
@@ -54,7 +54,7 @@ min_range = [repmat(0.1,1,1),...        %basal_nitc_on_ratio (0.1,10) - is 10 hi
 %                                       
 
 max_range = [repmat(10,1,1),...         %basal_nitc_on_ratio (0.1,10) - is 10 high enough?
-    repmat(10,1,1),...                  %onbasalA1_off_ratio (0.01,10) - per Larsson this is the bulk of the distribution (very quick off-burst), plus added an extra order of magnitude to enhance mean expression (Larsson data was scRNA-seq, so downsampled)
+    repmat(2,1,1),...                   %onbasalA1_off_ratio (0.01,2) - per Larsson this is the bulk of the distribution (very quick off-burst)
     repmat(10,1,1),...                  %A1_Aprime1_addon_ratio (0.1,10)
     repmat(10,1,1),...                  %A1_Aprime_prodon_ratio (0.1,10)
     repmat(1000,1,1),...                %r_prod_on (1,1000)
