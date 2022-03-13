@@ -267,6 +267,9 @@ high_lfc10_bimod <- lfc10_lhsf %>% filter(product == 'B1') %>% arrange(-bimodali
 low_lfc10_bimod <-  lfc10_lhsf %>% filter(product == 'B1', bimodality_coef > -0.01) %>% arrange(bimodality_coef) %>% head(5)
 high_lfc10_cv <- lfc10_lhsf %>% filter(product == 'B1') %>% arrange(-cv_product) %>% head(5)
 low_lfc10_cv <- lfc10_lhsf %>% filter(product == 'B1', cv_product > -0.01) %>% arrange(cv_product) %>% head(5)
+high_lfc10_mean <- lfc10_lhsf %>% filter(product == 'B1') %>% arrange(-mean_product) %>% head(5)
+stbl_lfc10_mean <-  lfc10_lhsf %>% filter(product == 'B1', bimodality_coef > -0.01) %>% arrange(mean_product) %>% head(5)
+low_lfc10_mean <-  lfc10_lhsf %>% filter(product == 'B1') %>% arrange(mean_product) %>% head(5)
 
 for (pset in high_lfc10_bimod$paramset) {
   
@@ -420,5 +423,363 @@ for (pset in low_lfc10_cv$paramset) {
     ggtitle(paste0('Parameter set ', as.character(pset))) +
     theme_classic()
   ggsave(dist_plot, file = paste0(plotdir, 'traces/stableCV_0to1_distributions_q300_paramset_', as.character(pset), '.pdf'))
+  
+}
+
+
+for (pset in high_lfc10_mean$paramset) {
+  
+  species<-as_tibble(read.csv(paste0(tracedir, 'initialsim_species',as.character(pset),'.csv'), header = T)) %>%
+    mutate(time = 1:300000)
+  
+  traceplot0 <- plot_traces(species, 7500, 8000, 'WT/WT')
+  traceplot1 <- plot_traces(species, 107500, 108000, 'WT/MUT')
+  traceplot2 <- plot_traces(species, 207500, 208000, 'MUT/MUT')
+  
+  f0<-paste0(plotdir, 'traces/increasedMean_0to1_paramset', as.character(pset),'_WTWT.pdf')
+  f1<-paste0(plotdir, 'traces/increasedMean_0to1_paramset', as.character(pset),'_WTMUT.pdf')
+  f2<-paste0(plotdir, 'traces/increasedMean_0to1_paramset', as.character(pset),'_MUTMUT.pdf')
+  
+  ggsave(plot = traceplot0, f0, width = 8, height = 6)
+  ggsave(plot = traceplot1, f1, width = 8, height = 6)
+  ggsave(plot = traceplot2, f2, width = 8, height = 6)
+  
+  species_sample <- species %>%
+    mutate(paramset = pset) %>%
+    filter(time %% 300 == 0, (time > 400 & time < 100001) | (time > 100400 & time < 200001) | (time > 200400 & time < 300001)) %>%
+    mutate(mutated_alleles = case_when(
+      time < 100001 ~ 0,
+      time > 100000 & time < 200001 ~ 1,
+      time > 200000 ~ 2
+    )) %>%
+    dplyr::select(A1, Aprime1, Anonsense1, B1, paramset, time, mutated_alleles) %>%
+    pivot_longer(cols = A1:B1, names_to = 'product', values_to = 'abundance')
+  
+  # cat(paste0('Working on ', as.character(paramset), '\n'))
+  dist_plot<-ggplot(species_sample, aes(abundance)) +
+    geom_histogram() +
+    facet_grid(mutated_alleles~product) +
+    ggtitle(paste0('Parameter set ', as.character(pset))) +
+    theme_classic()
+  ggsave(dist_plot, file = paste0(plotdir, 'traces/increasedMean_0to1_distributions_q300_paramset_', as.character(pset), '.pdf'))
+  
+}
+
+
+for (pset in stbl_lfc10_mean$paramset) {
+  
+  species<-as_tibble(read.csv(paste0(tracedir, 'initialsim_species',as.character(pset),'.csv'), header = T)) %>%
+    mutate(time = 1:300000)
+  
+  traceplot0 <- plot_traces(species, 7500, 8000, 'WT/WT')
+  traceplot1 <- plot_traces(species, 107500, 108000, 'WT/MUT')
+  traceplot2 <- plot_traces(species, 207500, 208000, 'MUT/MUT')
+  
+  f0<-paste0(plotdir, 'traces/stableMean_0to1_paramset', as.character(pset),'_WTWT.pdf')
+  f1<-paste0(plotdir, 'traces/stableMean_0to1_paramset', as.character(pset),'_WTMUT.pdf')
+  f2<-paste0(plotdir, 'traces/stableMean_0to1_paramset', as.character(pset),'_MUTMUT.pdf')
+  
+  ggsave(plot = traceplot0, f0, width = 8, height = 6)
+  ggsave(plot = traceplot1, f1, width = 8, height = 6)
+  ggsave(plot = traceplot2, f2, width = 8, height = 6)
+  
+  species_sample <- species %>%
+    mutate(paramset = pset) %>%
+    filter(time %% 300 == 0, (time > 400 & time < 100001) | (time > 100400 & time < 200001) | (time > 200400 & time < 300001)) %>%
+    mutate(mutated_alleles = case_when(
+      time < 100001 ~ 0,
+      time > 100000 & time < 200001 ~ 1,
+      time > 200000 ~ 2
+    )) %>%
+    dplyr::select(A1, Aprime1, Anonsense1, B1, paramset, time, mutated_alleles) %>%
+    pivot_longer(cols = A1:B1, names_to = 'product', values_to = 'abundance')
+  
+  # cat(paste0('Working on ', as.character(paramset), '\n'))
+  dist_plot<-ggplot(species_sample, aes(abundance)) +
+    geom_histogram() +
+    facet_grid(mutated_alleles~product) +
+    ggtitle(paste0('Parameter set ', as.character(pset))) +
+    theme_classic()
+  ggsave(dist_plot, file = paste0(plotdir, 'traces/stableMean_0to1_distributions_q300_paramset_', as.character(pset), '.pdf'))
+  
+}
+
+for (pset in low_lfc10_mean$paramset) {
+  
+  species<-as_tibble(read.csv(paste0(tracedir, 'initialsim_species',as.character(pset),'.csv'), header = T)) %>%
+    mutate(time = 1:300000)
+  
+  traceplot0 <- plot_traces(species, 7500, 8000, 'WT/WT')
+  traceplot1 <- plot_traces(species, 107500, 108000, 'WT/MUT')
+  traceplot2 <- plot_traces(species, 207500, 208000, 'MUT/MUT')
+  
+  f0<-paste0(plotdir, 'traces/decreasedMean_0to1_paramset', as.character(pset),'_WTWT.pdf')
+  f1<-paste0(plotdir, 'traces/decreasedMean_0to1_paramset', as.character(pset),'_WTMUT.pdf')
+  f2<-paste0(plotdir, 'traces/decreasedMean_0to1_paramset', as.character(pset),'_MUTMUT.pdf')
+  
+  ggsave(plot = traceplot0, f0, width = 8, height = 6)
+  ggsave(plot = traceplot1, f1, width = 8, height = 6)
+  ggsave(plot = traceplot2, f2, width = 8, height = 6)
+  
+  species_sample <- species %>%
+    mutate(paramset = pset) %>%
+    filter(time %% 300 == 0, (time > 400 & time < 100001) | (time > 100400 & time < 200001) | (time > 200400 & time < 300001)) %>%
+    mutate(mutated_alleles = case_when(
+      time < 100001 ~ 0,
+      time > 100000 & time < 200001 ~ 1,
+      time > 200000 ~ 2
+    )) %>%
+    dplyr::select(A1, Aprime1, Anonsense1, B1, paramset, time, mutated_alleles) %>%
+    pivot_longer(cols = A1:B1, names_to = 'product', values_to = 'abundance')
+  
+  # cat(paste0('Working on ', as.character(paramset), '\n'))
+  dist_plot<-ggplot(species_sample, aes(abundance)) +
+    geom_histogram() +
+    facet_grid(mutated_alleles~product) +
+    ggtitle(paste0('Parameter set ', as.character(pset))) +
+    theme_classic()
+  ggsave(dist_plot, file = paste0(plotdir, 'traces/decreasedMean_0to1_distributions_q300_paramset_', as.character(pset), '.pdf'))
+  
+}
+
+
+# pick traces based on absolute stats (e.g., highest bimodality in heterozyg)
+high_bimod_wtwt <- allstats %>% inner_join(lhs_sets, by = 'paramset') %>% filter(product == 'B1', Hill_coefficient_n < 5, mean_product > 10, mutated_alleles == 0) %>% arrange(-bimodality_coef) %>% head(5)
+low_bimod_wtwt <- allstats %>% inner_join(lhs_sets, by = 'paramset') %>% filter(product == 'B1', Hill_coefficient_n < 5, mean_product > 10, mutated_alleles == 0) %>% arrange(bimodality_coef) %>% head(5)
+high_bimod_wtmut <- allstats %>% inner_join(lhs_sets, by = 'paramset') %>% filter(product == 'B1', Hill_coefficient_n < 5, mean_product > 10, mutated_alleles == 1) %>% arrange(-bimodality_coef) %>% head(5)
+low_bimod_wtmut <- allstats %>% inner_join(lhs_sets, by = 'paramset') %>% filter(product == 'B1', Hill_coefficient_n < 5, mean_product > 10, mutated_alleles == 1) %>% arrange(bimodality_coef) %>% head(5)
+
+high_bimod_highmean_wtmut <- allstats %>% inner_join(lhs_sets, by = 'paramset') %>% filter(product == 'B1', Hill_coefficient_n < 5, mean_product > 50, mutated_alleles == 1) %>% arrange(-bimodality_coef) %>% head(5)
+low_bimod_highmean_wtmut <- allstats %>% inner_join(lhs_sets, by = 'paramset') %>% filter(product == 'B1', Hill_coefficient_n < 5, mean_product > 50, mutated_alleles == 1) %>% arrange(bimodality_coef) %>% head(5)
+
+for (pset in high_bimod_wtwt$paramset) {
+  
+  species<-as_tibble(read.csv(paste0(tracedir, 'initialsim_species',as.character(pset),'.csv'), header = T)) %>%
+    mutate(time = 1:300000)
+  
+  traceplot0 <- plot_traces(species, 7500, 8000, 'WT/WT')
+  traceplot1 <- plot_traces(species, 107500, 108000, 'WT/MUT')
+  traceplot2 <- plot_traces(species, 207500, 208000, 'MUT/MUT')
+  
+  f0<-paste0(plotdir, 'traces/highBimodality_in_wtwt_paramset', as.character(pset),'_WTWT.pdf')
+  f1<-paste0(plotdir, 'traces/highBimodality_in_wtwt_paramset', as.character(pset),'_WTMUT.pdf')
+  f2<-paste0(plotdir, 'traces/highBimodality_in_wtwt_paramset', as.character(pset),'_MUTMUT.pdf')
+  
+  ggsave(plot = traceplot0, f0, width = 8, height = 6)
+  ggsave(plot = traceplot1, f1, width = 8, height = 6)
+  ggsave(plot = traceplot2, f2, width = 8, height = 6)
+  
+  species_sample <- species %>%
+    mutate(paramset = pset) %>%
+    filter(time %% 300 == 0, (time > 400 & time < 100001) | (time > 100400 & time < 200001) | (time > 200400 & time < 300001)) %>%
+    mutate(mutated_alleles = case_when(
+      time < 100001 ~ 0,
+      time > 100000 & time < 200001 ~ 1,
+      time > 200000 ~ 2
+    )) %>%
+    dplyr::select(A1, Aprime1, Anonsense1, B1, paramset, time, mutated_alleles) %>%
+    pivot_longer(cols = A1:B1, names_to = 'product', values_to = 'abundance')
+  
+  # cat(paste0('Working on ', as.character(paramset), '\n'))
+  dist_plot<-ggplot(species_sample, aes(abundance)) +
+    geom_histogram() +
+    facet_grid(mutated_alleles~product) +
+    ggtitle(paste0('Parameter set ', as.character(pset))) +
+    theme_classic()
+  ggsave(dist_plot, file = paste0(plotdir, 'traces/highBimodality_in_wtwt_distributions_q300_paramset_', as.character(pset), '.pdf'))
+  
+}
+
+
+for (pset in low_bimod_wtwt$paramset) {
+  
+  species<-as_tibble(read.csv(paste0(tracedir, 'initialsim_species',as.character(pset),'.csv'), header = T)) %>%
+    mutate(time = 1:300000)
+  
+  traceplot0 <- plot_traces(species, 7500, 8000, 'WT/WT')
+  traceplot1 <- plot_traces(species, 107500, 108000, 'WT/MUT')
+  traceplot2 <- plot_traces(species, 207500, 208000, 'MUT/MUT')
+  
+  f0<-paste0(plotdir, 'traces/lowBimodality_in_wtwt_paramset', as.character(pset),'_WTWT.pdf')
+  f1<-paste0(plotdir, 'traces/lowBimodality_in_wtwt_paramset', as.character(pset),'_WTMUT.pdf')
+  f2<-paste0(plotdir, 'traces/lowBimodality_in_wtwt_paramset', as.character(pset),'_MUTMUT.pdf')
+  
+  ggsave(plot = traceplot0, f0, width = 8, height = 6)
+  ggsave(plot = traceplot1, f1, width = 8, height = 6)
+  ggsave(plot = traceplot2, f2, width = 8, height = 6)
+  
+  species_sample <- species %>%
+    mutate(paramset = pset) %>%
+    filter(time %% 300 == 0, (time > 400 & time < 100001) | (time > 100400 & time < 200001) | (time > 200400 & time < 300001)) %>%
+    mutate(mutated_alleles = case_when(
+      time < 100001 ~ 0,
+      time > 100000 & time < 200001 ~ 1,
+      time > 200000 ~ 2
+    )) %>%
+    dplyr::select(A1, Aprime1, Anonsense1, B1, paramset, time, mutated_alleles) %>%
+    pivot_longer(cols = A1:B1, names_to = 'product', values_to = 'abundance')
+  
+  # cat(paste0('Working on ', as.character(paramset), '\n'))
+  dist_plot<-ggplot(species_sample, aes(abundance)) +
+    geom_histogram() +
+    facet_grid(mutated_alleles~product) +
+    ggtitle(paste0('Parameter set ', as.character(pset))) +
+    theme_classic()
+  ggsave(dist_plot, file = paste0(plotdir, 'traces/lowBimodality_in_wtwt_distributions_q300_paramset_', as.character(pset), '.pdf'))
+  
+}
+
+
+for (pset in high_bimod_wtmut$paramset) {
+  
+  species<-as_tibble(read.csv(paste0(tracedir, 'initialsim_species',as.character(pset),'.csv'), header = T)) %>%
+    mutate(time = 1:300000)
+  
+  traceplot0 <- plot_traces(species, 7500, 8000, 'WT/WT')
+  traceplot1 <- plot_traces(species, 107500, 108000, 'WT/MUT')
+  traceplot2 <- plot_traces(species, 207500, 208000, 'MUT/MUT')
+  
+  f0<-paste0(plotdir, 'traces/highBimodality_in_wtmut_paramset', as.character(pset),'_WTWT.pdf')
+  f1<-paste0(plotdir, 'traces/highBimodality_in_wtmut_paramset', as.character(pset),'_WTMUT.pdf')
+  f2<-paste0(plotdir, 'traces/highBimodality_in_wtmut_paramset', as.character(pset),'_MUTMUT.pdf')
+  
+  ggsave(plot = traceplot0, f0, width = 8, height = 6)
+  ggsave(plot = traceplot1, f1, width = 8, height = 6)
+  ggsave(plot = traceplot2, f2, width = 8, height = 6)
+  
+  species_sample <- species %>%
+    mutate(paramset = pset) %>%
+    filter(time %% 300 == 0, (time > 400 & time < 100001) | (time > 100400 & time < 200001) | (time > 200400 & time < 300001)) %>%
+    mutate(mutated_alleles = case_when(
+      time < 100001 ~ 0,
+      time > 100000 & time < 200001 ~ 1,
+      time > 200000 ~ 2
+    )) %>%
+    dplyr::select(A1, Aprime1, Anonsense1, B1, paramset, time, mutated_alleles) %>%
+    pivot_longer(cols = A1:B1, names_to = 'product', values_to = 'abundance')
+  
+  # cat(paste0('Working on ', as.character(paramset), '\n'))
+  dist_plot<-ggplot(species_sample, aes(abundance)) +
+    geom_histogram() +
+    facet_grid(mutated_alleles~product) +
+    ggtitle(paste0('Parameter set ', as.character(pset))) +
+    theme_classic()
+  ggsave(dist_plot, file = paste0(plotdir, 'traces/highBimodality_in_wtmut_distributions_q300_paramset_', as.character(pset), '.pdf'))
+  
+}
+
+
+for (pset in low_bimod_wtmut$paramset) {
+  
+  species<-as_tibble(read.csv(paste0(tracedir, 'initialsim_species',as.character(pset),'.csv'), header = T)) %>%
+    mutate(time = 1:300000)
+  
+  traceplot0 <- plot_traces(species, 7500, 8000, 'WT/WT')
+  traceplot1 <- plot_traces(species, 107500, 108000, 'WT/MUT')
+  traceplot2 <- plot_traces(species, 207500, 208000, 'MUT/MUT')
+  
+  f0<-paste0(plotdir, 'traces/lowBimodality_in_wtmut_paramset', as.character(pset),'_WTWT.pdf')
+  f1<-paste0(plotdir, 'traces/lowBimodality_in_wtmut_paramset', as.character(pset),'_WTMUT.pdf')
+  f2<-paste0(plotdir, 'traces/lowBimodality_in_wtmut_paramset', as.character(pset),'_MUTMUT.pdf')
+  
+  ggsave(plot = traceplot0, f0, width = 8, height = 6)
+  ggsave(plot = traceplot1, f1, width = 8, height = 6)
+  ggsave(plot = traceplot2, f2, width = 8, height = 6)
+  
+  species_sample <- species %>%
+    mutate(paramset = pset) %>%
+    filter(time %% 300 == 0, (time > 400 & time < 100001) | (time > 100400 & time < 200001) | (time > 200400 & time < 300001)) %>%
+    mutate(mutated_alleles = case_when(
+      time < 100001 ~ 0,
+      time > 100000 & time < 200001 ~ 1,
+      time > 200000 ~ 2
+    )) %>%
+    dplyr::select(A1, Aprime1, Anonsense1, B1, paramset, time, mutated_alleles) %>%
+    pivot_longer(cols = A1:B1, names_to = 'product', values_to = 'abundance')
+  
+  # cat(paste0('Working on ', as.character(paramset), '\n'))
+  dist_plot<-ggplot(species_sample, aes(abundance)) +
+    geom_histogram() +
+    facet_grid(mutated_alleles~product) +
+    ggtitle(paste0('Parameter set ', as.character(pset))) +
+    theme_classic()
+  ggsave(dist_plot, file = paste0(plotdir, 'traces/lowBimodality_in_wtmut_distributions_q300_paramset_', as.character(pset), '.pdf'))
+  
+}
+
+for (pset in high_bimod_highmean_wtmut$paramset) {
+  
+  species<-as_tibble(read.csv(paste0(tracedir, 'initialsim_species',as.character(pset),'.csv'), header = T)) %>%
+    mutate(time = 1:300000)
+  
+  traceplot0 <- plot_traces(species, 7500, 8000, 'WT/WT')
+  traceplot1 <- plot_traces(species, 107500, 108000, 'WT/MUT')
+  traceplot2 <- plot_traces(species, 207500, 208000, 'MUT/MUT')
+  
+  f0<-paste0(plotdir, 'traces/highBimodality_in_wtmut_highmean_paramset', as.character(pset),'_WTWT.pdf')
+  f1<-paste0(plotdir, 'traces/highBimodality_in_wtmut_highmean_paramset', as.character(pset),'_WTMUT.pdf')
+  f2<-paste0(plotdir, 'traces/highBimodality_in_wtmut_highmean_paramset', as.character(pset),'_MUTMUT.pdf')
+  
+  ggsave(plot = traceplot0, f0, width = 8, height = 6)
+  ggsave(plot = traceplot1, f1, width = 8, height = 6)
+  ggsave(plot = traceplot2, f2, width = 8, height = 6)
+  
+  species_sample <- species %>%
+    mutate(paramset = pset) %>%
+    filter(time %% 300 == 0, (time > 400 & time < 100001) | (time > 100400 & time < 200001) | (time > 200400 & time < 300001)) %>%
+    mutate(mutated_alleles = case_when(
+      time < 100001 ~ 0,
+      time > 100000 & time < 200001 ~ 1,
+      time > 200000 ~ 2
+    )) %>%
+    dplyr::select(A1, Aprime1, Anonsense1, B1, paramset, time, mutated_alleles) %>%
+    pivot_longer(cols = A1:B1, names_to = 'product', values_to = 'abundance')
+  
+  # cat(paste0('Working on ', as.character(paramset), '\n'))
+  dist_plot<-ggplot(species_sample, aes(abundance)) +
+    geom_histogram() +
+    facet_grid(mutated_alleles~product) +
+    ggtitle(paste0('Parameter set ', as.character(pset))) +
+    theme_classic()
+  ggsave(dist_plot, file = paste0(plotdir, 'traces/highBimodality_in_wtmut_highmean_distributions_q300_paramset_', as.character(pset), '.pdf'))
+  
+}
+
+
+for (pset in low_bimod_highmean_wtmut$paramset) {
+  
+  species<-as_tibble(read.csv(paste0(tracedir, 'initialsim_species',as.character(pset),'.csv'), header = T)) %>%
+    mutate(time = 1:300000)
+  
+  traceplot0 <- plot_traces(species, 7500, 8000, 'WT/WT')
+  traceplot1 <- plot_traces(species, 107500, 108000, 'WT/MUT')
+  traceplot2 <- plot_traces(species, 207500, 208000, 'MUT/MUT')
+  
+  f0<-paste0(plotdir, 'traces/lowBimodality_in_wtmut_highmean_paramset', as.character(pset),'_WTWT.pdf')
+  f1<-paste0(plotdir, 'traces/lowBimodality_in_wtmut_highmean_paramset', as.character(pset),'_WTMUT.pdf')
+  f2<-paste0(plotdir, 'traces/lowBimodality_in_wtmut_highmean_paramset', as.character(pset),'_MUTMUT.pdf')
+  
+  ggsave(plot = traceplot0, f0, width = 8, height = 6)
+  ggsave(plot = traceplot1, f1, width = 8, height = 6)
+  ggsave(plot = traceplot2, f2, width = 8, height = 6)
+  
+  species_sample <- species %>%
+    mutate(paramset = pset) %>%
+    filter(time %% 300 == 0, (time > 400 & time < 100001) | (time > 100400 & time < 200001) | (time > 200400 & time < 300001)) %>%
+    mutate(mutated_alleles = case_when(
+      time < 100001 ~ 0,
+      time > 100000 & time < 200001 ~ 1,
+      time > 200000 ~ 2
+    )) %>%
+    dplyr::select(A1, Aprime1, Anonsense1, B1, paramset, time, mutated_alleles) %>%
+    pivot_longer(cols = A1:B1, names_to = 'product', values_to = 'abundance')
+  
+  # cat(paste0('Working on ', as.character(paramset), '\n'))
+  dist_plot<-ggplot(species_sample, aes(abundance)) +
+    geom_histogram() +
+    facet_grid(mutated_alleles~product) +
+    ggtitle(paste0('Parameter set ', as.character(pset))) +
+    theme_classic()
+  ggsave(dist_plot, file = paste0(plotdir, 'traces/lowBimodality_in_wtmut_highmean_distributions_q300_paramset_', as.character(pset), '.pdf'))
   
 }
