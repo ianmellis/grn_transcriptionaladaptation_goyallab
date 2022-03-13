@@ -199,6 +199,43 @@ pdf(paste0(plotdir, 'corrplot_2vs1mut.pdf'), width = 10, height = 10)
 cor_B1_paramratio_stats21 <- corrplot.mixed(cor(as.matrix(lfc21_lhs %>% filter(product == 'B1') %>% ungroup() %>% dplyr::select(-product))), tl.pos = 'lt')  
 dev.off()
 
+# filter and re-do analyses
+# mean_denom > 10
+# Hill n < 5
+lfc10_lhsf <- compared_stats %>%
+  filter(compare == 'lfc10', product %in% c('A1', 'B1')) %>%
+  dplyr::select(product, paramset, stat, diff, mean_denom) %>%
+  pivot_wider(names_from = stat, values_from = diff) %>%
+  inner_join(lhs_sets, by = 'paramset') %>%
+  filter(mean_denom > 10, Hill_coefficient_n < 5)
+
+pdf(paste0(plotdir, 'corrplot_1vs0mut_filt.pdf'), width = 10, height = 10)
+cor_B1_paramratio_stats10f <- corrplot.mixed(cor(as.matrix(lfc10_lhsf %>% filter(product == 'B1') %>% ungroup() %>% dplyr::select(-product))), tl.pos = 'lt')  
+dev.off()
+
+lfc20_lhsf <- compared_stats %>%
+  filter(compare == 'lfc20', product %in% c('A1', 'B1')) %>%
+  dplyr::select(product, paramset, stat, diff, mean_denom) %>%
+  pivot_wider(names_from = stat, values_from = diff) %>%
+  inner_join(lhs_sets, by = 'paramset') %>%
+  filter(mean_denom > 10, Hill_coefficient_n < 5)
+
+pdf(paste0(plotdir, 'corrplot_2vs0mut_filt.pdf'), width = 10, height = 10)
+cor_B1_paramratio_stats20f <- corrplot.mixed(cor(as.matrix(lfc20_lhsf %>% filter(product == 'B1') %>% ungroup() %>% dplyr::select(-product))), tl.pos = 'lt')  
+dev.off()
+
+lfc21_lhsf <- compared_stats %>%
+  filter(compare == 'lfc21', product %in% c('A1', 'B1')) %>%
+  dplyr::select(product, paramset, stat, diff, mean_denom) %>%
+  pivot_wider(names_from = stat, values_from = diff) %>%
+  inner_join(lhs_sets, by = 'paramset') %>%
+  filter(mean_denom > 10, Hill_coefficient_n < 5)
+
+pdf(paste0(plotdir, 'corrplot_2vs1mut_filt.pdf'), width = 10, height = 10)
+cor_B1_paramratio_stats21f <- corrplot.mixed(cor(as.matrix(lfc21_lhsf %>% filter(product == 'B1') %>% ungroup() %>% dplyr::select(-product))), tl.pos = 'lt')  
+dev.off()
+
+
 
 for (st in unistats) {
   
@@ -220,4 +257,168 @@ for (st in unistats) {
   
   ggsave(pvs1, file = paste0(plotdir, 'PerGenotype_', st, '_vs_mean.pdf'), width = 16, height = 8) 
   ggsave(pvs2, file = paste0(plotdir, 'PerGenotype_', st, '_vs_logmean.pdf'), width = 16, height = 8) 
+}
+
+# pick some traces: high and low bimodality, high and low CV
+sampledir <- '/Volumes/IAMYG1/grn_nitc_data/v1.6.2/samples/'
+tracedir <- '/Volumes/IAMYG1/grn_nitc_data/v1.6.2/fullTraces/'
+
+high_lfc10_bimod <- lfc10_lhsf %>% filter(product == 'B1') %>% arrange(-bimodality_coef) %>% head(5)
+low_lfc10_bimod <-  lfc10_lhsf %>% filter(product == 'B1', bimodality_coef > -0.01) %>% arrange(bimodality_coef) %>% head(5)
+high_lfc10_cv <- lfc10_lhsf %>% filter(product == 'B1') %>% arrange(-cv_product) %>% head(5)
+low_lfc10_cv <- lfc10_lhsf %>% filter(product == 'B1', cv_product > -0.01) %>% arrange(cv_product) %>% head(5)
+
+for (pset in high_lfc10_bimod$paramset) {
+  
+  species<-as_tibble(read.csv(paste0(tracedir, 'initialsim_species',as.character(pset),'.csv'), header = T)) %>%
+    mutate(time = 1:300000)
+  
+  traceplot0 <- plot_traces(species, 7500, 8000, 'WT/WT')
+  traceplot1 <- plot_traces(species, 107500, 108000, 'WT/MUT')
+  traceplot2 <- plot_traces(species, 207500, 208000, 'MUT/MUT')
+  
+  f0<-paste0(plotdir, 'traces/increasedBimod_0to1_paramset', as.character(pset),'_WTWT.pdf')
+  f1<-paste0(plotdir, 'traces/increasedBimod_0to1_paramset', as.character(pset),'_WTMUT.pdf')
+  f2<-paste0(plotdir, 'traces/increasedBimod_0to1_paramset', as.character(pset),'_MUTMUT.pdf')
+  
+  ggsave(plot = traceplot0, f0, width = 8, height = 6)
+  ggsave(plot = traceplot1, f1, width = 8, height = 6)
+  ggsave(plot = traceplot2, f2, width = 8, height = 6)
+  
+  species_sample <- species %>%
+    mutate(paramset = pset) %>%
+    filter(time %% 300 == 0, (time > 400 & time < 100001) | (time > 100400 & time < 200001) | (time > 200400 & time < 300001)) %>%
+    mutate(mutated_alleles = case_when(
+      time < 100001 ~ 0,
+      time > 100000 & time < 200001 ~ 1,
+      time > 200000 ~ 2
+    )) %>%
+    dplyr::select(A1, Aprime1, Anonsense1, B1, paramset, time, mutated_alleles) %>%
+    pivot_longer(cols = A1:B1, names_to = 'product', values_to = 'abundance')
+
+    # cat(paste0('Working on ', as.character(paramset), '\n'))
+    dist_plot<-ggplot(species_sample, aes(abundance)) +
+      geom_histogram() +
+      facet_grid(mutated_alleles~product) +
+      ggtitle(paste0('Parameter set ', as.character(pset))) +
+      theme_classic()
+    ggsave(dist_plot, file = paste0(plotdir, 'traces/increasedBimod_0to1_distributions_q300_paramset_', as.character(pset), '.pdf'))
+  
+}
+
+
+for (pset in low_lfc10_bimod$paramset) {
+  
+  species<-as_tibble(read.csv(paste0(tracedir, 'initialsim_species',as.character(pset),'.csv'), header = T)) %>%
+    mutate(time = 1:300000)
+  
+  traceplot0 <- plot_traces(species, 7500, 8000, 'WT/WT')
+  traceplot1 <- plot_traces(species, 107500, 108000, 'WT/MUT')
+  traceplot2 <- plot_traces(species, 207500, 208000, 'MUT/MUT')
+  
+  f0<-paste0(plotdir, 'traces/stableBimod_0to1_paramset', as.character(pset),'_WTWT.pdf')
+  f1<-paste0(plotdir, 'traces/stableBimod_0to1_paramset', as.character(pset),'_WTMUT.pdf')
+  f2<-paste0(plotdir, 'traces/stableBimod_0to1_paramset', as.character(pset),'_MUTMUT.pdf')
+  
+  ggsave(plot = traceplot0, f0, width = 8, height = 6)
+  ggsave(plot = traceplot1, f1, width = 8, height = 6)
+  ggsave(plot = traceplot2, f2, width = 8, height = 6)
+  
+  species_sample <- species %>%
+    mutate(paramset = pset) %>%
+    filter(time %% 300 == 0, (time > 400 & time < 100001) | (time > 100400 & time < 200001) | (time > 200400 & time < 300001)) %>%
+    mutate(mutated_alleles = case_when(
+      time < 100001 ~ 0,
+      time > 100000 & time < 200001 ~ 1,
+      time > 200000 ~ 2
+    )) %>%
+    dplyr::select(A1, Aprime1, Anonsense1, B1, paramset, time, mutated_alleles) %>%
+    pivot_longer(cols = A1:B1, names_to = 'product', values_to = 'abundance')
+  
+  # cat(paste0('Working on ', as.character(paramset), '\n'))
+  dist_plot<-ggplot(species_sample, aes(abundance)) +
+    geom_histogram() +
+    facet_grid(mutated_alleles~product) +
+    ggtitle(paste0('Parameter set ', as.character(pset))) +
+    theme_classic()
+  ggsave(dist_plot, file = paste0(plotdir, 'traces/stableBimod_0to1_distributions_q300_paramset_', as.character(pset), '.pdf'))
+  
+}
+
+
+for (pset in high_lfc10_cv$paramset) {
+  
+  species<-as_tibble(read.csv(paste0(tracedir, 'initialsim_species',as.character(pset),'.csv'), header = T)) %>%
+    mutate(time = 1:300000)
+  
+  traceplot0 <- plot_traces(species, 7500, 8000, 'WT/WT')
+  traceplot1 <- plot_traces(species, 107500, 108000, 'WT/MUT')
+  traceplot2 <- plot_traces(species, 207500, 208000, 'MUT/MUT')
+  
+  f0<-paste0(plotdir, 'traces/increasedCV_0to1_paramset', as.character(pset),'_WTWT.pdf')
+  f1<-paste0(plotdir, 'traces/increasedCV_0to1_paramset', as.character(pset),'_WTMUT.pdf')
+  f2<-paste0(plotdir, 'traces/increasedCV_0to1_paramset', as.character(pset),'_MUTMUT.pdf')
+  
+  ggsave(plot = traceplot0, f0, width = 8, height = 6)
+  ggsave(plot = traceplot1, f1, width = 8, height = 6)
+  ggsave(plot = traceplot2, f2, width = 8, height = 6)
+  
+  species_sample <- species %>%
+    mutate(paramset = pset) %>%
+    filter(time %% 300 == 0, (time > 400 & time < 100001) | (time > 100400 & time < 200001) | (time > 200400 & time < 300001)) %>%
+    mutate(mutated_alleles = case_when(
+      time < 100001 ~ 0,
+      time > 100000 & time < 200001 ~ 1,
+      time > 200000 ~ 2
+    )) %>%
+    dplyr::select(A1, Aprime1, Anonsense1, B1, paramset, time, mutated_alleles) %>%
+    pivot_longer(cols = A1:B1, names_to = 'product', values_to = 'abundance')
+  
+  # cat(paste0('Working on ', as.character(paramset), '\n'))
+  dist_plot<-ggplot(species_sample, aes(abundance)) +
+    geom_histogram() +
+    facet_grid(mutated_alleles~product) +
+    ggtitle(paste0('Parameter set ', as.character(pset))) +
+    theme_classic()
+  ggsave(dist_plot, file = paste0(plotdir, 'traces/increasedCV_0to1_distributions_q300_paramset_', as.character(pset), '.pdf'))
+  
+}
+
+
+for (pset in low_lfc10_cv$paramset) {
+  
+  species<-as_tibble(read.csv(paste0(tracedir, 'initialsim_species',as.character(pset),'.csv'), header = T)) %>%
+    mutate(time = 1:300000)
+  
+  traceplot0 <- plot_traces(species, 7500, 8000, 'WT/WT')
+  traceplot1 <- plot_traces(species, 107500, 108000, 'WT/MUT')
+  traceplot2 <- plot_traces(species, 207500, 208000, 'MUT/MUT')
+  
+  f0<-paste0(plotdir, 'traces/stableCV_0to1_paramset', as.character(pset),'_WTWT.pdf')
+  f1<-paste0(plotdir, 'traces/stableCV_0to1_paramset', as.character(pset),'_WTMUT.pdf')
+  f2<-paste0(plotdir, 'traces/stableCV_0to1_paramset', as.character(pset),'_MUTMUT.pdf')
+  
+  ggsave(plot = traceplot0, f0, width = 8, height = 6)
+  ggsave(plot = traceplot1, f1, width = 8, height = 6)
+  ggsave(plot = traceplot2, f2, width = 8, height = 6)
+  
+  species_sample <- species %>%
+    mutate(paramset = pset) %>%
+    filter(time %% 300 == 0, (time > 400 & time < 100001) | (time > 100400 & time < 200001) | (time > 200400 & time < 300001)) %>%
+    mutate(mutated_alleles = case_when(
+      time < 100001 ~ 0,
+      time > 100000 & time < 200001 ~ 1,
+      time > 200000 ~ 2
+    )) %>%
+    dplyr::select(A1, Aprime1, Anonsense1, B1, paramset, time, mutated_alleles) %>%
+    pivot_longer(cols = A1:B1, names_to = 'product', values_to = 'abundance')
+  
+  # cat(paste0('Working on ', as.character(paramset), '\n'))
+  dist_plot<-ggplot(species_sample, aes(abundance)) +
+    geom_histogram() +
+    facet_grid(mutated_alleles~product) +
+    ggtitle(paste0('Parameter set ', as.character(pset))) +
+    theme_classic()
+  ggsave(dist_plot, file = paste0(plotdir, 'traces/stableCV_0to1_distributions_q300_paramset_', as.character(pset), '.pdf'))
+  
 }

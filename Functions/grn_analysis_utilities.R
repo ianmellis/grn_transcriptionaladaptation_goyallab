@@ -25,3 +25,33 @@ calculate_bimodality <- function(x) {
   return(bc)
   
 }
+
+# plot_traces plots example traces for data from a simulation given timepoint bounds.
+# Accepts:
+# - dat: a tibble with columns: time, A1, Anonsense1, Aprime1, B1, paramset
+# - start: numeric, starting time
+# - end: numeric, ending time
+# - genostring: string, describing genotype, e.g., 'WT/WT'
+# 
+# Returns:
+# - p1: ggplot with traces only
+plot_traces <- function(dat, start, end, genostring){
+  
+  orig_color = 'black'
+  nons_color = 'firebrick2'
+  para_color = 'gray'
+  targ_color = 'dodgerblue2'
+  
+  species <- dat %>% filter(time >= start, time <= end)
+  
+  spec_plot <- ggplot() +
+    theme_classic() +
+    geom_line(data = species, aes(time, A1), color = orig_color, alpha = 0.5) +
+    geom_line(data = species, aes(time, Anonsense1), color = nons_color, alpha = 0.5) +
+    geom_line(data = species, aes(time, Aprime1), color = para_color, alpha = 0.5) +
+    geom_line(data = species, aes(time, B1), color = targ_color, alpha = 0.5) +
+    ylab('Abundance') +
+    ggtitle(paste0('Abundance over time, parameter set ', as.character(pset),'\nGenotype ', genostring, ' steady state'))
+  
+  return(spec_plot)
+}
