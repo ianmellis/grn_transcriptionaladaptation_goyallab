@@ -260,8 +260,12 @@ for (st in unistats) {
 }
 
 # pick some traces: high and low bimodality, high and low CV
-sampledir <- '/Volumes/IAMYG1/grn_nitc_data/v1.6.2/samples/'
-tracedir <- '/Volumes/IAMYG1/grn_nitc_data/v1.6.2/fullTraces/'
+sampledir <- '/Volumes/IAMYG1/grn_nitc_data/v1.6.5/samples/'
+tracedir <- '/Volumes/IAMYG1/grn_nitc_data/v1.6.5/fullTraces/'
+
+if(!dir.exists(paste0(plotdir, 'traces/'))){
+  dir.create(paste0(plotdir, 'traces/'))
+}
 
 high_lfc10_bimod <- lfc10_lhsf %>% filter(product == 'B1') %>% arrange(-bimodality_coef) %>% head(5)
 low_lfc10_bimod <-  lfc10_lhsf %>% filter(product == 'B1', bimodality_coef > -0.01) %>% arrange(bimodality_coef) %>% head(5)

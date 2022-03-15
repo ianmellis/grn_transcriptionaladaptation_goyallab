@@ -30,7 +30,11 @@ human = useMart("ensembl", dataset = "hsapiens_gene_ensembl") # version 105, Dec
 geneParaList <- getBM(attributes = c("ensembl_gene_id", 
                                      "external_gene_name",
                                      "hsapiens_paralog_ensembl_gene", 
-                                     "hsapiens_paralog_associated_gene_name"),
+                                     "hsapiens_paralog_associated_gene_name",
+                                     'hsapiens_paralog_subtype',
+                                     'hsapiens_paralog_orthology_type',
+                                     'hsapiens_paralog_perc_id',
+                                     'hsapiens_paralog_perc_id_r1'),
                       filters = 'external_gene_name',
                       values = target_genes,
                       mart = human)
