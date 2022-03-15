@@ -10,21 +10,21 @@ source('~/code/grn_nitc/Functions/grn_analysis_utilities.R')
 
 
 # edit as needed
-datadir <- '/Volumes/IAMYG1/grn_nitc_data/v1.6.2/samples/'
+datadir2 <- '/Volumes/IAMYG1/grn_nitc_data/v1.6.2/samples/'
 plotdir <- '/Volumes/IAMYG1/grn_nitc_data/v1.6.2and5/exploratory_analysis/'
-setwd(datadir)
+setwd(datadir2)
 
 if(!dir.exists(plotdir)){
   dir.create(plotdir)
 }
-paramsets <- 1:9900
-lhs_sets <- as_tibble(read.csv('latinhyp_sampledSets.csv')) 
-lhs_sets %<>%
-  mutate(paramset = 1:nrow(lhs_sets))
+paramsets2 <- 1:9900
+lhs_sets2 <- as_tibble(read.csv('latinhyp_sampledSets.csv')) 
+lhs_sets2 %<>%
+  mutate(paramset = 1:nrow(lhs_sets2))
 
-allstats <- list()
-allparams <- list()
-for (paramset in paramsets){
+allstats2 <- list()
+allparams2 <- list()
+for (paramset in paramsets2){
   
   # cat(paste0('Working on ', as.character(paramset), '\n'))
   
@@ -63,28 +63,24 @@ for (paramset in paramsets){
               bimodality_coef = calculate_bimodality(abundance),
               HDTpval = dip.test(abundance)$p.value, .groups = 'keep')
   
-  if(is.null(dim(allstats))) {
-    allstats <- spstats
+  if(is.null(dim(allstats2))) {
+    allstats2 <- spstats
   } else {
-    allstats %<>% bind_rows(spstats)
+    allstats2 %<>% bind_rows(spstats)
   }
   
-  if(is.null(dim(allparams))) {
-    allparams <- params
+  if(is.null(dim(allparams2))) {
+    allparams2 <- params
   } else {
-    allparams %<>% bind_rows(params)
+    allparams2 %<>% bind_rows(params)
   }
   
 }
 
 # edit as needed
-datadir <- '/Volumes/IAMYG1/grn_nitc_data/v1.6.5/samples/'
-plotdir <- '/Volumes/IAMYG1/grn_nitc_data/v1.6.2and5/exploratory_analysis/'
-setwd(datadir)
+datadir5 <- '/Volumes/IAMYG1/grn_nitc_data/v1.6.5/samples/'
+setwd(datadir5)
 
-if(!dir.exists(plotdir)){
-  dir.create(plotdir)
-}
 paramsets5 <- 1:10000
 lhs_sets5 <- as_tibble(read.csv('latinhyp_sampledSets.csv')) 
 lhs_sets5 %<>%
@@ -145,4 +141,30 @@ for (paramset in paramsets5){
   
 }
 
-allstats_full <- bind_rows(allstats %>% mutate(version = '1.6.2'), allstats5 %>% mutate(version = '1.6.5'))
+allstats_full <- bind_rows(allstats2 %>% mutate(version = '1.6.2'), allstats5 %>% mutate(version = '1.6.5'))
+allparams_full <- bind_rows(allparams2 %>% mutate(paramset = 1:9900, version = '1.6.2'),
+                            allparams5 %>% mutate(paramset = 1:10000, version = '1.6.5'))
+lhs_sets_full <- bind_rows(lhs_sets2 %>% mutate(version = '1.6.2'), lhs_sets5 %>% mutate(version = '1.6.5'))
+
+pseud = 0.01
+
+compared_stats <- allstats_full %>% 
+  group_by(version, paramset, product, mutated_alleles) %>% 
+  pivot_longer(names_to = 'stat', values_to = 'value', cols = mean_product:HDTpval) %>% 
+  pivot_wider(names_from = mutated_alleles, values_from = value) %>% 
+  mutate(lfc10 = log2((`1`+pseud)/(`0` + pseud)), 
+         delta10 = `1`-`0`,
+         lfc21 = log2((`2`+pseud)/(`1` + pseud)), 
+         delta21 = `2`-`1`,
+         lfc20 = log2((`2`+pseud)/(`0` + pseud)), 
+         delta20 = `2`-`0`) %>%
+  dplyr::select(-c(`0`:`2`)) %>% 
+  pivot_longer(names_to = 'compare', values_to = 'diff', cols = lfc10:delta20) %>%
+  inner_join(allstats_full %>% 
+               dplyr::select(mutated_alleles, product, paramset, version, mean_product) %>%
+               pivot_wider(names_from = mutated_alleles, values_from = mean_product), by = c('product', 'paramset', 'version')) %>%
+  mutate(mean_denom = case_when(
+    compare %in% c('lfc10', 'delta10', 'lfc20', 'delta20') ~ `0`,
+    compare %in% c('lfc21', 'delta21') ~ `1`))
+
+# filter to Hill n < 5
