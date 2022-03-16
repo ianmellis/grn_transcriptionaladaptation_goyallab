@@ -38,6 +38,8 @@ randtimes <- sample(-100:100, 332*3, replace = T)
 indexinds <- c(seq(400, 99999, by = 300), seq(100400, 199999, by = 300), seq(200400, 299999, by = 300)) 
 randinds<- randtimes + indexinds
 
+species1 <- fullsim %>% filter(time %in% randinds, time < 100000)
+
 species_sample1 <- fullsim %>%
   mutate(paramset = paramset) %>%
   filter(time %in% randinds) %>%
@@ -54,3 +56,13 @@ dist_plot<-ggplot(species_sample1, aes(abundance)) +
   facet_grid(mutated_alleles~product) +
   ggtitle(paste0('Parameter set ', as.character(paramset))) +
   theme_classic(); dist_plot
+
+if(!dir.exists('autocor/')){
+  dir.create('autocor')
+}
+for (paramset in 1:100){
+  
+  species<-as_tibble(read.csv(paste0('initialsim_species',as.character(paramset),'_q300.csv'), header = T))
+  pdf(paste0('paramset', as.character(paramset), '_B1autocorr'))
+  
+}
