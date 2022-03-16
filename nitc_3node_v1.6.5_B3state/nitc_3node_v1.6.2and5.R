@@ -168,3 +168,4 @@ compared_stats <- allstats_full %>%
     compare %in% c('lfc21', 'delta21') ~ `1`))
 
 # filter to Hill n < 5
+compared_stats %<>% ungroup() %>% inner_join(lhs_sets_full %>% filter(Hill_coefficient_n < 5) %>% dplyr::select(version, paramset), by = c('version','paramset'))
