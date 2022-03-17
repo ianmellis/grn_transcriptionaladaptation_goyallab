@@ -55,3 +55,45 @@ plot_traces <- function(dat, start, end, genostring){
   
   return(spec_plot)
 }
+
+plot_traces_ver <- function(dat, start, end, genostring){
+  
+  orig_color = 'black'
+  nons_color = 'firebrick2'
+  para_color = 'gray'
+  targ_color = 'dodgerblue2'
+  
+  species <- dat %>% filter(time >= start, time <= end)
+  
+  spec_plot <- ggplot() +
+    theme_classic() +
+    geom_line(data = species, aes(time, A1), color = orig_color, alpha = 0.5) +
+    geom_line(data = species, aes(time, Anonsense1), color = nons_color, alpha = 0.5) +
+    geom_line(data = species, aes(time, Aprime1), color = para_color, alpha = 0.5) +
+    geom_line(data = species, aes(time, B1), color = targ_color, alpha = 0.5) +
+    ylab('Abundance') +
+    ggtitle(paste0('Abundance over time, version ', as.character(ver), ', parameter set ', as.character(pset),'\nGenotype ', genostring, ' steady state'))
+  
+  return(spec_plot)
+}
+
+plot_traces_ver_Bfocus <- function(dat, start, end, genostring){
+  
+  orig_color = 'black'
+  nons_color = 'firebrick2'
+  para_color = 'gray'
+  targ_color = 'dodgerblue2'
+  
+  species <- dat %>% filter(time >= start, time <= end)
+  
+  spec_plot <- ggplot() +
+    theme_classic() +
+    geom_line(data = species, aes(time, A1), color = orig_color, alpha = 0.2) +
+    geom_line(data = species, aes(time, Anonsense1), color = nons_color, alpha = 0.2) +
+    geom_line(data = species, aes(time, Aprime1), color = para_color, alpha = 0.2) +
+    geom_line(data = species, aes(time, B1), color = targ_color, alpha = 0.9) +
+    ylab('Abundance') +
+    ggtitle(paste0('Abundance over time, version ', as.character(ver), ', parameter set ', as.character(pset),'\nGenotype ', genostring, ' steady state'))
+  
+  return(spec_plot)
+}
