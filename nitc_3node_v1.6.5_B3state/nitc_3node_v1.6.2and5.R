@@ -6,6 +6,7 @@ library(gridExtra)
 library(diptest)
 library(e1071)
 library(ggrepel)
+library(corrplot)
 source('~/code/grn_nitc/Functions/grn_analysis_utilities.R')
 
 
@@ -223,6 +224,19 @@ if(!dir.exists(paste0(plotdir, 'traces/'))){
   dir.create(paste0(plotdir, 'traces/'))
 }
 
+bimod_vs_cv_wtmut_mean50B1 <- ggplot() + 
+  geom_point(data = allstats_full %>% 
+               inner_join(lhs_sets_full, by = c('version', 'paramset')) %>% 
+               filter(product == 'B1', Hill_coefficient_n < 5, mean_product > 45,mean_product < 55, mutated_alleles == 1), 
+             aes(cv_product, bimodality_coef)) +
+  geom_text_repel(data = allstats_full %>% 
+               inner_join(lhs_sets_full, by = c('version', 'paramset')) %>% 
+               filter(product == 'B1', Hill_coefficient_n < 5, mean_product > 45,mean_product < 55, mutated_alleles == 1), 
+             aes(cv_product, bimodality_coef, label = paste0(version, '_', paramset))) +
+  theme_bw() +
+  ggtitle('B1 in WT/MUT genotype, 45 < mean < 55\nCV vs Bimodality coefficient')
+ggsave(bimod_vs_cv_wtmut_mean50B1, file = paste0(plotdir, 'bimod_vs_cv_wtmut_mean50B1.pdf'))
+
 for (pind in 1:nrow(high_bimod_wtmut)) {
   
   ver = high_bimod_wtmut$version[pind]
@@ -430,9 +444,9 @@ for (pind in 1:nrow(high_cv_wtmut)) {
   traceplot1 <- plot_traces_ver(species, 107500, 108000, 'WT/MUT')
   traceplot2 <- plot_traces_ver(species, 207500, 208000, 'MUT/MUT')
   
-  f0<-paste0(plotdir, 'traces/highCV_in_wtmut_version_',as.character(ver), '_paramset', as.character(pset),'_WTWT.pdf')
-  f1<-paste0(plotdir, 'traces/highCV_in_wtmut_version_',as.character(ver), '_paramset', as.character(pset),'_WTMUT.pdf')
-  f2<-paste0(plotdir, 'traces/highCV_in_wtmut_version_',as.character(ver), '_paramset', as.character(pset),'_MUTMUT.pdf')
+  f0<-paste0(plotdir, '../../v1.6.2and5/panel_drafts/1cd_example_traceAndHisto/highCV_in_wtmut_version_',as.character(ver), '_paramset', as.character(pset),'_WTWT.pdf')
+  f1<-paste0(plotdir, '../../v1.6.2and5/panel_drafts/1cd_example_traceAndHisto/highCV_in_wtmut_version_',as.character(ver), '_paramset', as.character(pset),'_WTMUT.pdf')
+  f2<-paste0(plotdir, '../../v1.6.2and5/panel_drafts/1cd_example_traceAndHisto/highCV_in_wtmut_version_',as.character(ver), '_paramset', as.character(pset),'_MUTMUT.pdf')
   
   ggsave(plot = traceplot0, f0, width = 8, height = 6)
   ggsave(plot = traceplot1, f1, width = 8, height = 6)
@@ -455,9 +469,9 @@ for (pind in 1:nrow(high_cv_wtmut)) {
   traceplot1s <- plot_traces_ver(species, 107500, 107600, 'WT/MUT')
   traceplot2s <- plot_traces_ver(species, 207500, 207600, 'MUT/MUT')
   
-  f0s<-paste0(plotdir, 'traces/highCV_in_wtmut_version_',as.character(ver), '_paramset', as.character(pset),'_WTWT_short.pdf')
-  f1s<-paste0(plotdir, 'traces/highCV_in_wtmut_version_',as.character(ver), '_paramset', as.character(pset),'_WTMUT_short.pdf')
-  f2s<-paste0(plotdir, 'traces/highCV_in_wtmut_version_',as.character(ver), '_paramset', as.character(pset),'_MUTMUT_short.pdf')
+  f0s<-paste0(plotdir, '../../v1.6.2and5/panel_drafts/1cd_example_traceAndHisto/highCV_in_wtmut_version_',as.character(ver), '_paramset', as.character(pset),'_WTWT_short.pdf')
+  f1s<-paste0(plotdir, '../../v1.6.2and5/panel_drafts/1cd_example_traceAndHisto/highCV_in_wtmut_version_',as.character(ver), '_paramset', as.character(pset),'_WTMUT_short.pdf')
+  f2s<-paste0(plotdir, '../../v1.6.2and5/panel_drafts/1cd_example_traceAndHisto/highCV_in_wtmut_version_',as.character(ver), '_paramset', as.character(pset),'_MUTMUT_short.pdf')
   
   ggsave(plot = traceplot0s, f0s, width = 8, height = 6)
   ggsave(plot = traceplot1s, f1s, width = 8, height = 6)
@@ -525,9 +539,9 @@ for (pind in 1:nrow(low_cv_wtmut)) {
   traceplot1 <- plot_traces_ver(species, 107500, 108000, 'WT/MUT')
   traceplot2 <- plot_traces_ver(species, 207500, 208000, 'MUT/MUT')
   
-  f0<-paste0(plotdir, 'traces/lowCV_in_wtmut_version_',as.character(ver), '_paramset', as.character(pset),'_WTWT.pdf')
-  f1<-paste0(plotdir, 'traces/lowCV_in_wtmut_version_',as.character(ver), '_paramset', as.character(pset),'_WTMUT.pdf')
-  f2<-paste0(plotdir, 'traces/lowCV_in_wtmut_version_',as.character(ver), '_paramset', as.character(pset),'_MUTMUT.pdf')
+  f0<-paste0(plotdir, '../../v1.6.2and5/panel_drafts/1cd_example_traceAndHisto/lowCV_in_wtmut_version_',as.character(ver), '_paramset', as.character(pset),'_WTWT.pdf')
+  f1<-paste0(plotdir, '../../v1.6.2and5/panel_drafts/1cd_example_traceAndHisto/lowCV_in_wtmut_version_',as.character(ver), '_paramset', as.character(pset),'_WTMUT.pdf')
+  f2<-paste0(plotdir, '../../v1.6.2and5/panel_drafts/1cd_example_traceAndHisto/lowCV_in_wtmut_version_',as.character(ver), '_paramset', as.character(pset),'_MUTMUT.pdf')
   
   ggsave(plot = traceplot0, f0, width = 8, height = 6)
   ggsave(plot = traceplot1, f1, width = 8, height = 6)
@@ -550,9 +564,9 @@ for (pind in 1:nrow(low_cv_wtmut)) {
   traceplot1s <- plot_traces_ver(species, 107500, 107600, 'WT/MUT')
   traceplot2s <- plot_traces_ver(species, 207500, 207600, 'MUT/MUT')
   
-  f0s<-paste0(plotdir, 'traces/lowCV_in_wtmut_version_',as.character(ver), '_paramset', as.character(pset),'_WTWT_short.pdf')
-  f1s<-paste0(plotdir, 'traces/lowCV_in_wtmut_version_',as.character(ver), '_paramset', as.character(pset),'_WTMUT_short.pdf')
-  f2s<-paste0(plotdir, 'traces/lowCV_in_wtmut_version_',as.character(ver), '_paramset', as.character(pset),'_MUTMUT_short.pdf')
+  f0s<-paste0(plotdir, '../../v1.6.2and5/panel_drafts/1cd_example_traceAndHisto/lowCV_in_wtmut_version_',as.character(ver), '_paramset', as.character(pset),'_WTWT_short.pdf')
+  f1s<-paste0(plotdir, '../../v1.6.2and5/panel_drafts/1cd_example_traceAndHisto/lowCV_in_wtmut_version_',as.character(ver), '_paramset', as.character(pset),'_WTMUT_short.pdf')
+  f2s<-paste0(plotdir, '../../v1.6.2and5/panel_drafts/1cd_example_traceAndHisto/lowCV_in_wtmut_version_',as.character(ver), '_paramset', as.character(pset),'_MUTMUT_short.pdf')
   
   ggsave(plot = traceplot0s, f0s, width = 8, height = 6)
   ggsave(plot = traceplot1s, f1s, width = 8, height = 6)
@@ -599,6 +613,175 @@ for (pind in 1:nrow(low_cv_wtmut)) {
   ggsave(dist_plot2, file = paste0(plotdir, 'traces/lowCV_in_wtmut_distributions_WTWT_WTMUTonly_q300_version_',as.character(ver), '_paramset_', as.character(pset), '.pdf'))
   
 }
+
+
+# change from wt/wt to wt/mut analysis
+
+sumstats_wt_vs_het_all <- ggplot(allstats_full %>% 
+         group_by(version, paramset, product, mutated_alleles) %>% 
+         pivot_longer(names_to = 'stat', values_to = 'value', cols = mean_product:HDTpval) %>% 
+         pivot_wider(names_from = mutated_alleles, values_from = value) %>% filter(product == 'B1'), 
+       aes(`0`, `1`)) + 
+  geom_point(alpha = 0.5, stroke = 0) + 
+  facet_wrap(~stat, scales = 'free') +
+  theme_bw() +
+  xlab('WT/WT') +
+  ylab('WT/MUT') +
+  ggtitle('summary stats in wt/wt and heterozygous genotypes')
+ggsave(sumstats_wt_vs_het_all, file = paste0(plotdir, 'sumstats_wt_vs_het_all.pdf'))
+
+hetmean10set <- compared_stats %>% filter(product == 'B1', compare == 'lfc21', mean_denom > 10) %>% dplyr::select(version, paramset) %>% unique()
+
+sumstats_wt_vs_het_hetmean10 <- ggplot(allstats_full %>% 
+                                   group_by(version, paramset, product, mutated_alleles) %>% 
+                                   pivot_longer(names_to = 'stat', values_to = 'value', cols = mean_product:HDTpval) %>% 
+                                   pivot_wider(names_from = mutated_alleles, values_from = value) %>% filter(product == 'B1') %>%
+                                     inner_join(hetmean10set, by=c('version', 'paramset')), 
+                                 aes(`0`, `1`)) + 
+  geom_point(alpha = 0.5, stroke = 0) + 
+  facet_wrap(~stat, scales = 'free') +
+  theme_bw() +
+  xlab('WT/WT') +
+  ylab('WT/MUT') +
+  ggtitle('summary stats in wt/wt and heterozygous genotypes\nMinimum mean in het = 10')
+ggsave(sumstats_wt_vs_het_hetmean10, file = paste0(plotdir, 'sumstats_wt_vs_het_hetmean10.pdf'))
+
+
+unistats<-unique(compared_stats$stat)
+# 
+# for (st in unistats) {
+#   
+#   p1 <- ggplot(compared_stats %>% filter(stat == st | stat == 'mean_product', grepl('delta', compare)) %>% pivot_wider(names_from = stat, values_from = diff), aes(mean_product, eval(as.symbol(st)))) + 
+#     geom_point() + 
+#     geom_text(aes(label = paramset)) +
+#     facet_grid(product~compare, scales = 'free') +
+#     theme_bw() +
+#     ggtitle(paste0('Change in ', st, ' vs. change in mean')) +
+#     ylab(paste0('Change in ', st)) +
+#     xlab('Change in mean')
+#   ggsave(p1, file = paste0(plotdir, 'changein_', st, '_vs_mean.pdf'), width = 16, height = 8)
+#   
+#   p2 <- ggplot(compared_stats %>% filter(stat == st | stat == 'mean_product', grepl('delta', compare)) %>% pivot_wider(names_from = stat, values_from = diff), aes(mean_denom, eval(as.symbol(st)))) + 
+#     geom_point() + 
+#     geom_text(aes(label = paramset)) +
+#     facet_grid(product~compare, scales = 'free') +
+#     theme_bw() +
+#     ggtitle(paste0('Change in ', st, ' vs. change in mean')) +
+#     ylab(paste0('Change in ', st)) +
+#     xlab('Starting mean abundance')
+#   
+#   p3 <- ggplot(compared_stats %>% filter(stat == st | stat == 'mean_product', grepl('delta', compare)) %>% pivot_wider(names_from = stat, values_from = diff), aes(mean_product, eval(as.symbol(st)), color = mean_denom)) + 
+#     geom_point() + 
+#     geom_text(aes(label = paramset)) +
+#     facet_grid(product~compare, scales = 'free') +
+#     theme_bw() +
+#     ggtitle(paste0('Change in ', st, ' vs. change in mean')) +
+#     ylab(paste0('Change in ', st)) +
+#     xlab('Change in mean')
+#   
+#   p1l <- ggplot(compared_stats %>% filter(stat == st | stat == 'mean_product', grepl('lfc', compare)) %>% pivot_wider(names_from = stat, values_from = diff), aes(mean_product, eval(as.symbol(st)))) + 
+#     geom_point() + 
+#     geom_text(aes(label = paramset)) +
+#     facet_grid(product~compare, scales = 'free') +
+#     theme_bw() +
+#     ggtitle(paste0('Change in ', st, ' vs. change in mean')) +
+#     ylab(paste0('Change in ', st)) +
+#     xlab('Change in mean')
+#   ggsave(p1, file = paste0(plotdir, 'changein_', st, '_vs_mean.pdf'), width = 16, height = 8)
+#   
+#   p2l <- ggplot(compared_stats %>% filter(stat == st | stat == 'mean_product', grepl('lfc', compare)) %>% pivot_wider(names_from = stat, values_from = diff), aes(mean_denom, eval(as.symbol(st)))) + 
+#     geom_point() + 
+#     geom_text(aes(label = paramset)) +
+#     facet_grid(product~compare, scales = 'free') +
+#     theme_bw() +
+#     ggtitle(paste0('Change in ', st, ' vs. change in mean')) +
+#     ylab(paste0('Change in ', st)) +
+#     xlab('Starting mean abundance')
+#   
+#   p3l <- ggplot(compared_stats %>% filter(stat == st | stat == 'mean_product', grepl('lfc', compare)) %>% pivot_wider(names_from = stat, values_from = diff), aes(mean_product, eval(as.symbol(st)), color = mean_denom)) + 
+#     geom_point() + 
+#     geom_text(aes(label = paramset)) +
+#     facet_grid(product~compare, scales = 'free') +
+#     theme_bw() +
+#     ggtitle(paste0('Change in ', st, ' vs. change in mean')) +
+#     ylab(paste0('Change in ', st)) +
+#     xlab('Change in mean')
+#   
+#   ggsave(p1, file = paste0(plotdir, 'Diff_changein_', st, '_vs_changeinmean.pdf'), width = 16, height = 8)
+#   ggsave(p2, file = paste0(plotdir, 'Diff_changein_', st, '_vs_startingmean.pdf'), width = 16, height = 8)
+#   ggsave(p3, file = paste0(plotdir, 'Diff_changein_', st, '_vs_changeinmean_colorstartingmean.pdf'), width = 16, height = 8)
+#   
+#   ggsave(p1l, file = paste0(plotdir, 'LFC_changein_', st, '_vs_changeinmean.pdf'), width = 16, height = 8)
+#   ggsave(p2l, file = paste0(plotdir, 'LFC_changein_', st, '_vs_startingmean.pdf'), width = 16, height = 8)
+#   ggsave(p3l, file = paste0(plotdir, 'LFC_changein_', st, '_vs_changeinmean_colorstartingmean.pdf'), width = 16, height = 8)
+#   
+# }
+# 
+# lfc10_lhs <- compared_stats %>%
+#   filter(compare == 'lfc10', product %in% c('A1', 'B1')) %>%
+#   dplyr::select(product, paramset, stat, diff, mean_denom) %>%
+#   pivot_wider(names_from = stat, values_from = diff) %>%
+#   inner_join(lhs_sets, by = 'paramset') 
+# pdf(paste0(plotdir, 'corrplot_1vs0mut.pdf'), width = 10, height = 10)
+# cor_B1_paramratio_stats10 <- corrplot.mixed(cor(as.matrix(lfc10_lhs %>% filter(product == 'B1') %>% ungroup() %>% dplyr::select(-product))), tl.pos = 'lt')  
+# dev.off()
+# 
+# lfc20_lhs <- compared_stats %>%
+#   filter(compare == 'lfc20', product %in% c('A1', 'B1')) %>%
+#   dplyr::select(product, paramset, stat, diff, mean_denom) %>%
+#   pivot_wider(names_from = stat, values_from = diff) %>%
+#   inner_join(lhs_sets, by = 'paramset') 
+# 
+# pdf(paste0(plotdir, 'corrplot_2vs0mut.pdf'), width = 10, height = 10)
+# cor_B1_paramratio_stats20 <- corrplot.mixed(cor(as.matrix(lfc20_lhs %>% filter(product == 'B1') %>% ungroup() %>% dplyr::select(-product))), tl.pos = 'lt')  
+# dev.off()
+# 
+# lfc21_lhs <- compared_stats %>%
+#   filter(compare == 'lfc21', product %in% c('A1', 'B1')) %>%
+#   dplyr::select(product, paramset, stat, diff, mean_denom) %>%
+#   pivot_wider(names_from = stat, values_from = diff) %>%
+#   inner_join(lhs_sets, by = 'paramset') 
+# 
+# pdf(paste0(plotdir, 'corrplot_2vs1mut.pdf'), width = 10, height = 10)
+# cor_B1_paramratio_stats21 <- corrplot.mixed(cor(as.matrix(lfc21_lhs %>% filter(product == 'B1') %>% ungroup() %>% dplyr::select(-product))), tl.pos = 'lt')  
+# dev.off()
+
+# filter and re-do analyses
+# mean_denom > 10
+# Hill n < 5
+lfc10_lhsf <- compared_stats %>%
+  filter(compare == 'lfc10', product %in% c('A1', 'B1')) %>%
+  dplyr::select(product, version, paramset, stat, diff, mean_denom) %>%
+  pivot_wider(names_from = stat, values_from = diff) %>%
+  inner_join(lhs_sets_full, by = c('version', 'paramset')) %>%
+  filter(mean_denom > 10, Hill_coefficient_n < 5)
+
+pdf(paste0(plotdir, 'corrplot_1vs0mut_filt.pdf'), width = 10, height = 10)
+cor_B1_paramratio_stats10f <- corrplot.mixed(cor(as.matrix(lfc10_lhsf %>% filter(product == 'B1') %>% ungroup() %>% dplyr::select(-c(product, version)))), tl.pos = 'lt')  
+dev.off()
+
+lfc20_lhsf <- compared_stats %>%
+  filter(compare == 'lfc20', product %in% c('A1', 'B1')) %>%
+  dplyr::select(product, paramset, stat, diff, mean_denom) %>%
+  pivot_wider(names_from = stat, values_from = diff) %>%
+  inner_join(lhs_sets, by = 'paramset') %>%
+  filter(mean_denom > 10, Hill_coefficient_n < 5)
+
+pdf(paste0(plotdir, 'corrplot_2vs0mut_filt.pdf'), width = 10, height = 10)
+cor_B1_paramratio_stats20f <- corrplot.mixed(cor(as.matrix(lfc20_lhsf %>% filter(product == 'B1') %>% ungroup() %>% dplyr::select(-product))), tl.pos = 'lt')  
+dev.off()
+
+lfc21_lhsf <- compared_stats %>%
+  filter(compare == 'lfc21', product %in% c('A1', 'B1')) %>%
+  dplyr::select(product, paramset, stat, diff, mean_denom) %>%
+  pivot_wider(names_from = stat, values_from = diff) %>%
+  inner_join(lhs_sets, by = 'paramset') %>%
+  filter(mean_denom > 10, Hill_coefficient_n < 5)
+
+pdf(paste0(plotdir, 'corrplot_2vs1mut_filt.pdf'), width = 10, height = 10)
+cor_B1_paramratio_stats21f <- corrplot.mixed(cor(as.matrix(lfc21_lhsf %>% filter(product == 'B1') %>% ungroup() %>% dplyr::select(-product))), tl.pos = 'lt')  
+dev.off()
+
 
 
 
