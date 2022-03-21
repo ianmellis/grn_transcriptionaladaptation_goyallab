@@ -220,6 +220,15 @@ low_bimod_wtmut <- allstats_full %>% inner_join(lhs_sets_full, by = c('version',
 high_cv_wtmut <- allstats_full %>% inner_join(lhs_sets_full, by = c('version', 'paramset')) %>% filter(product == 'B1', Hill_coefficient_n < 5, mean_product > 45,mean_product < 55, mutated_alleles == 1) %>% arrange(-cv_product) %>% head(10)  
 low_cv_wtmut <- allstats_full %>% inner_join(lhs_sets_full, by = c('version', 'paramset')) %>% filter(product == 'B1', Hill_coefficient_n < 5, mean_product > 45,mean_product < 55, mutated_alleles == 1) %>% arrange(cv_product) %>% head(10)
 
+high_mean_wtmut <- allstats_full %>% 
+  inner_join(lhs_sets_full, by = c('version', 'paramset')) %>% 
+  filter(product == 'B1', Hill_coefficient_n < 5, mean_product > 15, mutated_alleles == 1, cv_product > 1.9, cv_product < 2.1) %>% 
+  arrange(-mean_product) %>% head(10)  
+low_mean_wtmut <- allstats_full %>% 
+  inner_join(lhs_sets_full, by = c('version', 'paramset')) %>% 
+  filter(product == 'B1', Hill_coefficient_n < 5, mean_product > 15, mutated_alleles == 1, cv_product > 1.9, cv_product < 2.1) %>% 
+  arrange(mean_product) %>% head(10)  
+
 if(!dir.exists(paste0(plotdir, 'traces/'))){
   dir.create(paste0(plotdir, 'traces/'))
 }
