@@ -657,107 +657,7 @@ ggsave(sumstats_wt_vs_het_hetmean10, file = paste0(plotdir, 'sumstats_wt_vs_het_
 
 
 unistats<-unique(compared_stats$stat)
-# 
-# for (st in unistats) {
-#   
-#   p1 <- ggplot(compared_stats %>% filter(stat == st | stat == 'mean_product', grepl('delta', compare)) %>% pivot_wider(names_from = stat, values_from = diff), aes(mean_product, eval(as.symbol(st)))) + 
-#     geom_point() + 
-#     geom_text(aes(label = paramset)) +
-#     facet_grid(product~compare, scales = 'free') +
-#     theme_bw() +
-#     ggtitle(paste0('Change in ', st, ' vs. change in mean')) +
-#     ylab(paste0('Change in ', st)) +
-#     xlab('Change in mean')
-#   ggsave(p1, file = paste0(plotdir, 'changein_', st, '_vs_mean.pdf'), width = 16, height = 8)
-#   
-#   p2 <- ggplot(compared_stats %>% filter(stat == st | stat == 'mean_product', grepl('delta', compare)) %>% pivot_wider(names_from = stat, values_from = diff), aes(mean_denom, eval(as.symbol(st)))) + 
-#     geom_point() + 
-#     geom_text(aes(label = paramset)) +
-#     facet_grid(product~compare, scales = 'free') +
-#     theme_bw() +
-#     ggtitle(paste0('Change in ', st, ' vs. change in mean')) +
-#     ylab(paste0('Change in ', st)) +
-#     xlab('Starting mean abundance')
-#   
-#   p3 <- ggplot(compared_stats %>% filter(stat == st | stat == 'mean_product', grepl('delta', compare)) %>% pivot_wider(names_from = stat, values_from = diff), aes(mean_product, eval(as.symbol(st)), color = mean_denom)) + 
-#     geom_point() + 
-#     geom_text(aes(label = paramset)) +
-#     facet_grid(product~compare, scales = 'free') +
-#     theme_bw() +
-#     ggtitle(paste0('Change in ', st, ' vs. change in mean')) +
-#     ylab(paste0('Change in ', st)) +
-#     xlab('Change in mean')
-#   
-#   p1l <- ggplot(compared_stats %>% filter(stat == st | stat == 'mean_product', grepl('lfc', compare)) %>% pivot_wider(names_from = stat, values_from = diff), aes(mean_product, eval(as.symbol(st)))) + 
-#     geom_point() + 
-#     geom_text(aes(label = paramset)) +
-#     facet_grid(product~compare, scales = 'free') +
-#     theme_bw() +
-#     ggtitle(paste0('Change in ', st, ' vs. change in mean')) +
-#     ylab(paste0('Change in ', st)) +
-#     xlab('Change in mean')
-#   ggsave(p1, file = paste0(plotdir, 'changein_', st, '_vs_mean.pdf'), width = 16, height = 8)
-#   
-#   p2l <- ggplot(compared_stats %>% filter(stat == st | stat == 'mean_product', grepl('lfc', compare)) %>% pivot_wider(names_from = stat, values_from = diff), aes(mean_denom, eval(as.symbol(st)))) + 
-#     geom_point() + 
-#     geom_text(aes(label = paramset)) +
-#     facet_grid(product~compare, scales = 'free') +
-#     theme_bw() +
-#     ggtitle(paste0('Change in ', st, ' vs. change in mean')) +
-#     ylab(paste0('Change in ', st)) +
-#     xlab('Starting mean abundance')
-#   
-#   p3l <- ggplot(compared_stats %>% filter(stat == st | stat == 'mean_product', grepl('lfc', compare)) %>% pivot_wider(names_from = stat, values_from = diff), aes(mean_product, eval(as.symbol(st)), color = mean_denom)) + 
-#     geom_point() + 
-#     geom_text(aes(label = paramset)) +
-#     facet_grid(product~compare, scales = 'free') +
-#     theme_bw() +
-#     ggtitle(paste0('Change in ', st, ' vs. change in mean')) +
-#     ylab(paste0('Change in ', st)) +
-#     xlab('Change in mean')
-#   
-#   ggsave(p1, file = paste0(plotdir, 'Diff_changein_', st, '_vs_changeinmean.pdf'), width = 16, height = 8)
-#   ggsave(p2, file = paste0(plotdir, 'Diff_changein_', st, '_vs_startingmean.pdf'), width = 16, height = 8)
-#   ggsave(p3, file = paste0(plotdir, 'Diff_changein_', st, '_vs_changeinmean_colorstartingmean.pdf'), width = 16, height = 8)
-#   
-#   ggsave(p1l, file = paste0(plotdir, 'LFC_changein_', st, '_vs_changeinmean.pdf'), width = 16, height = 8)
-#   ggsave(p2l, file = paste0(plotdir, 'LFC_changein_', st, '_vs_startingmean.pdf'), width = 16, height = 8)
-#   ggsave(p3l, file = paste0(plotdir, 'LFC_changein_', st, '_vs_changeinmean_colorstartingmean.pdf'), width = 16, height = 8)
-#   
-# }
-# 
-# lfc10_lhs <- compared_stats %>%
-#   filter(compare == 'lfc10', product %in% c('A1', 'B1')) %>%
-#   dplyr::select(product, paramset, stat, diff, mean_denom) %>%
-#   pivot_wider(names_from = stat, values_from = diff) %>%
-#   inner_join(lhs_sets, by = 'paramset') 
-# pdf(paste0(plotdir, 'corrplot_1vs0mut.pdf'), width = 10, height = 10)
-# cor_B1_paramratio_stats10 <- corrplot.mixed(cor(as.matrix(lfc10_lhs %>% filter(product == 'B1') %>% ungroup() %>% dplyr::select(-product))), tl.pos = 'lt')  
-# dev.off()
-# 
-# lfc20_lhs <- compared_stats %>%
-#   filter(compare == 'lfc20', product %in% c('A1', 'B1')) %>%
-#   dplyr::select(product, paramset, stat, diff, mean_denom) %>%
-#   pivot_wider(names_from = stat, values_from = diff) %>%
-#   inner_join(lhs_sets, by = 'paramset') 
-# 
-# pdf(paste0(plotdir, 'corrplot_2vs0mut.pdf'), width = 10, height = 10)
-# cor_B1_paramratio_stats20 <- corrplot.mixed(cor(as.matrix(lfc20_lhs %>% filter(product == 'B1') %>% ungroup() %>% dplyr::select(-product))), tl.pos = 'lt')  
-# dev.off()
-# 
-# lfc21_lhs <- compared_stats %>%
-#   filter(compare == 'lfc21', product %in% c('A1', 'B1')) %>%
-#   dplyr::select(product, paramset, stat, diff, mean_denom) %>%
-#   pivot_wider(names_from = stat, values_from = diff) %>%
-#   inner_join(lhs_sets, by = 'paramset') 
-# 
-# pdf(paste0(plotdir, 'corrplot_2vs1mut.pdf'), width = 10, height = 10)
-# cor_B1_paramratio_stats21 <- corrplot.mixed(cor(as.matrix(lfc21_lhs %>% filter(product == 'B1') %>% ungroup() %>% dplyr::select(-product))), tl.pos = 'lt')  
-# dev.off()
 
-# filter and re-do analyses
-# mean_denom > 10
-# Hill n < 5
 lfc10_lhsf <- compared_stats %>%
   filter(compare == 'lfc10', product %in% c('A1', 'B1')) %>%
   dplyr::select(product, version, paramset, stat, diff, mean_denom) %>%
@@ -790,6 +690,61 @@ lfc21_lhsf <- compared_stats %>%
 pdf(paste0(plotdir, 'corrplot_2vs1mut_filt.pdf'), width = 10, height = 10)
 cor_B1_paramratio_stats21f <- corrplot.mixed(cor(as.matrix(lfc21_lhsf %>% filter(product == 'B1') %>% ungroup() %>% dplyr::select(-product))), tl.pos = 'lt')  
 dev.off()
+
+
+## Normalize stats to mean
+
+loess_fitted_allstats_full <- allstats_full
+for (ma in 0:2) {
+  
+  for (gene in c('A1', 'Anonsense1', 'Aprime1', 'B1')) {
+    
+    for (stat in unistats[unistats != 'mean_product']) {
+      
+      tempdat <- allstats_full %>%
+        filter(mutated_alleles == ma,
+               product == gene) %>%
+        dplyr::select(mutated_alleles, product, version, paramset, mean_product, stat)
+      
+      loess1 <- loess(eval(as.symbol(stat)) ~ mean_product, data = tempdat, span = 0.1)
+      
+      l1dat <- data.frame(mean_product = loess1$x,
+                          stat = loess1$fitted,
+                          resid = loess1$residuals,
+                          version = tempdat$version,
+                          paramset = tempdat$paramset,
+                          product = gene,
+                          mutated_alleles = ma)
+      colnames(l1dat)[2] <- paste0(stat,'_fitted')
+      colnames(l1dat)[3] <- paste0(stat,'_residual')
+      
+      lplot1 <- ggplot() +
+        geom_point(data = tempdat, aes(mean_product, eval(as.symbol(stat))), alpha = 0.1) +
+        geom_point(data = l1dat, aes(mean_product, eval(as.symbol(paste0(stat,'_fitted')))), color = 'red') +
+        theme_classic() +
+        ylab(stat) +
+        xlab('Mean') +
+        ggtitle(paste0(stat, ' vs mean, with LOESS fit to mean\nGene product: ', gene, ', mutated alleles: ', as.character(ma)))
+      
+      lplot2 <- ggplot() +
+        geom_point(data = tempdat, aes(log(mean_product), eval(as.symbol(stat))), alpha = 0.1) +
+        geom_point(data = l1dat, aes(log(mean_product), eval(as.symbol(paste0(stat,'_fitted')))), color = 'red') +
+        theme_classic() +
+        ylab(stat) +
+        xlab('Log(Mean)') +
+        ggtitle(paste0(stat, ' vs log(mean), with LOESS fit to mean\nGene product: ', gene, ', mutated alleles: ', as.character(ma)))
+      
+      ggsave(lplot1, file = paste0(plotdir, 'LOESS_', stat, 'vsMean_',gene,'_mutAlleles',ma,'.pdf'), width = 5, height = 5)
+      ggsave(lplot2, file = paste0(plotdir, 'LOESS_', stat, 'vsMean_',gene,'_mutAlleles',ma,'_log.pdf'), width = 5, height = 5)
+      
+      loess_fitted_allstats_full %<>% full_join(l1dat, by = c('version', 'paramset', 'mutated_alleles', 'product', 'mean_product'))
+      
+    }
+    
+  }
+  
+}
+
 
 
 
