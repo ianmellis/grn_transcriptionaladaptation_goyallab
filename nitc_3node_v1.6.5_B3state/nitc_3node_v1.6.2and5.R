@@ -142,6 +142,25 @@ for (paramset in paramsets5){
     allparams5 %<>% bind_rows(params)
   }
   
+  for (ma in c(0,1,2)) {
+    
+    for (gene in c('A1', 'Aprime1', 'Anonsense1', 'B1')) {
+      
+      subs <- species_sample %>%
+        filter(mutated_alleles == ma, product == gene)
+      
+      simdist <- subs$abundance
+      
+      expFit <- fitdistr(simdist, 'exponential')
+      
+      expKS <- ks.test(simdist, 'pexp', expFit$estimate)
+      
+      
+      
+    }
+    
+  }
+  
 }
 
 # pull specific parameter sets and plot histograms and traces for figure (svg files)
@@ -266,7 +285,6 @@ for (ind in 1:nrow(setsToPlot)){
     ggtitle(paste0('Parameter set ', as.character(pset))) +
     theme_classic()
   ggsave(dist_plot3, file = paste0(plotdir, 'panel_drafts/', classlab, '/histogram_in_wtmut_distribution_B1WTMUTonly_q300_version_',as.character(ver), '_paramset_', as.character(pset), '.svg'))
-  
   
   
 }
