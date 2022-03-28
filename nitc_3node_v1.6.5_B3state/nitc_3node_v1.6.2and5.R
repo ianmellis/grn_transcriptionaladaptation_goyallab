@@ -7,6 +7,8 @@ library(diptest)
 library(e1071)
 library(ggrepel)
 library(corrplot)
+library(tibble)
+library(svglite)
 source('~/code/grn_nitc/Functions/grn_analysis_utilities.R')
 
 
@@ -142,6 +144,134 @@ for (paramset in paramsets5){
   
 }
 
+# pull specific parameter sets and plot histograms and traces for figure (svg files)
+
+setsToPlot <- tibble(
+  version = c('1.6.2', '1.6.5', '1.6.2', '1.6.5', '1.6.5'),
+  paramset = c(7000, 4900, 9400, 3000, 8100),
+  classID = c('exponential', 'bimodal', 'gaussian', 'uniform', 'heavyTail')
+)
+
+if(!dir.exists(paste0(plotdir, 'panel_drafts/'))){
+  dir.create(paste0(plotdir, 'panel_drafts/'))
+}
+
+for (ind in 1:nrow(setsToPlot)){
+  
+  pset = setsToPlot$paramset[ind]
+  ver = setsToPlot$version[ind]
+  classlab = setsToPlot$classID[ind]
+  
+  if(!dir.exists(paste0(plotdir, 'panel_drafts/', classlab))){
+    dir.create(paste0(plotdir, 'panel_drafts/', classlab))
+  }
+  if(!dir.exists(paste0(plotdir, 'panel_drafts/', classlab, '/if_panel_1C/'))){
+    dir.create(paste0(plotdir, 'panel_drafts/', classlab, '/if_panel_1C/'))
+  }  
+  if(!dir.exists(paste0(plotdir, 'panel_drafts/', classlab, '/supp/'))){
+    dir.create(paste0(plotdir, 'panel_drafts/', classlab, '/supp/'))
+  }
+  if(ver == '1.6.2') {
+    tracedir = datadir2
+  } else {
+    tracedir = datadir5
+  }
+  setwd(tracedir)
+  species<-as_tibble(read.csv(paste0('../fullTraces/initialsim_species',as.character(pset),'.csv'), header = T)) %>%
+    mutate(time = 1:300000)
+  
+  traceplot0n <- plot_traces_ver_nonons(species, 7500, 8000, 'WT/WT')
+  traceplot1n <- plot_traces_ver_nonons(species, 107500, 108000, 'WT/MUT')
+  traceplot2n <- plot_traces_ver_nonons(species, 207500, 208000, 'MUT/MUT')
+  
+  f0n<-paste0(plotdir, 'panel_drafts/', classlab, '/supp/trace_in_wtmut_version_',as.character(ver), '_paramset', as.character(pset),'_WTWT_noNonsense.svg')
+  f1n<-paste0(plotdir, 'panel_drafts/', classlab, '/supp/trace_in_wtmut_version_',as.character(ver), '_paramset', as.character(pset),'_WTMUT_noNonsense.svg')
+  f2n<-paste0(plotdir, 'panel_drafts/', classlab, '/supp/trace_in_wtmut_version_',as.character(ver), '_paramset', as.character(pset),'_MUTMUT_noNonsense.svg')
+  
+  ggsave(plot = traceplot0n, f0n, width = 8, height = 6)
+  ggsave(plot = traceplot1n, f1n, width = 8, height = 6)
+  ggsave(plot = traceplot2n, f2n, width = 8, height = 6)
+  
+  
+  traceplot0 <- plot_traces_ver(species, 7500, 8000, 'WT/WT')
+  traceplot1 <- plot_traces_ver(species, 107500, 108000, 'WT/MUT')
+  traceplot2 <- plot_traces_ver(species, 207500, 208000, 'MUT/MUT')
+  
+  f0<-paste0(plotdir, 'panel_drafts/', classlab, '/if_panel_1C/trace_in_wtmut_version_',as.character(ver), '_paramset', as.character(pset),'_WTWT.svg')
+  f1<-paste0(plotdir, 'panel_drafts/', classlab, '/if_panel_1C/trace_in_wtmut_version_',as.character(ver), '_paramset', as.character(pset),'_WTMUT.svg')
+  f2<-paste0(plotdir, 'panel_drafts/', classlab, '/supp/trace_in_wtmut_version_',as.character(ver), '_paramset', as.character(pset),'_MUTMUT.svg')
+  
+  ggsave(plot = traceplot0, f0, width = 8, height = 6)
+  ggsave(plot = traceplot1, f1, width = 8, height = 6)
+  ggsave(plot = traceplot2, f2, width = 8, height = 6)
+  
+  
+  traceplot0sb <- plot_traces_ver_Bfocus(species, 7500, 7600, 'WT/WT')
+  traceplot1sb <- plot_traces_ver_Bfocus(species, 107500, 107600, 'WT/MUT')
+  traceplot2sb <- plot_traces_ver_Bfocus(species, 207500, 207600, 'MUT/MUT')
+  
+  f0sb<-paste0(plotdir, 'panel_drafts/', classlab, '/supp/trace_in_wtmut_version_',as.character(ver), '_paramset', as.character(pset),'_WTWT_Bfocus_short.svg')
+  f1sb<-paste0(plotdir, 'panel_drafts/', classlab, '/supp/trace_in_wtmut_version_',as.character(ver), '_paramset', as.character(pset),'_WTMUT_Bfocus_short.svg')
+  f2sb<-paste0(plotdir, 'panel_drafts/', classlab, '/supp/trace_in_wtmut_version_',as.character(ver), '_paramset', as.character(pset),'_MUTMUT_Bfocus_short.svg')
+  
+  ggsave(plot = traceplot0sb, f0sb, width = 8, height = 6)
+  ggsave(plot = traceplot1sb, f1sb, width = 8, height = 6)
+  ggsave(plot = traceplot2sb, f2sb, width = 8, height = 6)
+  
+  traceplot0nb <- plot_traces_ver_nonons_Bfocus(species, 7500, 7600, 'WT/WT')
+  traceplot1nb <- plot_traces_ver_nonons_Bfocus(species, 107500, 107600, 'WT/MUT')
+  traceplot2nb <- plot_traces_ver_nonons_Bfocus(species, 207500, 207600, 'MUT/MUT')
+  
+  f0nb<-paste0(plotdir, 'panel_drafts/', classlab, '/supp/trace_in_wtmut_version_',as.character(ver), '_paramset', as.character(pset),'_WTWT_noNonsense_Bfocus_short.svg')
+  f1nb<-paste0(plotdir, 'panel_drafts/', classlab, '/trace_in_wtmut_version_',as.character(ver), '_paramset', as.character(pset),'_WTMUT_noNonsense_Bfocus_short.svg')
+  f2nb<-paste0(plotdir, 'panel_drafts/', classlab, '/supp/trace_in_wtmut_version_',as.character(ver), '_paramset', as.character(pset),'_MUTMUT_noNonsense_Bfocus_short.svg')
+  
+  ggsave(plot = traceplot0nb, f0nb, width = 8, height = 6)
+  ggsave(plot = traceplot1nb, f1nb, width = 8, height = 6)
+  ggsave(plot = traceplot2nb, f2nb, width = 8, height = 6)
+  
+  
+  
+  species_sample <- species %>%
+    mutate(paramset = pset, version = ver) %>%
+    filter( (time+1) %% 300 == 0, (time > 400 & time < 100001) | (time > 100400 & time < 200001) | (time > 200400 & time < 300001)) %>%
+    mutate(mutated_alleles = case_when(
+      time < 100001 ~ 0,
+      time > 100000 & time < 200001 ~ 1,
+      time > 200000 ~ 2
+    )) %>%
+    dplyr::select(A1, Aprime1, Anonsense1, B1, paramset, time, mutated_alleles) %>%
+    pivot_longer(cols = A1:B1, names_to = 'product', values_to = 'abundance')
+  
+  # cat(paste0('Working on ', as.character(paramset), '\n'))
+  dist_plot<-ggplot(species_sample, aes(abundance)) +
+    geom_histogram() +
+    geom_rug() +
+    facet_grid(mutated_alleles~product) +
+    ggtitle(paste0('Parameter set ', as.character(pset))) +
+    theme_classic()
+  ggsave(dist_plot, file = paste0(plotdir, 'panel_drafts/', classlab, '/supp/histogram_in_wtmut_distributions_q300_version_',as.character(ver), '_paramset_', as.character(pset), '.svg'))
+  
+  dist_plot2<-ggplot(species_sample %>% filter(mutated_alleles < 2), aes(abundance)) +
+    geom_histogram() +
+    geom_rug() +
+    facet_grid(mutated_alleles~product) +
+    ggtitle(paste0('Parameter set ', as.character(pset))) +
+    theme_classic()
+  ggsave(dist_plot2, file = paste0(plotdir, 'panel_drafts/', classlab, '/if_panel_1C/histogram_in_wtmut_distributions_WTWT_WTMUTonly_q300_version_',as.character(ver), '_paramset_', as.character(pset), '.svg'))
+  
+  dist_plot3 <- ggplot(species_sample %>% filter(mutated_alleles == 1, product == 'B1'), aes(abundance)) +
+    geom_histogram() +
+    geom_rug() +
+    ggtitle(paste0('Parameter set ', as.character(pset))) +
+    theme_classic()
+  ggsave(dist_plot3, file = paste0(plotdir, 'panel_drafts/', classlab, '/histogram_in_wtmut_distribution_B1WTMUTonly_q300_version_',as.character(ver), '_paramset_', as.character(pset), '.svg'))
+  
+  
+  
+}
+
+# summary stats draft1
 allstats_full <- bind_rows(allstats2 %>% mutate(version = '1.6.2'), allstats5 %>% mutate(version = '1.6.5'))
 allparams_full <- bind_rows(allparams2 %>% mutate(paramset = 1:9900, version = '1.6.2'),
                             allparams5 %>% mutate(paramset = 1:10000, version = '1.6.5'))
@@ -737,7 +867,7 @@ for (ma in 0:2) {
       ggsave(lplot1, file = paste0(plotdir, 'LOESS_', stat, 'vsMean_',gene,'_mutAlleles',ma,'.pdf'), width = 5, height = 5)
       ggsave(lplot2, file = paste0(plotdir, 'LOESS_', stat, 'vsMean_',gene,'_mutAlleles',ma,'_log.pdf'), width = 5, height = 5)
       
-      loess_fitted_allstats_full %<>% full_join(l1dat, by = c('version', 'paramset', 'mutated_alleles', 'product', 'mean_product'))
+      loess_fitted_allstats_full %<>% left_join(l1dat, by = c('version', 'paramset', 'mutated_alleles', 'product', 'mean_product'))
       
     }
     
