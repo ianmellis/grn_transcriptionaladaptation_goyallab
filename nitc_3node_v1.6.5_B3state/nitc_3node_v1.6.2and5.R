@@ -9,6 +9,7 @@ library(ggrepel)
 library(corrplot)
 library(tibble)
 library(svglite)
+library()
 source('~/code/grn_nitc/Functions/grn_analysis_utilities.R')
 
 
@@ -64,7 +65,7 @@ for (paramset in paramsets2){
               fano_product = sd_product^2/(mean_product + 0.01),
               gini_product = ineq(abundance + 1, type = 'Gini', na.rm = T),
               bimodality_coef = calculate_bimodality(abundance),
-              HDTpval = dip.test(abundance)$p.value, .groups = 'keep')
+              entropy = entropy(discretize(abundance, numBins = 30, r=c(0,max(1,max(abundance))))), .groups = 'keep')
   
   if(is.null(dim(allstats2))) {
     allstats2 <- spstats
@@ -155,6 +156,9 @@ for (paramset in paramsets5){
       
       expKS <- ks.test(simdist, 'pexp', expFit$estimate)
       
+      simbinned <- discretize(simdist, numBins = 30)
+      
+      simentropy <- entropy(simbinned)
       
       
     }
@@ -166,9 +170,11 @@ for (paramset in paramsets5){
 # pull specific parameter sets and plot histograms and traces for figure (svg files)
 
 setsToPlot <- tibble(
-  version = c('1.6.2', '1.6.5', '1.6.2', '1.6.5', '1.6.5'),
-  paramset = c(7000, 4900, 9400, 3000, 8100),
-  classID = c('exponential', 'bimodal', 'gaussian', 'uniform', 'heavyTail')
+  version = c('1.6.2', '1.6.5', '1.6.2', '1.6.5', '1.6.5', '1.6.2', '1.6.2', '1.6.2', '1.6.2', 
+              '1.6.5', '1.6.5', '1.6.5', '1.6.5', '1.6.5', '1.6.5', '1.6.2', '1.6.2', '1.6.2', '1.6.2'),
+  paramset = c(7000, 4900, 9400, 3000, 8100, 2800, 3300, 5800, 9900, 600, 3500, 
+               4365, 3664, 4738, 7118, 4274, 574, 5873, 4290),
+  classID = c('exponential', 'bimodal', 'gaussian', 'uniform', 'heavyTail', 'uniform', 'uniform', 'uniform', 'uniform', 'uniform', 'uniform', 'gaussian', 'gaussian', 'gaussian', 'gaussian', 'uniform', 'uniform', 'uniform', 'uniform')
 )
 
 if(!dir.exists(paste0(plotdir, 'panel_drafts/'))){
@@ -282,10 +288,9 @@ for (ind in 1:nrow(setsToPlot)){
   dist_plot3 <- ggplot(species_sample %>% filter(mutated_alleles == 1, product == 'B1'), aes(abundance)) +
     geom_histogram() +
     geom_rug() +
-    ggtitle(paste0('Parameter set ', as.character(pset))) +
+    ggtitle(paste0('Version ', as.character(ver), ' Parameter set ', as.character(pset))) +
     theme_classic()
   ggsave(dist_plot3, file = paste0(plotdir, 'panel_drafts/', classlab, '/histogram_in_wtmut_distribution_B1WTMUTonly_q300_version_',as.character(ver), '_paramset_', as.character(pset), '.svg'))
-  
   
 }
 
