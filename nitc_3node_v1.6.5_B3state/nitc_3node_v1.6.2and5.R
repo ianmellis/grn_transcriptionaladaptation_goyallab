@@ -26,6 +26,10 @@ lhs_sets2 <- as_tibble(read.csv('latinhyp_sampledSets.csv'))
 lhs_sets2 %<>%
   mutate(paramset = 1:nrow(lhs_sets2))
 
+lhs_sets2_Hn5<- lhs_sets2 %>% filter(Hill_coefficient_n < 5, paramset <= 9900)
+
+paramsets2 <- lhs_sets2_Hn5$paramset
+
 allstats2 <- list()
 allparams2 <- list()
 for (paramset in paramsets2){
@@ -66,6 +70,49 @@ for (paramset in paramsets2){
               gini_product = ineq(abundance + 1, type = 'Gini', na.rm = T),
               bimodality_coef = calculate_bimodality(abundance),
               entropy = entropy(discretize(abundance, numBins = 30, r=c(0,max(1,max(abundance))))), .groups = 'keep')
+  
+  entr_temp <- tibble(
+    mutated_alleles = numeric(),
+    product = character(),
+    paramset = numeric(),
+    entropy95 = numeric(),
+    entropy90 = numeric()
+  )
+  
+  for (ma in c(0,1,2)) {
+    
+    for (gene in c('A1', 'Aprime1', 'Anonsense1', 'B1')) {
+      
+      subs <- species_sample %>%
+        filter(mutated_alleles == ma, product == gene)
+      
+      simdist <- subs$abundance
+      
+      # 
+      # expFit <- fitdistr(simdist, 'exponential')
+      # 
+      # expKS <- ks.test(simdist, 'pexp', expFit$estimate)
+      
+      #filter to remove top and bottom 2.5% of values to assess entropy of distribution bulk
+      
+      nv <- length(simdist)
+      simdistfilt95 <- simdist[order(simdist)[round(0.025*nv):round(0.975*nv)]]
+      simdistfilt90 <- simdist[order(simdist)[round(0.05*nv):round(0.95*nv)]]
+      
+      trow <- tibble(
+        mutated_alleles = ma,
+        paramset = paramset,
+        product = gene,
+        entropy95 = entropy(discretize(simdistfilt95, numBins = 30, r=c(0,max(1,max(simdistfilt95))))),
+        entropy90 = entropy(discretize(simdistfilt90, numBins = 30, r=c(0,max(1,max(simdistfilt90)))))
+      )
+      
+      entr_temp %<>% bind_rows(trow)
+      
+    }
+  }
+  
+  spstats %<>% inner_join(entr_temp, by = c('mutated_alleles', 'product', 'paramset'))
   
   if(is.null(dim(allstats2))) {
     allstats2 <- spstats
@@ -143,25 +190,7 @@ for (paramset in paramsets5){
     allparams5 %<>% bind_rows(params)
   }
   
-  for (ma in c(0,1,2)) {
-    
-    for (gene in c('A1', 'Aprime1', 'Anonsense1', 'B1')) {
-      
-      subs <- species_sample %>%
-        filter(mutated_alleles == ma, product == gene)
-      
-      simdist <- subs$abundance
-      
-      expFit <- fitdistr(simdist, 'exponential')
-      
-      expKS <- ks.test(simdist, 'pexp', expFit$estimate)
-      
-      simbinned <- discretize(simdist, numBins = 30)
-      
-      simentropy <- entropy(simbinned)
-      
-      
-    }
+
     
   }
   
