@@ -178,6 +178,51 @@ for (paramset in paramsets5){
               bimodality_coef = calculate_bimodality(abundance),
               HDTpval = dip.test(abundance)$p.value, .groups = 'keep')
   
+  
+  entr_temp <- tibble(
+    mutated_alleles = numeric(),
+    product = character(),
+    paramset = numeric(),
+    entropy95 = numeric(),
+    entropy90 = numeric()
+  )
+  
+  for (ma in c(0,1,2)) {
+    
+    for (gene in c('A1', 'Aprime1', 'Anonsense1', 'B1')) {
+      
+      subs <- species_sample %>%
+        filter(mutated_alleles == ma, product == gene)
+      
+      simdist <- subs$abundance
+      
+      # 
+      # expFit <- fitdistr(simdist, 'exponential')
+      # 
+      # expKS <- ks.test(simdist, 'pexp', expFit$estimate)
+      
+      #filter to remove top and bottom 2.5% of values to assess entropy of distribution bulk
+      
+      nv <- length(simdist)
+      simdistfilt95 <- simdist[order(simdist)[round(0.025*nv):round(0.975*nv)]]
+      simdistfilt90 <- simdist[order(simdist)[round(0.05*nv):round(0.95*nv)]]
+      
+      trow <- tibble(
+        mutated_alleles = ma,
+        paramset = paramset,
+        product = gene,
+        entropy95 = entropy(discretize(simdistfilt95, numBins = 30, r=c(0,max(1,max(simdistfilt95))))),
+        entropy90 = entropy(discretize(simdistfilt90, numBins = 30, r=c(0,max(1,max(simdistfilt90)))))
+      )
+      
+      entr_temp %<>% bind_rows(trow)
+      
+    }
+  }
+  
+  spstats %<>% inner_join(entr_temp, by = c('mutated_alleles', 'product', 'paramset'))
+  
+  
   if(is.null(dim(allstats5))) {
     allstats5 <- spstats
   } else {
@@ -192,9 +237,8 @@ for (paramset in paramsets5){
   
 
     
-  }
-  
 }
+  
 
 # pull specific parameter sets and plot histograms and traces for figure (svg files)
 
