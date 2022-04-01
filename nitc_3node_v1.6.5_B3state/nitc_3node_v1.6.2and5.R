@@ -971,7 +971,22 @@ for (ma in 0:2) {
   
 }
 
+bimfilt <- 0.15
+high_bimodality <- loess_fitted_allstats_full %>% 
+  filter(bimodality_residual > bimfilt)
 
+unimodal_symmetric <- loess_fitted_allstats_full %>% 
+  filter(bimodality_residual <= bimfilt) # and not exponential (skewness limit?)
+
+unimodal_exponential <- loess_fitted_allstats_full %>% 
+  filter(skewness > 1) #skewness limit?
+
+unimodal_subexponential <- loess_fitted_allstats_full %>% 
+  filter(skewness > 1) #skewness limit higher?
+
+entfilt <- 0.15
+high_entropy <- loess_fitted_allstats_full %>% 
+  filter(entropy_residual > entfilt)
 
 
 
