@@ -30,6 +30,7 @@ lhs_sets2_Hn5<- lhs_sets2 %>% filter(Hill_coefficient_n < 5, paramset <= 9900)
 
 paramsets2 <- lhs_sets2_Hn5$paramset
 
+# calculate stats
 allstats2 <- list()
 allparams2 <- list()
 for (paramset in paramsets2){
@@ -239,6 +240,66 @@ for (paramset in paramsets5){
     
 }
   
+
+
+# temp: collate all data
+setwd(datadir2)
+all_species_q300 <- list()
+for (paramset in paramsets2){
+  
+  # cat(paste0('Working on ', as.character(paramset), '\n'))
+  
+  species<-as_tibble(read.csv(paste0('initialsim_species',as.character(paramset),'_q300.csv'), header = T))
+  
+  species_sample <- species %>%
+    mutate(paramset = paramset,
+           version = '1.6.2') %>%
+    filter((time > 400 & time < 100001) | (time > 100400 & time < 200001) | (time > 200400 & time < 300001)) %>%
+    mutate(mutated_alleles = case_when(
+      time < 100001 ~ 0,
+      time > 100000 & time < 200001 ~ 1,
+      time > 200000 ~ 2
+    )) %>%
+    dplyr::select(A1, Aprime1, Anonsense1, B1, paramset, version, time, mutated_alleles)
+  
+  
+  if(is.null(dim(all_species_q300))) {
+    all_species_q300 <- species_sample
+  } else {
+    all_species_q300 %<>% bind_rows(species_sample)
+  }
+  
+}
+
+setwd(datadir5)
+for (paramset in paramsets5){
+  
+  # cat(paste0('Working on ', as.character(paramset), '\n'))
+  
+  species<-as_tibble(read.csv(paste0('initialsim_species',as.character(paramset),'_q300.csv'), header = T))
+  
+  species_sample <- species %>%
+    mutate(paramset = paramset,
+           version = '1.6.5') %>%
+    filter((time > 400 & time < 100001) | (time > 100400 & time < 200001) | (time > 200400 & time < 300001)) %>%
+    mutate(mutated_alleles = case_when(
+      time < 100001 ~ 0,
+      time > 100000 & time < 200001 ~ 1,
+      time > 200000 ~ 2
+    )) %>%
+    dplyr::select(A1, Aprime1, Anonsense1, B1, paramset, version, time, mutated_alleles)
+  
+  
+  if(is.null(dim(all_species_q300))) {
+    all_species_q300 <- species_sample
+  } else {
+    all_species_q300 %<>% bind_rows(species_sample)
+  }
+  
+}
+write.csv(all_species_q300, file = paste0('/Volumes/IAMYG1/grn_nitc_data/v1.6.2and5/all_species_q300.csv'))
+
+
 
 # pull specific parameter sets and plot histograms and traces for figure (svg files)
 
@@ -979,10 +1040,10 @@ unimodal_symmetric <- loess_fitted_allstats_full %>%
   filter(bimodality_residual <= bimfilt) # and not exponential (skewness limit?)
 
 unimodal_exponential <- loess_fitted_allstats_full %>% 
-  filter(skewness > 1) #skewness limit?
+  filter(skewness > 1, skewness < 3) #skewness limit?
 
 unimodal_subexponential <- loess_fitted_allstats_full %>% 
-  filter(skewness > 1) #skewness limit higher?
+  filter(skewness >= 3) #skewness limit higher? Techinically skewness of exp = 2
 
 entfilt <- 0.15
 high_entropy <- loess_fitted_allstats_full %>% 
