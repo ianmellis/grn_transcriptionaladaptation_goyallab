@@ -301,6 +301,9 @@ write.csv(all_species_q300, file = paste0('/Volumes/IAMYG1/grn_nitc_data/v1.6.2a
 
 
 
+
+
+
 # pull specific parameter sets and plot histograms and traces for figure (svg files)
 
 setsToPlot <- tibble(
@@ -438,7 +441,7 @@ pseud = 0.01
 
 compared_stats <- allstats_full %>% 
   group_by(version, paramset, product, mutated_alleles) %>% 
-  pivot_longer(names_to = 'stat', values_to = 'value', cols = mean_product:HDTpval) %>% 
+  pivot_longer(names_to = 'stat', values_to = 'value', cols = mean_product:entropy90) %>% 
   pivot_wider(names_from = mutated_alleles, values_from = value) %>% 
   mutate(lfc10 = log2((`1`+pseud)/(`0` + pseud)), 
          delta10 = `1`-`0`,
@@ -982,11 +985,13 @@ dev.off()
 ## Normalize stats to mean
 
 loess_fitted_allstats_full <- allstats_full
-for (ma in 0:2) {
+for (stat in unistats[unistats != 'mean_product']) {
+  
+  statdat <- list()
   
   for (gene in c('A1', 'Anonsense1', 'Aprime1', 'B1')) {
     
-    for (stat in unistats[unistats != 'mean_product']) {
+    for (ma in 0:2) {
       
       tempdat <- allstats_full %>%
         filter(mutated_alleles == ma,
@@ -1024,11 +1029,16 @@ for (ma in 0:2) {
       ggsave(lplot1, file = paste0(plotdir, 'LOESS_', stat, 'vsMean_',gene,'_mutAlleles',ma,'.pdf'), width = 5, height = 5)
       ggsave(lplot2, file = paste0(plotdir, 'LOESS_', stat, 'vsMean_',gene,'_mutAlleles',ma,'_log.pdf'), width = 5, height = 5)
       
-      loess_fitted_allstats_full %<>% left_join(l1dat, by = c('version', 'paramset', 'mutated_alleles', 'product', 'mean_product'))
-      
+      if(is.null(dim(statdat))){
+        statdat <- l1dat
+      } else {
+        statdat %<>% bind_rows(l1dat)
+      }
     }
     
   }
+  
+  loess_fitted_allstats_full %<>% left_join(statdat, by = c('version', 'paramset', 'mutated_alleles', 'product', 'mean_product'))
   
 }
 

@@ -26,6 +26,54 @@ calculate_bimodality <- function(x) {
   
 }
 
+# sliding_window_normalize performs sliding-window normalization to a 0-1 scale for a dependent variable along an independent variable axis (e.g., 0-1 scale normalize CV along mean axis)
+# Accepts:
+# - dat: a tibble with columns including the indep and depen column names
+# - indep: a character, the colname of the independent variable (e.g., mean)
+# - depen: a character, the colname of the dependent variable (e.g., CV)
+# - radius: an integer, the sliding window radius (number of values upstream and number of values downstream to consider. E.g., radius = 25 gives a window of size 51 including the reference value)
+#
+# Returns:
+# - dat_mod: a tibble, dat with new columns 'depen'_swn
+sliding_window_normalize <- function(dat, indep, depen, radius) {
+  
+  tempdat <- dat %>% ungroup() %>% dplyr::select(as.symbol(eval(indep)), as.symbol(eval(depen)))
+  
+  tempdat %<>% arrange(as.symbol(eval(indep)))
+  
+  nr <- nrow(tempdat)
+  
+  for (i in 1:nr) {
+    
+    tind <- tempdat[i,indep]
+    tdep <- tempdat[i,depen]
+    
+    td1 <- tempdat[max(0, (i-radius)):min(nr, (i+radius)),]
+    
+    maxdepen = max(td[,depen])
+    mindepen = min(td[,depen])
+    
+    tdep_swn = (tdep-mindepen)/(maxdepen-mindepen)
+    
+    tdat_swn <- tibble(
+      X1 = tind,
+      X2 = tdep,
+      X3 = tdep_swn
+    )
+    
+    if(is.null(dim(dat_mod))){
+      dat_mod <- tdat_swn
+    } else {
+      dat_mod %<>% bind_rows(tdat_swn)
+    }
+    
+  }
+  
+  colnames(dat_mod) <- c(indep, depen, paste0(depen, '_swn'))
+
+}
+  
+
 # plot_traces plots example traces for data from a simulation given timepoint bounds.
 # Accepts:
 # - dat: a tibble with columns: time, A1, Anonsense1, Aprime1, B1, paramset
