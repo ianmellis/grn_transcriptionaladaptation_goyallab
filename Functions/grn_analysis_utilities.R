@@ -37,28 +37,33 @@ calculate_bimodality <- function(x) {
 # - dat_mod: a tibble, dat with new columns 'depen'_swn
 sliding_window_normalize <- function(dat, indep, depen, radius) {
   
-  tempdat <- dat %>% ungroup() %>% dplyr::select(as.symbol(eval(indep)), as.symbol(eval(depen)))
+  nr <- nrow(dat)
   
-  tempdat %<>% arrange(as.symbol(eval(indep)))
+  dat %<>% ungroup() %>% mutate(tID = 1:nr)
   
-  nr <- nrow(tempdat)
+  tempdat <- dat %>% ungroup() %>% dplyr::select(as.symbol(eval(indep)), as.symbol(eval(depen)), tID)
   
+  tempdat <- tempdat[order(tempdat$mean_product),] %>% as.data.frame()
+  
+  dat_mod <- list()
   for (i in 1:nr) {
     
     tind <- tempdat[i,indep]
     tdep <- tempdat[i,depen]
+    tid <- tempdat[i,'tID']
     
-    td1 <- tempdat[max(0, (i-radius)):min(nr, (i+radius)),]
+    td1 <- tempdat[max(1, (i-radius)):min(nr, (i+radius)),]
     
-    maxdepen = max(td[,depen])
-    mindepen = min(td[,depen])
+    maxdepen = max(td1[,depen]) + 0.00001 # prevent divide by zero
+    mindepen = min(td1[,depen])
     
     tdep_swn = (tdep-mindepen)/(maxdepen-mindepen)
     
     tdat_swn <- tibble(
-      X1 = tind,
+      X1 = tind[1],
       X2 = tdep,
-      X3 = tdep_swn
+      X3 = tdep_swn,
+      X4 = tid
     )
     
     if(is.null(dim(dat_mod))){
@@ -69,7 +74,11 @@ sliding_window_normalize <- function(dat, indep, depen, radius) {
     
   }
   
-  colnames(dat_mod) <- c(indep, depen, paste0(depen, '_swn'))
+  colnames(dat_mod) <- c(indep, depen, paste0(depen, '_swn'), 'tID')
+  
+  dat_mod %<>% inner_join(dat, by = c('tID', eval(depen), eval(indep))) %>% dplyr::select(-tID)
+  
+  return(dat_mod)
 
 }
   
