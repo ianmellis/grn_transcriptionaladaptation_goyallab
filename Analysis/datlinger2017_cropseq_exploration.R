@@ -26,7 +26,8 @@ target_genes <- unique(as.character(as.matrix(bulk_coldata[2,2:ncol(bulk_coldata
 sccounts <- as_tibble(read.csv(file = 'GSE92872_CROP-seq_Jurkat_TCR.digital_expression.csv', stringsAsFactors = F))
 
 # pull list of paralogs from ensembl
-human = useMart("ensembl", dataset = "hsapiens_gene_ensembl") # version 105, Dec 2021
+# human = useMart("ensembl", dataset = "hsapiens_gene_ensembl") # version 105, Dec 2021
+human = useEnsembl("ensembl", dataset = "hsapiens_gene_ensembl", version = 105) # version 105, Dec 2021
 geneParaList <- getBM(attributes = c("ensembl_gene_id", 
                                      "external_gene_name",
                                      "hsapiens_paralog_ensembl_gene", 
@@ -69,7 +70,7 @@ for(crispr_target in target_genes) {
     group_by(gene_name, gene, condition) %>%
     summarise(meanRPM = mean(RPM),
               sdRPM = sd(RPM),
-              semRPM = sd(RPM)/sqrt(length(RPM))) %>%
+              semRPM = sdRPM/sqrt(length(RPM))) %>%
     group_by(gene_name, condition) %>%
     pivot_wider(names_from = gene, values_from = c(meanRPM, sdRPM, semRPM)) %>%
     mutate(meanFC = eval(as.symbol(paste0('meanRPM_', crispr_target)))/meanRPM_CTRL,
@@ -78,6 +79,12 @@ for(crispr_target in target_genes) {
            lfc_RPM = log2(meanFC),
            lfc_RPM_up = log2(meanFC+sdFC),
            lfc_RPM_dn = log2(max((meanFC-sdFC),0.001)))
+  
+  bulk_summary_FC <- bulk_sub_sum %>%
+    group_by(condition) %>%
+    filter(gene_name != crispr_target) %>%
+    summarise(gmeanParalogFC = exp(mean(log(meanFC))),
+              log2_gmeanParalogFC = log2(gmeanParalogFC))
   
   p1 <- ggplot(bulk_sub, aes(gene, RPM)) +
     facet_grid(condition~gene_name) +
