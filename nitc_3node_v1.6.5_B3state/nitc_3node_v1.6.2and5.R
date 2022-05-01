@@ -177,7 +177,7 @@ for (paramset in paramsets5){
               fano_product = sd_product^2/(mean_product + 0.01),
               gini_product = ineq(abundance + 1, type = 'Gini', na.rm = T),
               bimodality_coef = calculate_bimodality(abundance),
-              HDTpval = dip.test(abundance)$p.value, .groups = 'keep')
+              entropy = entropy(discretize(abundance, numBins = 30, r=c(0,max(1,max(abundance))))), .groups = 'keep')
   
   
   entr_temp <- tibble(
@@ -300,7 +300,97 @@ for (paramset in paramsets5){
 write.csv(all_species_q300, file = paste0('/Volumes/IAMYG1/grn_nitc_data/v1.6.2and5/all_species_q300.csv'))
 
 
-
+# summary stats on all data from the collated table, without reloading each file
+allstats_full1 <- list()
+psets <- data.frame(
+  version = as.character(c(rep('1.6.2', length(paramsets2)), rep('1.6.5', length(paramsets5)))),
+  paramset = c(paramsets2, paramsets5)
+)
+for (i in 1:nrow(psets)){
+  
+  # cat(paste0('Working on ', as.character(paramset), '\n'))
+  
+  ver = as.character(psets[i,'version'])
+  paramset1 = psets[i,'paramset']
+  
+  species <- all_species_q300 %>% ungroup() %>%
+    filter(version == ver & paramset == paramset1)
+  
+  species_sample <- species %>%
+    pivot_longer(cols = A1:B1, names_to = 'product', values_to = 'abundance')
+  
+  paramset = paramset1
+  if(paramset %% 100 == 0) {
+    cat(paste0('Working on ', as.character(paramset), '\n'))
+    dist_plot<-ggplot(species_sample, aes(abundance)) +
+      geom_histogram() +
+      facet_grid(mutated_alleles~product) +
+      ggtitle(paste0('Parameter set ', as.character(paramset))) +
+      theme_classic()
+    ggsave(dist_plot, file = paste0(plotdir, 'distributions_q300_v1.6.5_paramset_', as.character(paramset), '_2.pdf'))
+  }
+  
+  spstats <- species_sample %>%
+    group_by(mutated_alleles, product, paramset) %>%
+    summarise(mean_product = mean(abundance),
+              sd_product = sd(abundance),
+              cv_product = sd_product/(mean_product + 0.01),
+              fano_product = sd_product^2/(mean_product + 0.01),
+              gini_product = ineq(abundance + 1, type = 'Gini', na.rm = T),
+              bimodality_coef = calculate_bimodality(abundance),
+              entropy = entropy(discretize(abundance, numBins = 30, r=c(0,max(1,max(abundance))))), .groups = 'keep')
+  
+  entr_temp <- tibble(
+    mutated_alleles = numeric(),
+    product = character(),
+    paramset = numeric(),
+    entropy95 = numeric(),
+    entropy90 = numeric()
+  )
+  
+  for (ma in c(0,1,2)) {
+    
+    for (gene in c('A1', 'Aprime1', 'Anonsense1', 'B1')) {
+      
+      subs <- species_sample %>%
+        filter(mutated_alleles == ma, product == gene)
+      
+      simdist <- subs$abundance
+      
+      # 
+      # expFit <- fitdistr(simdist, 'exponential')
+      # 
+      # expKS <- ks.test(simdist, 'pexp', expFit$estimate)
+      
+      #filter to remove top and bottom 2.5% of values to assess entropy of distribution bulk
+      
+      nv <- length(simdist)
+      simdistfilt95 <- simdist[order(simdist)[round(0.025*nv):round(0.975*nv)]]
+      simdistfilt90 <- simdist[order(simdist)[round(0.05*nv):round(0.95*nv)]]
+      
+      trow <- tibble(
+        mutated_alleles = ma,
+        paramset = paramset,
+        product = gene,
+        entropy95 = entropy(discretize(simdistfilt95, numBins = 30, r=c(0,max(1,max(simdistfilt95))))),
+        entropy90 = entropy(discretize(simdistfilt90, numBins = 30, r=c(0,max(1,max(simdistfilt90)))))
+      )
+      
+      entr_temp %<>% bind_rows(trow)
+      
+    }
+  }
+  
+  spstats %<>% inner_join(entr_temp, by = c('mutated_alleles', 'product', 'paramset'))
+  
+  
+  if(is.null(dim(allstats_full1))) {
+    allstats_full1 <- spstats
+  } else {
+    allstats_full1 %<>% bind_rows(spstats)
+  }
+  
+}
 
 
 
@@ -984,17 +1074,17 @@ dev.off()
 
 ## Normalize stats to mean
 
-loess_fitted_allstats_full <- allstats_full
+loess_fitted_allstats_2 <- allstats2 %>% mutate(version = '1.6.2')
 for (stat in unistats[unistats != 'mean_product']) {
   
   statdat <- list()
   
   for (gene in c('A1', 'Anonsense1', 'Aprime1', 'B1')) {
     
-    for (ma in 0:2) {
+    # for (ma in 0:2) {
       
-      tempdat <- allstats_full %>%
-        filter(mutated_alleles == ma,
+      tempdat <- allstats2 %>% mutate(version = '1.6.2') %>% # remove for full
+        filter(#mutated_alleles == ma,
                product == gene) %>%
         dplyr::select(mutated_alleles, product, version, paramset, mean_product, stat)
       
@@ -1006,7 +1096,7 @@ for (stat in unistats[unistats != 'mean_product']) {
                           version = tempdat$version,
                           paramset = tempdat$paramset,
                           product = gene,
-                          mutated_alleles = ma)
+                          mutated_alleles = tempdat$mutated_alleles)
       colnames(l1dat)[2] <- paste0(stat,'_fitted')
       colnames(l1dat)[3] <- paste0(stat,'_residual')
       
@@ -1016,7 +1106,7 @@ for (stat in unistats[unistats != 'mean_product']) {
         theme_classic() +
         ylab(stat) +
         xlab('Mean') +
-        ggtitle(paste0(stat, ' vs mean, with LOESS fit to mean\nGene product: ', gene, ', mutated alleles: ', as.character(ma)))
+        ggtitle(paste0(stat, ' vs mean, with LOESS fit to mean\nGene product: ', gene))#, ', mutated alleles: ', as.character(ma)))
       
       lplot2 <- ggplot() +
         geom_point(data = tempdat, aes(log(mean_product), eval(as.symbol(stat))), alpha = 0.1) +
@@ -1024,23 +1114,61 @@ for (stat in unistats[unistats != 'mean_product']) {
         theme_classic() +
         ylab(stat) +
         xlab('Log(Mean)') +
-        ggtitle(paste0(stat, ' vs log(mean), with LOESS fit to mean\nGene product: ', gene, ', mutated alleles: ', as.character(ma)))
+        ggtitle(paste0(stat, ' vs log(mean), with LOESS fit to mean\nGene product: ', gene))#, ', mutated alleles: ', as.character(ma)))
       
-      ggsave(lplot1, file = paste0(plotdir, 'LOESS_', stat, 'vsMean_',gene,'_mutAlleles',ma,'.pdf'), width = 5, height = 5)
-      ggsave(lplot2, file = paste0(plotdir, 'LOESS_', stat, 'vsMean_',gene,'_mutAlleles',ma,'_log.pdf'), width = 5, height = 5)
+      ggsave(lplot1, file = paste0(plotdir, 'LOESS_', stat, 'vsMean_',gene,'_v1.6.2only.pdf'), width = 5, height = 5)#'_mutAlleles',ma,'_v1.6.2only.pdf'), width = 5, height = 5)
+      ggsave(lplot2, file = paste0(plotdir, 'LOESS_', stat, 'vsMean_',gene,'_v1.6.2only.pdf'), width = 5, height = 5)#'_mutAlleles',ma,'_log_v1.6.2only.pdf'), width = 5, height = 5)
       
       if(is.null(dim(statdat))){
         statdat <- l1dat
       } else {
         statdat %<>% bind_rows(l1dat)
       }
-    }
+    #}
     
   }
   
-  loess_fitted_allstats_full %<>% left_join(statdat, by = c('version', 'paramset', 'mutated_alleles', 'product', 'mean_product'))
+  statdat$version <- as.character(statdat$version)
+  statdat$product <- as.character(statdat$product)
+  statdat$paramset <- as.numeric(statdat$paramset)
+  
+  loess_fitted_allstats_2 %<>% left_join(as_tibble(statdat) %>% dplyr::select(-mean_product), by = c('version', 'paramset', 'mutated_alleles', 'product'))
+  
+  statdat2 <- sliding_window_normalize(as_tibble(statdat) %>% filter(mean_product>10), 'mean_product', paste0(stat,'_residual'), 25)
+  
+  loess_fitted_allstats_2 %<>% left_join(statdat2 %>% dplyr::select(-c('mean_product', paste0(stat,'_residual'), paste0(stat,'_fitted'))), by = c('version', 'paramset', 'mutated_alleles', 'product'))
+  
+  td1<-allstats2 %>% mutate(version = '1.6.2') %>% # remove for full
+    dplyr::select(mutated_alleles, product, version, paramset, mean_product, stat)
+  
+  lplot_all_stat <- ggplot() +
+    geom_point(data = td1 %>% filter(mean_product>10), aes(log(mean_product), eval(as.symbol(stat))), stroke=0, alpha = 0.05) +
+    geom_density2d(data = td1 %>% filter(mutated_alleles == 0, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(stat))), color = 'blue') +
+    geom_density2d(data = td1 %>% filter(mutated_alleles == 1, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(stat))), color = 'red') +
+    geom_density2d(data = td1 %>% filter(mutated_alleles == 2, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(stat))), color = 'green') +
+    theme_classic()
+  
+  lplot_all_statLOESS <-  ggplot() +
+    geom_point(data = statdat %>% filter(mean_product>10), aes(log(mean_product), eval(as.symbol(paste0(stat,'_residual')))), stroke=0, alpha = 0.05) +
+    geom_density2d(data = statdat %>% filter(mutated_alleles == 0, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual')))), color = 'blue') +
+    geom_density2d(data = statdat %>% filter(mutated_alleles == 1, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual')))), color = 'red') +
+    geom_density2d(data = statdat %>% filter(mutated_alleles == 2, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual')))), color = 'green') +
+    theme_classic()
+   
+  lplot_all_statLOESSSWN <-  ggplot() +
+    geom_point(data = statdat2 %>% filter(mean_product>10), aes(log(mean_product), eval(as.symbol(paste0(stat,'_residual_swn')))), stroke=0, alpha = 0.05) +
+    geom_density2d(data = statdat2 %>% filter(mutated_alleles == 0, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual_swn')))), color = 'blue') +
+    geom_density2d(data = statdat2 %>% filter(mutated_alleles == 1, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual_swn')))), color = 'red') +
+    geom_density2d(data = statdat2 %>% filter(mutated_alleles == 2, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual_swn')))), color = 'green') +
+    theme_classic()
+  
+  pdf(paste0(paste0(plotdir, 'LOESSplots_', stat, 'vsLogMean_B1_v1.6.2only.pdf')), width = 10, height = 7)
+  grid.arrange(lplot_all_stat,lplot_all_statLOESS,lplot_all_statLOESSSWN, ncol=3)
+  dev.off()
   
 }
+
+
 
 bimfilt <- 0.15
 high_bimodality <- loess_fitted_allstats_full %>% 
