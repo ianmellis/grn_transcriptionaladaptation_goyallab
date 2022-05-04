@@ -57,6 +57,9 @@ bulk_counts_tall %<>%
   mutate(RPM = count*1000000/total_counts) %>%
   inner_join(as.data.frame(bulk_coldata_tall) %>% mutate(sampleID = rownames(bulk_coldata_tall)), by = 'sampleID')
 
+pseud = 0.1
+bulk_FC_perTarget <- list()
+bulk_FC_perTarget_perParalog <- list()
 for(crispr_target in target_genes) {
   
   paralogs <- geneParaList %>%
@@ -68,10 +71,11 @@ for(crispr_target in target_genes) {
   
   bulk_sub_sum <- bulk_sub %>%
     group_by(gene_name, gene, condition) %>%
-    summarise(meanRPM = mean(RPM),
-              sdRPM = sd(RPM),
-              semRPM = sdRPM/sqrt(length(RPM))) %>%
-    group_by(gene_name, condition) %>%
+    summarise(meanRPM = mean(RPM + pseud),
+              sdRPM = sd(RPM + pseud),
+              semRPM = sdRPM/sqrt(length(RPM)),
+              CRISPR_target = crispr_target) %>%
+    group_by(CRISPR_target, gene_name, condition) %>%
     pivot_wider(names_from = gene, values_from = c(meanRPM, sdRPM, semRPM)) %>%
     mutate(meanFC = eval(as.symbol(paste0('meanRPM_', crispr_target)))/meanRPM_CTRL,
            sdFC = meanFC*sqrt((eval(as.symbol(paste0('sdRPM_', crispr_target)))/eval(as.symbol(paste0('meanRPM_', crispr_target))))^2 + 
@@ -84,7 +88,9 @@ for(crispr_target in target_genes) {
     group_by(condition) %>%
     filter(gene_name != crispr_target) %>%
     summarise(gmeanParalogFC = exp(mean(log(meanFC))),
-              log2_gmeanParalogFC = log2(gmeanParalogFC))
+              log2_gmeanParalogFC = log2(gmeanParalogFC),
+              nParalogs = length(meanFC)) %>%
+    mutate(CRISPR_target = crispr_target)
   
   p1 <- ggplot(bulk_sub, aes(gene, RPM)) +
     facet_grid(condition~gene_name) +
@@ -126,4 +132,32 @@ for(crispr_target in target_genes) {
   
   ggsave(p4, file = paste0('/Volumes/IAMYG1/grn_nitc_data/CROP-seq/Datlinger2017/exploration/bulkExp_',crispr_target,'_KO_log_FCnoEB.pdf'), height = 4, width = 8)
   
+  if(is.null(dim(bulk_FC_perTarget))) {
+    bulk_FC_perTarget <- bulk_summary_FC
+  } else {
+    bulk_FC_perTarget %<>% bind_rows(bulk_summary_FC)
+  }
+  
+  if(is.null(dim(bulk_FC_perTarget_perParalog))) {
+    bulk_FC_perTarget_perParalog <- bulk_sub_sum
+  } else {
+    bulk_FC_perTarget_perParalog %<>% bind_rows(bulk_sub_sum)
+  }
+  
 }
+
+bulk_FC_perTarget_FCplot <- ggplot() + 
+  geom_point(data = bulk_FC_perTarget_perParalog %>% filter(CRISPR_target != gene_name), aes(CRISPR_target, lfc_RPM), position = position_jitter(seed = 8272, width = 0.1, height = 0)) +
+  geom_bar(data = bulk_FC_perTarget, aes(CRISPR_target, log2_gmeanParalogFC), stat = 'identity', alpha = 0.3) +
+  facet_grid(condition~.) + 
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 30)) +
+  ylab('Log2(fold-change) after KO in points\nLog2(Geometric mean fold change) in bar') +
+  xlab('CRISPR target') +
+  ggtitle('Change in paralog expression after reference gene KO\nDoes not include reference gene change')
+ggsave(bulk_FC_perTarget_FCplot, file = '/Volumes/IAMYG1/grn_nitc_data/CROP-seq/Datlinger2017/exploration/bulkExp_allParalogs_KO_log_FCnoEB.pdf', height = 7, width = 7)
+
+paralogs %>% as_tibble()
+
+
+
