@@ -1,6 +1,7 @@
 library(tidyverse)
 library(magrittr)
 library(biomaRt)
+library(GenomicFeatures)
 
 setwd('/Volumes/IAMYG1/grn_nitc_data/CROP-seq/Datlinger2017/GSE92872/')
 
@@ -39,6 +40,9 @@ geneParaList <- getBM(attributes = c("ensembl_gene_id",
                       filters = 'external_gene_name',
                       values = target_genes,
                       mart = human)
+
+# load "gene lengths", (i.e., union of all Refseq transcript exons/UTRs per gene) from hg38 genes
+lengthtbl<- as_tibble(read.csv(file = '~/code/grn_nitc/Resources/hg38.ncbiRefSeq.txLengthPerGene.csv', header = T, stringsAsFactors = F))
 
 # look for nitc in bulk results
 bulk_counts_tall <- as.data.frame(bulk_countmat) %>%
