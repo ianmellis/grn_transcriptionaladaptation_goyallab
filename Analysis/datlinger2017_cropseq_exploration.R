@@ -1,7 +1,7 @@
 library(tidyverse)
 library(magrittr)
 library(biomaRt)
-library(GenomicFeatures)
+# library(GenomicFeatures)
 
 setwd('/Volumes/IAMYG1/grn_nitc_data/CROP-seq/Datlinger2017/GSE92872/')
 
@@ -24,7 +24,7 @@ target_genes <- unique(as.character(as.matrix(bulk_coldata[2,2:ncol(bulk_coldata
 
 
 # load CROP-seq data
-sccounts <- as_tibble(read.csv(file = 'GSE92872_CROP-seq_Jurkat_TCR.digital_expression.csv', stringsAsFactors = F))
+# sccounts <- as_tibble(read.csv(file = 'GSE92872_CROP-seq_Jurkat_TCR.digital_expression.csv', stringsAsFactors = F))
 
 # pull list of paralogs from ensembl
 # human = useMart("ensembl", dataset = "hsapiens_gene_ensembl") # version 105, Dec 2021
@@ -61,6 +61,11 @@ bulk_counts_tall %<>%
   mutate(RPM = count*1000000/total_counts) %>%
   inner_join(as.data.frame(bulk_coldata_tall) %>% mutate(sampleID = rownames(bulk_coldata_tall)), by = 'sampleID')
 
+bulk_counts_tall %>%
+  mutate(RPK = count*1e3/length) %>%
+  group_by(gene) %>%
+  summarise(sumRPK = sum(RPK))
+         
 pseud = 0.1
 bulk_FC_perTarget <- list()
 bulk_FC_perTarget_perParalog <- list()
