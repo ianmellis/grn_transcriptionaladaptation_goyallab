@@ -1,4 +1,5 @@
 library(tidyverse)
+library(ggrepel)
 library(magrittr)
 library(biomaRt)
 # library(GenomicFeatures)
@@ -59,14 +60,16 @@ bulk_totalcounts <- bulk_counts_tall %>%
 bulk_counts_tall %<>% 
   inner_join(bulk_totalcounts, by = 'sampleID') %>%
   mutate(RPM = count*1000000/total_counts) %>%
-  inner_join(as.data.frame(bulk_coldata_tall) %>% mutate(sampleID = rownames(bulk_coldata_tall)), by = 'sampleID')
+  inner_join(as.data.frame(bulk_coldata_tall) %>% 
+               mutate(sampleID = rownames(bulk_coldata_tall)), by = 'sampleID')
 
+# absolute change in TPM after KO per paralog
 bulk_counts_tall %>%
   mutate(RPK = count*1e3/length) %>%
   group_by(gene) %>%
   summarise(sumRPK = sum(RPK))
          
-pseud = 0.1
+pseud = 1
 bulk_FC_perTarget <- list()
 bulk_FC_perTarget_perParalog <- list()
 for(crispr_target in target_genes) {
@@ -163,10 +166,21 @@ bulk_FC_perTarget_FCplot <- ggplot() +
   theme(axis.text.x = element_text(angle = 30)) +
   ylab('Log2(fold-change) after KO in points\nLog2(Geometric mean fold change) in bar') +
   xlab('CRISPR target') +
-  ggtitle('Change in paralog expression after reference gene KO\nDoes not include reference gene change')
+  ggtitle('Change in paralog expression (RPM+1) after reference gene KO\nDoes not include reference gene change')
 ggsave(bulk_FC_perTarget_FCplot, file = '/Volumes/IAMYG1/grn_nitc_data/CROP-seq/Datlinger2017/exploration/bulkExp_allParalogs_KO_log_FCnoEB.pdf', height = 7, width = 7)
 
 paralogs %>% as_tibble()
 
-
+bulk_FCvsPercID_perTarget <- ggplot() +
+  geom_point(data = bulk_FC_perTarget_perParalog %>% 
+               filter(CRISPR_target != gene_name) %>%
+               inner_join(geneParaList %>%
+                            dplyr::rename(CRISPR_target = external_gene_name,
+                                          gene_name = hsapiens_paralog_associated_gene_name), by = c('CRISPR_target', 'gene_name')), 
+             aes(hsapiens_paralog_perc_id, lfc_RPM)) +
+  facet_wrap(~CRISPR_target) +
+  theme_bw() + 
+  xlim(c(0,100)) +
+  ylab('Log2(fold-change) after KO')
+ggsave(bulk_FCvsPercID_perTarget, file = '/Volumes/IAMYG1/grn_nitc_data/CROP-seq/Datlinger2017/exploration/bulk_FCvsPercID_perTarget.pdf', height = 7, width = 7)
 
