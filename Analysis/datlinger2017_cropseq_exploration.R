@@ -158,6 +158,30 @@ for(crispr_target in target_genes) {
   
 }
 
+bulk_FC_EGR1_stim_FCplot <- ggplot() + 
+  geom_point(data = bulk_FC_perTarget_perParalog %>% filter(CRISPR_target != gene_name, CRISPR_target == 'EGR1', condition == 'stimulated'), aes(CRISPR_target, lfc_RPM), position = position_jitter(seed = 8272, width = 0.1, height = 0)) +
+  geom_text_repel(data = bulk_FC_perTarget_perParalog %>% filter(CRISPR_target != gene_name, CRISPR_target == 'EGR1', condition == 'stimulated'), aes(CRISPR_target, lfc_RPM, label = gene_name), position = position_jitter(seed = 8272, width = 0.1, height = 0)) +
+  geom_bar(data = bulk_FC_perTarget %>% filter(CRISPR_target == 'EGR1', condition == 'stimulated'), aes(CRISPR_target, log2_gmeanParalogFC), stat = 'identity', alpha = 0.3) +
+  facet_grid(condition~.) + 
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 30)) +
+  ylab('Log2(fold-change) after KO in points\nLog2(Geometric mean fold change) in bar') +
+  xlab('CRISPR target') +
+  ggtitle('Change in paralog expression (RPM+1) after reference gene KO\nDoes not include reference gene change')
+ggsave(bulk_FC_EGR1_stim_FCplot, file = '/Volumes/IAMYG1/grn_nitc_data/CROP-seq/Datlinger2017/exploration/bulkExp_allParalogs_EGR1_stim_KO_FCplot.pdf', height = 4, width = 2)
+
+bulk_FC_EGR1_FCplot <- ggplot() + 
+  geom_point(data = bulk_FC_perTarget_perParalog %>% filter(CRISPR_target != gene_name, CRISPR_target == 'EGR1'), aes(CRISPR_target, lfc_RPM), position = position_jitter(seed = 8272, width = 0.1, height = 0)) +
+  geom_text_repel(data = bulk_FC_perTarget_perParalog %>% filter(CRISPR_target != gene_name, CRISPR_target == 'EGR1'), aes(CRISPR_target, lfc_RPM, label = gene_name), position = position_jitter(seed = 8272, width = 0.1, height = 0)) +
+  geom_bar(data = bulk_FC_perTarget %>% filter(CRISPR_target == 'EGR1'), aes(CRISPR_target, log2_gmeanParalogFC), stat = 'identity', alpha = 0.3) +
+  facet_grid(condition~.) + 
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 30)) +
+  ylab('Log2(fold-change) after KO in points\nLog2(Geometric mean fold change) in bar') +
+  xlab('CRISPR target') +
+  ggtitle('Change in paralog expression (RPM+1) after reference gene KO\nDoes not include reference gene change')
+ggsave(bulk_FC_EGR1_FCplot, file = '/Volumes/IAMYG1/grn_nitc_data/CROP-seq/Datlinger2017/exploration/bulkExp_allParalogs_EGR1_KO_FCplot.pdf', height = 7, width = 2)
+
 bulk_FC_perTarget_FCplot <- ggplot() + 
   geom_point(data = bulk_FC_perTarget_perParalog %>% filter(CRISPR_target != gene_name), aes(CRISPR_target, lfc_RPM), position = position_jitter(seed = 8272, width = 0.1, height = 0)) +
   geom_bar(data = bulk_FC_perTarget, aes(CRISPR_target, log2_gmeanParalogFC), stat = 'identity', alpha = 0.3) +
@@ -171,9 +195,28 @@ ggsave(bulk_FC_perTarget_FCplot, file = '/Volumes/IAMYG1/grn_nitc_data/CROP-seq/
 
 paralogs %>% as_tibble()
 
-bulk_FCvsPercID_perTarget <- ggplot() +
+
+bulk_FCvsPercID_EGR1_stim_perTarget <- ggplot(bulk_FC_perTarget_perParalog %>% 
+                                                filter(CRISPR_target != gene_name,
+                                                       CRISPR_target == 'EGR1',
+                                                       condition == 'stimulated') %>%
+                                                inner_join(geneParaList %>%
+                                                             dplyr::rename(CRISPR_target = external_gene_name,
+                                                                           gene_name = hsapiens_paralog_associated_gene_name), by = c('CRISPR_target', 'gene_name')), 
+                                              aes(hsapiens_paralog_perc_id, lfc_RPM)) +
+  geom_point() +
+  geom_text_repel(aes(label = gene_name)) +
+  facet_wrap(~CRISPR_target) +
+  theme_bw() + 
+  xlim(c(0,100)) +
+  ylab('Log2(fold-change) after KO') +
+  ggtitle('Change in paralog expression (RPM+1) after reference gene KO\nVs. Percent sequence similarity to reference gene')
+ggsave(bulk_FCvsPercID_EGR1_stim_perTarget, file = '/Volumes/IAMYG1/grn_nitc_data/CROP-seq/Datlinger2017/exploration/bulk_FCvsPercID_EGR1_stim_perTarget.pdf', height = 4, width = 4)
+
+bulk_FCvsPercID_stim_perTarget <- ggplot() +
   geom_point(data = bulk_FC_perTarget_perParalog %>% 
-               filter(CRISPR_target != gene_name) %>%
+               filter(CRISPR_target != gene_name,
+                      condition == 'stimulated') %>%
                inner_join(geneParaList %>%
                             dplyr::rename(CRISPR_target = external_gene_name,
                                           gene_name = hsapiens_paralog_associated_gene_name), by = c('CRISPR_target', 'gene_name')), 
@@ -181,6 +224,22 @@ bulk_FCvsPercID_perTarget <- ggplot() +
   facet_wrap(~CRISPR_target) +
   theme_bw() + 
   xlim(c(0,100)) +
-  ylab('Log2(fold-change) after KO')
-ggsave(bulk_FCvsPercID_perTarget, file = '/Volumes/IAMYG1/grn_nitc_data/CROP-seq/Datlinger2017/exploration/bulk_FCvsPercID_perTarget.pdf', height = 7, width = 7)
+  ylab('Log2(fold-change) after KO') +
+  ggtitle('Change in paralog expression (RPM+1) after reference gene KO\nVs. Percent sequence similarity to reference gene\nStimulated condition')
+ggsave(bulk_FCvsPercID_stim_perTarget, file = '/Volumes/IAMYG1/grn_nitc_data/CROP-seq/Datlinger2017/exploration/bulk_FCvsPercID_stim_perTarget.pdf', height = 7, width = 7)
+
+bulk_FCvsPercID_unstim_perTarget <- ggplot() +
+  geom_point(data = bulk_FC_perTarget_perParalog %>% 
+               filter(CRISPR_target != gene_name,
+                      condition == 'unstimulated') %>%
+               inner_join(geneParaList %>%
+                            dplyr::rename(CRISPR_target = external_gene_name,
+                                          gene_name = hsapiens_paralog_associated_gene_name), by = c('CRISPR_target', 'gene_name')), 
+             aes(hsapiens_paralog_perc_id, lfc_RPM)) +
+  facet_wrap(~CRISPR_target) +
+  theme_bw() + 
+  xlim(c(0,100)) +
+  ylab('Log2(fold-change) after KO') +
+  ggtitle('Change in paralog expression (RPM+1) after reference gene KO\nVs. Percent sequence similarity to reference gene\nUnstimulated condition')
+ggsave(bulk_FCvsPercID_unstim_perTarget, file = '/Volumes/IAMYG1/grn_nitc_data/CROP-seq/Datlinger2017/exploration/bulk_FCvsPercID_unstim_perTarget.pdf', height = 7, width = 7)
 
