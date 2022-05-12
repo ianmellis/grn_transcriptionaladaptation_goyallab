@@ -59,7 +59,7 @@ bulk_totalcounts <- bulk_counts_tall %>%
   group_by(sampleID) %>%
   summarise(total_counts = sum(count))
 
-countplot <- bulk_counts_tall %>% dplyr::select(total_counts) %>% unique() %>% ggplot() + geom_histogram(aes(total_counts)) + theme_classic() + ggtitle('total counts per bulk sample')
+countplot <- bulk_totalcounts %>% dplyr::select(total_counts) %>% unique() %>% ggplot() + geom_histogram(aes(total_counts)) + theme_classic() + ggtitle('total counts per bulk sample')
 ggsave(countplot, file = paste0(plotdir, 'total_counts_per_bulk_sample.pdf'))
 
 bulk_counts_tall %<>% 
@@ -75,7 +75,8 @@ bulk_counts_tall %>%
   mutate(RPK = count*1e3/length) %>%
   group_by(gene) %>%
   mutate(sumRPKpm = sum(RPK)/1e6,
-         TPM = RPK/sumRPKpm)
+         TPM = RPK/sumRPKpm) %>%
+  dplyr::select(-c('RPK','sumRPKpm','length'))
          
 pseud = 1
 bulk_FC_perTarget <- list()
@@ -89,7 +90,7 @@ for(crispr_target in target_genes) {
     filter(gene %in% c(crispr_target, 'CTRL'),
            gene_name %in% c(crispr_target, paralogs$hsapiens_paralog_associated_gene_name))
   
-  bulk_sub_sum <- bulk_sub %>%
+  bulk_sub_sum_rpm <- bulk_sub %>%
     group_by(gene_name, gene, condition) %>%
     summarise(meanRPM = mean(RPM + pseud),
               sdRPM = sd(RPM + pseud),
@@ -104,7 +105,7 @@ for(crispr_target in target_genes) {
            lfc_RPM_up = log2(meanFC+sdFC),
            lfc_RPM_dn = log2(max((meanFC-sdFC),0.001)))
   
-  bulk_summary_FC <- bulk_sub_sum %>%
+  bulk_summary_FC_rpm <- bulk_sub_sum_rpm %>%
     group_by(condition) %>%
     filter(gene_name != crispr_target) %>%
     summarise(gmeanParalogFC = exp(mean(log(meanFC))),
