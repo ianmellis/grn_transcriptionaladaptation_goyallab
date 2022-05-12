@@ -6,6 +6,7 @@ library(biomaRt)
 
 setwd('/Volumes/IAMYG1/grn_nitc_data/CROP-seq/Datlinger2017/GSE92872/')
 
+plotdir <- '/Volumes/IAMYG1/grn_nitc_data/CROP-seq/Datlinger2017/exploration/'
 # load and reformat bulk data
 bulkcounts <- as_tibble(read.csv(file = 'GSE92872_CROP-seq_Jurkat_TCR.count_matrix.csv', stringsAsFactors = F))
 
@@ -43,7 +44,8 @@ geneParaList <- getBM(attributes = c("ensembl_gene_id",
                       mart = human)
 
 # load "gene lengths", (i.e., union of all Refseq transcript exons/UTRs per gene) from hg38 genes
-lengthtbl<- as_tibble(read.csv(file = '~/code/grn_nitc/Resources/hg38.ncbiRefSeq.txLengthPerGene.csv', header = T, stringsAsFactors = F))
+lengthtbl<- as_tibble(read.csv(file = '~/code/grn_nitc/Resources/hg38.ncbiRefSeq.txLengthPerGene.csv', header = T, stringsAsFactors = F)) %>%
+  dplyr::rename(gene_name = gene_id)
 
 # look for nitc in bulk results
 bulk_counts_tall <- as.data.frame(bulk_countmat) %>%
@@ -57,17 +59,23 @@ bulk_totalcounts <- bulk_counts_tall %>%
   group_by(sampleID) %>%
   summarise(total_counts = sum(count))
 
+countplot <- bulk_counts_tall %>% dplyr::select(total_counts) %>% unique() %>% ggplot() + geom_histogram(aes(total_counts)) + theme_classic() + ggtitle('total counts per bulk sample')
+ggsave(countplot, file = paste0(plotdir, 'total_counts_per_bulk_sample.pdf'))
+
 bulk_counts_tall %<>% 
   inner_join(bulk_totalcounts, by = 'sampleID') %>%
   mutate(RPM = count*1000000/total_counts) %>%
   inner_join(as.data.frame(bulk_coldata_tall) %>% 
-               mutate(sampleID = rownames(bulk_coldata_tall)), by = 'sampleID')
+               mutate(sampleID = rownames(bulk_coldata_tall)), by = 'sampleID') %>%
+  filter(total_counts > 1e6)
 
 # absolute change in TPM after KO per paralog
 bulk_counts_tall %>%
+  inner_join(lengthtbl, by = 'gene_name') %>%
   mutate(RPK = count*1e3/length) %>%
   group_by(gene) %>%
-  summarise(sumRPK = sum(RPK))
+  mutate(sumRPKpm = sum(RPK)/1e6,
+         TPM = RPK/sumRPKpm)
          
 pseud = 1
 bulk_FC_perTarget <- list()
