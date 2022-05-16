@@ -70,7 +70,7 @@ bulk_counts_tall %<>%
   filter(total_counts > 1e6)
 
 # absolute change in TPM after KO per paralog
-bulk_counts_tall %>%
+bulk_counts_tall %<>%
   inner_join(lengthtbl, by = 'gene_name') %>%
   mutate(RPK = count*1e3/length) %>%
   group_by(gene) %>%
@@ -113,6 +113,31 @@ for(crispr_target in target_genes) {
               nParalogs = length(meanFC)) %>%
     mutate(CRISPR_target = crispr_target)
   
+  bulk_sub_sum_tpm <- bulk_sub %>%
+    group_by(gene_name, gene, condition) %>%
+    summarise(meanTPM = mean(TPM + pseud),
+              sdTPM = sd(TPM + pseud),
+              semTPM = sdTPM/sqrt(length(TPM)),
+              CRISPR_target = crispr_target) %>%
+    group_by(CRISPR_target, gene_name, condition) %>%
+    pivot_wider(names_from = gene, values_from = c(meanTPM, sdTPM, semTPM)) %>%
+    mutate(meanFC_TPM = eval(as.symbol(paste0('meanTPM_', crispr_target)))/meanTPM_CTRL,
+           mean_deltaTPM = eval(as.symbol(paste0('meanTPM_', crispr_target))) - meanTPM_CTRL,
+           sdFC_TPM = meanFC_TPM*sqrt((eval(as.symbol(paste0('sdTPM_', crispr_target)))/eval(as.symbol(paste0('meanTPM_', crispr_target))))^2 + 
+                                (sdTPM_CTRL/meanTPM_CTRL)^2),
+           lfc_TPM = log2(meanFC_TPM),
+           lfc_TPM_up = log2(meanFC_TPM+sdFC_TPM),
+           lfc_TPM_dn = log2(max((meanFC_TPM-sdFC_TPM),0.001)))
+  
+  bulk_summary_FC_tpm <- bulk_sub_sum_tpm %>%
+    group_by(condition) %>%
+    filter(gene_name != crispr_target) %>%
+    summarise(gmeanParalogFC_TPM = exp(mean(log(meanFC_TPM))),
+              log2_gmeanParalogFC_TPM = log2(gmeanParalogFC_TPM),
+              nParalogs = length(meanFC_TPM)) %>%
+    mutate(CRISPR_target = crispr_target)
+  
+  
   p1 <- ggplot(bulk_sub, aes(gene, RPM)) +
     facet_grid(condition~gene_name) +
     geom_point(aes(color = gene)) +
@@ -130,10 +155,10 @@ for(crispr_target in target_genes) {
   ggsave(p2, file = paste0('/Volumes/IAMYG1/grn_nitc_data/CROP-seq/Datlinger2017/exploration/bulkExp_',crispr_target,'_KO_log.pdf'), height = 4, width = 2+nrow(paralogs))
   
   p3 <- ggplot() +
-    geom_point(data = bulk_sub_sum, aes(log2(meanRPM_CTRL+1), lfc_RPM)) +
-    geom_errorbar(data = bulk_sub_sum, aes(log2(meanRPM_CTRL+1), ymin = lfc_RPM_dn, ymax = lfc_RPM_up)) +
+    geom_point(data = bulk_sub_sum_rpm, aes(log2(meanRPM_CTRL), lfc_RPM)) +
+    geom_errorbar(data = bulk_sub_sum_rpm, aes(log2(meanRPM_CTRL), ymin = lfc_RPM_dn, ymax = lfc_RPM_up)) +
     theme_classic() +
-    geom_text_repel(data = bulk_sub_sum, aes(log2(meanRPM_CTRL+1), lfc_RPM, label = gene_name)) +
+    geom_text_repel(data = bulk_sub_sum_rpm, aes(log2(meanRPM_CTRL), lfc_RPM, label = gene_name)) +
     facet_wrap(~condition) +
     ggtitle(paste0('bulk gene expression change relative to control\nafter ', crispr_target, ' knockout')) +
     ylab('log2(fold change) relative to control') +
@@ -142,10 +167,10 @@ for(crispr_target in target_genes) {
   ggsave(p3, file = paste0('/Volumes/IAMYG1/grn_nitc_data/CROP-seq/Datlinger2017/exploration/bulkExp_',crispr_target,'_KO_log_FC.pdf'), height = 4, width = 8)
   
   p4 <- ggplot() +
-    geom_point(data = bulk_sub_sum, aes(log2(meanRPM_CTRL+1), lfc_RPM)) +
+    geom_point(data = bulk_sub_sum_rpm, aes(log2(meanRPM_CTRL), lfc_RPM)) +
     # geom_errorbar(data = bulk_sub_sum, aes(log2(meanRPM_CTRL+1), ymin = lfc_RPM_dn, ymax = lfc_RPM_up)) +
     theme_classic() +
-    geom_text_repel(data = bulk_sub_sum, aes(log2(meanRPM_CTRL+1), lfc_RPM, label = gene_name)) +
+    geom_text_repel(data = bulk_sub_sum_rpm, aes(log2(meanRPM_CTRL), lfc_RPM, label = gene_name)) +
     facet_wrap(~condition) +
     ggtitle(paste0('bulk gene expression change relative to control\nafter ', crispr_target, ' knockout')) +
     ylab('log2(fold change) relative to control') +
@@ -153,16 +178,44 @@ for(crispr_target in target_genes) {
   
   ggsave(p4, file = paste0('/Volumes/IAMYG1/grn_nitc_data/CROP-seq/Datlinger2017/exploration/bulkExp_',crispr_target,'_KO_log_FCnoEB.pdf'), height = 4, width = 8)
   
-  if(is.null(dim(bulk_FC_perTarget))) {
-    bulk_FC_perTarget <- bulk_summary_FC
+  p5 <- ggplot() + 
+    geom_point(data = bulk_sub_sum_tpm, aes(log2(meanTPM_CTRL), mean_deltaTPM)) +
+    geom_text_repel(data = bulk_sub_sum_tpm, aes(log2(meanTPM_CTRL), mean_deltaTPM, label = gene_name), seed = 362) +
+    facet_grid(condition ~ CRISPR_target) +
+    theme_classic() +
+    ggtitle('Absolute increase in paralog expression\nvs paralog average in CTRL')
+  ggsave(p5, file = paste0('/Volumes/IAMYG1/grn_nitc_data/CROP-seq/Datlinger2017/exploration/bulkExp_',crispr_target,'_KO_log_deltaTPMvsParalogMean.pdf'), height = 4, width = 8)
+  
+  p6 <- ggplot() + 
+    geom_point(data = bulk_sub_sum_tpm, aes(CRISPR_target, mean_deltaTPM)) +
+    geom_text_repel(data = bulk_sub_sum_tpm, aes(log2(meanTPM_CTRL), mean_deltaTPM, label = gene_name), seed = 362) +
+    facet_grid(condition ~ CRISPR_target) +
+    theme_classic() +
+    ggtitle('Absolute increase in paralog expression\nvs paralog average in CTRL')
+  ggsave(p6, file = paste0('/Volumes/IAMYG1/grn_nitc_data/CROP-seq/Datlinger2017/exploration/bulkExp_',crispr_target,'_KO_log_deltaTPMvsTargetMean.pdf'), height = 4, width = 8)
+  
+  if(is.null(dim(bulk_FC_perTarget_rpm))) {
+    bulk_FC_perTarget_rpm <- bulk_summary_FC_rpm
   } else {
-    bulk_FC_perTarget %<>% bind_rows(bulk_summary_FC)
+    bulk_FC_perTarget_rpm %<>% bind_rows(bulk_summary_FC_rpm)
   }
   
-  if(is.null(dim(bulk_FC_perTarget_perParalog))) {
-    bulk_FC_perTarget_perParalog <- bulk_sub_sum
+  if(is.null(dim(bulk_FC_perTarget_perParalog_rpm))) {
+    bulk_FC_perTarget_perParalog_rpm <- bulk_sub_sum_rpm
   } else {
-    bulk_FC_perTarget_perParalog %<>% bind_rows(bulk_sub_sum)
+    bulk_FC_perTarget_perParalog_rpm %<>% bind_rows(bulk_sub_sum_rpm)
+  }
+  
+  if(is.null(dim(bulk_FC_perTarget_tpm))) {
+    bulk_FC_perTarget_tpm <- bulk_summary_FC_tpm
+  } else {
+    bulk_FC_perTarget_tpm %<>% bind_rows(bulk_summary_FC_tpm)
+  }
+  
+  if(is.null(dim(bulk_FC_perTarget_perParalog_tpm))) {
+    bulk_FC_perTarget_perParalog_tpm <- bulk_sub_sum_tpm
+  } else {
+    bulk_FC_perTarget_perParalog_tpm %<>% bind_rows(bulk_sub_sum_tpm)
   }
   
 }
