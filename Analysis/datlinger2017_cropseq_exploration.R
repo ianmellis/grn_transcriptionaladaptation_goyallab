@@ -79,8 +79,10 @@ bulk_counts_tall %<>%
   dplyr::select(-c('RPK','sumRPKpm','length'))
          
 pseud = 1
-bulk_FC_perTarget <- list()
-bulk_FC_perTarget_perParalog <- list()
+bulk_FC_perTarget_rpm <- list()
+bulk_FC_perTarget_perParalog_rpm <- list()
+bulk_FC_perTarget_tpm <- list()
+bulk_FC_perTarget_perParalog_tpm <- list()
 for(crispr_target in target_genes) {
   
   paralogs <- geneParaList %>%
@@ -133,6 +135,7 @@ for(crispr_target in target_genes) {
     group_by(condition) %>%
     filter(gene_name != crispr_target) %>%
     summarise(gmeanParalogFC_TPM = exp(mean(log(meanFC_TPM))),
+              mean_mean_deltaTPM = mean(mean_deltaTPM),
               log2_gmeanParalogFC_TPM = log2(gmeanParalogFC_TPM),
               nParalogs = length(meanFC_TPM)) %>%
     mutate(CRISPR_target = crispr_target)
@@ -186,13 +189,13 @@ for(crispr_target in target_genes) {
     ggtitle('Absolute increase in paralog expression\nvs paralog average in CTRL')
   ggsave(p5, file = paste0('/Volumes/IAMYG1/grn_nitc_data/CROP-seq/Datlinger2017/exploration/bulkExp_',crispr_target,'_KO_log_deltaTPMvsParalogMean.pdf'), height = 4, width = 8)
   
-  p6 <- ggplot() + 
-    geom_point(data = bulk_sub_sum_tpm, aes(CRISPR_target, mean_deltaTPM)) +
-    geom_text_repel(data = bulk_sub_sum_tpm, aes(log2(meanTPM_CTRL), mean_deltaTPM, label = gene_name), seed = 362) +
-    facet_grid(condition ~ CRISPR_target) +
-    theme_classic() +
-    ggtitle('Absolute increase in paralog expression\nvs paralog average in CTRL')
-  ggsave(p6, file = paste0('/Volumes/IAMYG1/grn_nitc_data/CROP-seq/Datlinger2017/exploration/bulkExp_',crispr_target,'_KO_log_deltaTPMvsTargetMean.pdf'), height = 4, width = 8)
+  # p6 <- ggplot() + 
+  #   geom_point(data = bulk_sub_sum_tpm, aes(CRISPR_target, mean_deltaTPM)) +
+  #   geom_text_repel(data = bulk_sub_sum_tpm, aes(log2(meanTPM_CTRL), mean_deltaTPM, label = gene_name), seed = 362) +
+  #   facet_grid(condition ~ CRISPR_target) +
+  #   theme_classic() +
+  #   ggtitle('Absolute increase in paralog expression\nvs paralog average in CTRL')
+  # ggsave(p6, file = paste0('/Volumes/IAMYG1/grn_nitc_data/CROP-seq/Datlinger2017/exploration/bulkExp_',crispr_target,'_KO_log_deltaTPMvsTargetMean.pdf'), height = 4, width = 8)
   
   if(is.null(dim(bulk_FC_perTarget_rpm))) {
     bulk_FC_perTarget_rpm <- bulk_summary_FC_rpm
@@ -254,6 +257,30 @@ bulk_FC_perTarget_FCplot <- ggplot() +
   xlab('CRISPR target') +
   ggtitle('Change in paralog expression (RPM+1) after reference gene KO\nDoes not include reference gene change')
 ggsave(bulk_FC_perTarget_FCplot, file = '/Volumes/IAMYG1/grn_nitc_data/CROP-seq/Datlinger2017/exploration/bulkExp_allParalogs_KO_log_FCnoEB.pdf', height = 7, width = 7)
+
+bulk_deltaTPM_perTarget <- ggplot() + 
+  geom_point(data = bulk_FC_perTarget_perParalog_tpm %>% filter(CRISPR_target != gene_name), aes(CRISPR_target, mean_deltaTPM), position = position_jitter(seed = 8272, width = 0.1, height = 0)) +
+  # geom_bar(data = bulk_FC_perTarget, aes(CRISPR_target, log2_gmeanParalogFC), stat = 'identity', alpha = 0.3) +
+  facet_grid(condition~.) + 
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 30)) +
+  ylab('Absolute change in TPM after KO per paralog\nfor each CRISPR target') +
+  xlab('CRISPR target') +
+  ggtitle('Change in paralog expression (KO - CTRL) after reference gene KO\nDoes not include reference gene change')
+ggsave(bulk_deltaTPM_perTarget, file = '/Volumes/IAMYG1/grn_nitc_data/CROP-seq/Datlinger2017/exploration/bulkExp_allParalogs_KO_deltaTPM.pdf', height = 7, width = 7)
+
+bulk_logdeltaTPM_perTarget <- ggplot() + 
+  geom_point(data = bulk_FC_perTarget_perParalog_tpm %>% filter(CRISPR_target != gene_name), aes(CRISPR_target, log2(mean_deltaTPM)), position = position_jitter(seed = 8272, width = 0.1, height = 0)) +
+  # geom_bar(data = bulk_FC_perTarget, aes(CRISPR_target, log2_gmeanParalogFC), stat = 'identity', alpha = 0.3) +
+  facet_grid(condition~.) + 
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 30)) +
+  ylab('Absolute change in TPM after KO per paralog\nfor each CRISPR target') +
+  xlab('CRISPR target') +
+  ggtitle('Change in paralog expression log2(KO - CTRL) after reference gene KO\nDoes not include reference gene change')
+ggsave(bulk_logdeltaTPM_perTarget, file = '/Volumes/IAMYG1/grn_nitc_data/CROP-seq/Datlinger2017/exploration/bulkExp_allParalogs_KO_logdeltaTPM.pdf', height = 7, width = 7)
+
+
 
 paralogs %>% as_tibble()
 
