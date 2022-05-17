@@ -26,7 +26,7 @@ target_genes <- unique(as.character(as.matrix(bulk_coldata[2,2:ncol(bulk_coldata
 
 
 # load CROP-seq data
-# sccounts <- as_tibble(read.csv(file = 'GSE92872_CROP-seq_Jurkat_TCR.digital_expression.csv', stringsAsFactors = F))
+sccounts <- as_tibble(read.csv(file = 'GSE92872_CROP-seq_Jurkat_TCR.digital_expression.csv', stringsAsFactors = F, header = F))
 
 # pull list of paralogs from ensembl
 # human = useMart("ensembl", dataset = "hsapiens_gene_ensembl") # version 105, Dec 2021
@@ -224,9 +224,9 @@ for(crispr_target in target_genes) {
 }
 
 bulk_FC_EGR1_stim_FCplot <- ggplot() + 
-  geom_point(data = bulk_FC_perTarget_perParalog %>% filter(CRISPR_target != gene_name, CRISPR_target == 'EGR1', condition == 'stimulated'), aes(CRISPR_target, lfc_RPM), position = position_jitter(seed = 8272, width = 0.1, height = 0)) +
-  geom_text_repel(data = bulk_FC_perTarget_perParalog %>% filter(CRISPR_target != gene_name, CRISPR_target == 'EGR1', condition == 'stimulated'), aes(CRISPR_target, lfc_RPM, label = gene_name), position = position_jitter(seed = 8272, width = 0.1, height = 0)) +
-  geom_bar(data = bulk_FC_perTarget %>% filter(CRISPR_target == 'EGR1', condition == 'stimulated'), aes(CRISPR_target, log2_gmeanParalogFC), stat = 'identity', alpha = 0.3) +
+  geom_point(data = bulk_FC_perTarget_perParalog_rpmerParalog %>% filter(CRISPR_target != gene_name, CRISPR_target == 'EGR1', condition == 'stimulated'), aes(CRISPR_target, lfc_RPM), position = position_jitter(seed = 8272, width = 0.1, height = 0)) +
+  geom_text_repel(data = bulk_FC_perTarget_perParalog_rpmaralog %>% filter(CRISPR_target != gene_name, CRISPR_target == 'EGR1', condition == 'stimulated'), aes(CRISPR_target, lfc_RPM, label = gene_name), position = position_jitter(seed = 8272, width = 0.1, height = 0)) +
+  geom_bar(data = bulk_FC_perTarget_rpm %>% filter(CRISPR_target == 'EGR1', condition == 'stimulated'), aes(CRISPR_target, log2_gmeanParalogFC), stat = 'identity', alpha = 0.3) +
   facet_grid(condition~.) + 
   theme_bw() +
   theme(axis.text.x = element_text(angle = 30)) +
@@ -236,9 +236,9 @@ bulk_FC_EGR1_stim_FCplot <- ggplot() +
 ggsave(bulk_FC_EGR1_stim_FCplot, file = '/Volumes/IAMYG1/grn_nitc_data/CROP-seq/Datlinger2017/exploration/bulkExp_allParalogs_EGR1_stim_KO_FCplot.pdf', height = 4, width = 2)
 
 bulk_FC_EGR1_FCplot <- ggplot() + 
-  geom_point(data = bulk_FC_perTarget_perParalog %>% filter(CRISPR_target != gene_name, CRISPR_target == 'EGR1'), aes(CRISPR_target, lfc_RPM), position = position_jitter(seed = 8272, width = 0.1, height = 0)) +
-  geom_text_repel(data = bulk_FC_perTarget_perParalog %>% filter(CRISPR_target != gene_name, CRISPR_target == 'EGR1'), aes(CRISPR_target, lfc_RPM, label = gene_name), position = position_jitter(seed = 8272, width = 0.1, height = 0)) +
-  geom_bar(data = bulk_FC_perTarget %>% filter(CRISPR_target == 'EGR1'), aes(CRISPR_target, log2_gmeanParalogFC), stat = 'identity', alpha = 0.3) +
+  geom_point(data = bulk_FC_perTarget_perParalog_rpm %>% filter(CRISPR_target != gene_name, CRISPR_target == 'EGR1'), aes(CRISPR_target, lfc_RPM), position = position_jitter(seed = 8272, width = 0.1, height = 0)) +
+  geom_text_repel(data = bulk_FC_perTarget_perParalog_rpm %>% filter(CRISPR_target != gene_name, CRISPR_target == 'EGR1'), aes(CRISPR_target, lfc_RPM, label = gene_name), position = position_jitter(seed = 8272, width = 0.1, height = 0)) +
+  geom_bar(data = bulk_FC_perTarget_rpmrTarget %>% filter(CRISPR_target == 'EGR1'), aes(CRISPR_target, log2_gmeanParalogFC), stat = 'identity', alpha = 0.3) +
   facet_grid(condition~.) + 
   theme_bw() +
   theme(axis.text.x = element_text(angle = 30)) +
@@ -248,8 +248,8 @@ bulk_FC_EGR1_FCplot <- ggplot() +
 ggsave(bulk_FC_EGR1_FCplot, file = '/Volumes/IAMYG1/grn_nitc_data/CROP-seq/Datlinger2017/exploration/bulkExp_allParalogs_EGR1_KO_FCplot.pdf', height = 7, width = 2)
 
 bulk_FC_perTarget_FCplot <- ggplot() + 
-  geom_point(data = bulk_FC_perTarget_perParalog %>% filter(CRISPR_target != gene_name), aes(CRISPR_target, lfc_RPM), position = position_jitter(seed = 8272, width = 0.1, height = 0)) +
-  geom_bar(data = bulk_FC_perTarget, aes(CRISPR_target, log2_gmeanParalogFC), stat = 'identity', alpha = 0.3) +
+  geom_point(data = bulk_FC_perTarget_perParalog_rpm %>% filter(CRISPR_target != gene_name), aes(CRISPR_target, lfc_RPM), position = position_jitter(seed = 8272, width = 0.1, height = 0)) +
+  geom_bar(data = bulk_FC_perTarget_rpm, aes(CRISPR_target, log2_gmeanParalogFC), stat = 'identity', alpha = 0.3) +
   facet_grid(condition~.) + 
   theme_bw() +
   theme(axis.text.x = element_text(angle = 30)) +
@@ -279,7 +279,6 @@ bulk_logdeltaTPM_perTarget <- ggplot() +
   xlab('CRISPR target') +
   ggtitle('Change in paralog expression log2(KO - CTRL) after reference gene KO\nDoes not include reference gene change')
 ggsave(bulk_logdeltaTPM_perTarget, file = '/Volumes/IAMYG1/grn_nitc_data/CROP-seq/Datlinger2017/exploration/bulkExp_allParalogs_KO_logdeltaTPM.pdf', height = 7, width = 7)
-
 
 
 paralogs %>% as_tibble()
@@ -332,3 +331,45 @@ bulk_FCvsPercID_unstim_perTarget <- ggplot() +
   ggtitle('Change in paralog expression (RPM+1) after reference gene KO\nVs. Percent sequence similarity to reference gene\nUnstimulated condition')
 ggsave(bulk_FCvsPercID_unstim_perTarget, file = '/Volumes/IAMYG1/grn_nitc_data/CROP-seq/Datlinger2017/exploration/bulk_FCvsPercID_unstim_perTarget.pdf', height = 7, width = 7)
 
+# filter to paralogs that are overexpressed after reference gene KO in bulk
+# arbitrarily pick LFC>0.5 for RPM data
+
+bulk_FC_perTarget_perParalog_rpm %>%
+  filter(lfc_RPM > 0.5, meanRPM_CTRL > 5) %>%
+  dplyr::select(gene_name, CRISPR_target, condition, lfc_RPM, meanRPM_CTRL) 
+
+# process single-cell data
+# sccounts$condition[1:10]
+
+sccounts_coldata <- sccounts[1:5,] %>% as.data.frame()
+rownames(sccounts_coldata) <- sccounts_coldata[,1]
+sccounts_coldata_tall <- t(sccounts_coldata)
+sccounts_coldata_tall <- sccounts_coldata_tall[2:nrow(sccounts_coldata_tall),]
+
+sccounts <- sccounts[7:nrow(sccounts),]
+sccounts %<>% as.data.frame()
+rownames(sccounts) <- sccounts$V1
+colnames(sccounts) <- c('GENE', sccounts_coldata_tall[,'cell'])
+
+sccounts <- sccounts[,2:ncol(sccounts)]
+
+
+for (crispr_target in target_genes) {
+  
+  control_cells <- sccounts_coldata_tall %>%
+    as_tibble() %>%
+    filter(gene == 'CTRL')
+  
+  targeted_cells <- sccounts_coldata_tall %>%
+    as_tibble() %>%
+    filter(gene == crispr_target)
+  
+  paralogs_of_target <- geneParaList %>%
+    filter(external_gene_name == crispr_target)
+  
+  control_counts <- sccounts[paralogs_of_target$hsapiens_paralog_associated_gene_name, control_cells$cell]
+  
+  targeted_counts <- sccounts[paralogs_of_target$hsapiens_paralog_associated_gene_name, targeted_cells$cell]
+  
+  
+}
