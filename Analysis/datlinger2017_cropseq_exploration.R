@@ -403,7 +403,7 @@ for (crispr_target in target_genes) {
     ggsave(sc_histograms, file = paste0(plotdir, 'singleCell_', crispr_target, '_paralog_histograms.pdf'), width = 7, height = 2+0.8*nrow(paralogs_of_target))
     
     sc_densityplots <- ggplot(bind_rows(control_rpms_tall, targeted_rpms_tall), aes(rpm)) +
-      geom_histogram(aes(y=..density..)) +
+      geom_histogram(aes(y=(..count..)/tapply(..count..,..PANEL..,sum)[..PANEL..])) +
       facet_grid(gene_name ~ CRISPR_target, scales = 'free') +
       theme_classic() +
       ggtitle(paste0('Paralog expression before and after ', crispr_target ,' mutation\n', as.character(nrow(control_cells)), ' control cells, ', as.character(nrow(targeted_cells)), ' targeted cells'))
