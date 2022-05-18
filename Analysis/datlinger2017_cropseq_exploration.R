@@ -363,15 +363,18 @@ rownames(scrpms) <- rodat_sccounts
 # scrpms %<>% as_tibble() %>% mutate(gene_name = rodat_sccounts)
 
 minCountsPerCell = 1000
+# next: separate by stimulated vs unstimulated; start w stimulated 
 for (crispr_target in target_genes) {
   
   control_cells <- sccounts_coldata_tall %>%
     as_tibble() %>%
-    filter(gene == 'CTRL')
+    filter(gene == 'CTRL',
+           condition == 'stimulated')
   
   targeted_cells <- sccounts_coldata_tall %>%
     as_tibble() %>%
-    filter(gene == crispr_target)
+    filter(gene == crispr_target,
+           condition == 'stimulated')
   
   paralogs_of_target <- geneParaList %>%
     filter(external_gene_name == crispr_target,
@@ -395,18 +398,20 @@ for (crispr_target in target_genes) {
       pivot_longer(cols = -gene_name, names_to = 'cell', values_to = 'rpm') %>%
       mutate(CRISPR_target = crispr_target)
     
+    max_exp <- max(c(control_rpms_tall$rpm, targeted_rpms_tall$rpm))
+    
     sc_histograms <- ggplot(bind_rows(control_rpms_tall, targeted_rpms_tall), aes(rpm)) +
       geom_histogram() +
-      facet_grid(gene_name ~ CRISPR_target, scales = 'free') +
+      facet_grid(CRISPR_target ~ gene_name, scales = 'free') +
       theme_classic() +
       ggtitle(paste0('Paralog expression before and after ', crispr_target ,' mutation\n', as.character(nrow(control_cells)), ' control cells, ', as.character(nrow(targeted_cells)), ' targeted cells'))
-    ggsave(sc_histograms, file = paste0(plotdir, 'singleCell_', crispr_target, '_paralog_histograms.pdf'), width = 7, height = 2+0.8*nrow(paralogs_of_target))
+    ggsave(sc_histograms, file = paste0(plotdir, 'singleCell_', crispr_target, '_paralog_stimulated_histograms.pdf'), width = 2+0.8*nrow(paralogs_of_target), height = 7)
     
     sc_densityplots <- ggplot(bind_rows(control_rpms_tall, targeted_rpms_tall), aes(rpm)) +
       geom_histogram(aes(y=(..count..)/tapply(..count..,..PANEL..,sum)[..PANEL..])) +
-      facet_grid(gene_name ~ CRISPR_target, scales = 'free') +
+      facet_grid(CRISPR_target ~ gene_name, scales = 'free') +
       theme_classic() +
       ggtitle(paste0('Paralog expression before and after ', crispr_target ,' mutation\n', as.character(nrow(control_cells)), ' control cells, ', as.character(nrow(targeted_cells)), ' targeted cells'))
-    ggsave(sc_densityplots, file = paste0(plotdir, 'singleCell_', crispr_target, '_paralog_densityplots.pdf'), width = 7, height = 2+0.8*nrow(paralogs_of_target))
+    ggsave(sc_densityplots, file = paste0(plotdir, 'singleCell_', crispr_target, '_paralog_stimulated_densityplots.pdf'), width = 2+0.8*nrow(paralogs_of_target), height = 7)
   }
 }
