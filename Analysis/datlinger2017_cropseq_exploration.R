@@ -349,11 +349,20 @@ sccounts_coldata_tall <- sccounts_coldata_tall[2:nrow(sccounts_coldata_tall),]
 sccounts <- sccounts[7:nrow(sccounts),]
 sccounts %<>% as.data.frame()
 rownames(sccounts) <- sccounts$V1
+rodat_sccounts <- sccounts$V1
 colnames(sccounts) <- c('GENE', sccounts_coldata_tall[,'cell'])
 
 sccounts <- sccounts[,2:ncol(sccounts)]
+sccounts <- sapply(sccounts, as.numeric)
 
+sctotals <- colSums(sccounts) # total counts per cell
 
+scrpms <- apply(sccounts, 2 , function(x){x*1e6/sum(x)}) # rpms
+
+rownames(scrpms) <- rodat_sccounts
+# scrpms %<>% as_tibble() %>% mutate(gene_name = rodat_sccounts)
+
+minCountsPerCell = 1000
 for (crispr_target in target_genes) {
   
   control_cells <- sccounts_coldata_tall %>%
@@ -365,11 +374,39 @@ for (crispr_target in target_genes) {
     filter(gene == crispr_target)
   
   paralogs_of_target <- geneParaList %>%
-    filter(external_gene_name == crispr_target)
+    filter(external_gene_name == crispr_target,
+           hsapiens_paralog_associated_gene_name %in% rownames(scrpms))
   
-  control_counts <- sccounts[paralogs_of_target$hsapiens_paralog_associated_gene_name, control_cells$cell]
-  
-  targeted_counts <- sccounts[paralogs_of_target$hsapiens_paralog_associated_gene_name, targeted_cells$cell]
-  
-  
+  if(nrow(paralogs_of_target) > 0) {
+    
+    control_rpms <- scrpms[c(paralogs_of_target$hsapiens_paralog_associated_gene_name, crispr_target), control_cells$cell]
+    targeted_rpms <- scrpms[c(paralogs_of_target$hsapiens_paralog_associated_gene_name, crispr_target), targeted_cells$cell]
+    
+    control_rpms %<>% as.data.frame()
+    control_rpms$gene_name = rownames(control_rpms)
+    
+    targeted_rpms %<>% as.data.frame()
+    targeted_rpms$gene_name = rownames(targeted_rpms)
+    
+    control_rpms_tall <- control_rpms %>%
+      pivot_longer(cols = -gene_name, names_to = 'cell', values_to = 'rpm') %>%
+      mutate(CRISPR_target = 'CTRL')
+    targeted_rpms_tall <- targeted_rpms %>%
+      pivot_longer(cols = -gene_name, names_to = 'cell', values_to = 'rpm') %>%
+      mutate(CRISPR_target = crispr_target)
+    
+    sc_histograms <- ggplot(bind_rows(control_rpms_tall, targeted_rpms_tall), aes(rpm)) +
+      geom_histogram() +
+      facet_grid(gene_name ~ CRISPR_target, scales = 'free') +
+      theme_classic() +
+      ggtitle(paste0('Paralog expression before and after ', crispr_target ,' mutation\n', as.character(nrow(control_cells)), ' control cells, ', as.character(nrow(targeted_cells)), ' targeted cells'))
+    ggsave(sc_histograms, file = paste0(plotdir, 'singleCell_', crispr_target, '_paralog_histograms.pdf'), width = 7, height = 2+0.8*nrow(paralogs_of_target))
+    
+    sc_densityplots <- ggplot(bind_rows(control_rpms_tall, targeted_rpms_tall), aes(rpm)) +
+      geom_histogram(aes(y=..density..)) +
+      facet_grid(gene_name ~ CRISPR_target, scales = 'free') +
+      theme_classic() +
+      ggtitle(paste0('Paralog expression before and after ', crispr_target ,' mutation\n', as.character(nrow(control_cells)), ' control cells, ', as.character(nrow(targeted_cells)), ' targeted cells'))
+    ggsave(sc_densityplots, file = paste0(plotdir, 'singleCell_', crispr_target, '_paralog_densityplots.pdf'), width = 7, height = 2+0.8*nrow(paralogs_of_target))
+  }
 }
