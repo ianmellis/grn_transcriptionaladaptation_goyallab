@@ -47,6 +47,12 @@ geneParaList <- getBM(attributes = c("ensembl_gene_id",
 lengthtbl<- as_tibble(read.csv(file = '~/code/grn_nitc/Resources/hg38.ncbiRefSeq.txLengthPerGene.csv', header = T, stringsAsFactors = F)) %>%
   dplyr::rename(gene_name = gene_id)
 
+# load T-cell network from Marbach et al. (TO DOWNLOAD)
+tcellNet = as_tibble(read.table("extractedData/Networks/Network_compendium/Tissue-specific_regulatory_networks_FANTOM5-v1/32_high-level_networks/21_heart.txt", sep = "\t", header = F, stringsAsFactors = F)) # change to T-cell
+colnames(tcellNet) = c("TF", "Target", "edgeWt")
+tcellNet = unique(tcellNet$TF)
+
+
 # look for nitc in bulk results
 bulk_counts_tall <- as.data.frame(bulk_countmat) %>%
   mutate(gene_name = rownames(bulk_countmat)) %>%
@@ -334,9 +340,43 @@ ggsave(bulk_FCvsPercID_unstim_perTarget, file = '/Volumes/IAMYG1/grn_nitc_data/C
 # filter to paralogs that are overexpressed after reference gene KO in bulk
 # arbitrarily pick LFC>0.5 for RPM data
 
-bulk_FC_perTarget_perParalog_rpm %>%
-  filter(lfc_RPM > 0.5, meanRPM_CTRL > 5) %>%
-  dplyr::select(gene_name, CRISPR_target, condition, lfc_RPM, meanRPM_CTRL) 
+upreg_paralogs_bulk_stim <- bulk_FC_perTarget_perParalog_rpm %>%
+  filter(lfc_RPM > 0.5, meanRPM_CTRL > 5, condition == 'stimulated') %>%
+  dplyr::select(gene_name, CRISPR_target, condition, lfc_RPM, meanRPM_CTRL)
+
+write.csv(upreg_paralogs_bulk_stim, file = '~/code/grn_nitc/datlinger2017_cropseq/upreg_paralogs_bulk_stim.csv', quote = F, row.names = F)
+
+targselfids <- list()
+for (targ in target_genes) {
+  targselfid <- geneParaList %>%
+    dplyr::rename(gene_name = hsapiens_paralog_associated_gene_name,
+                  CRISPR_target = external_gene_name) %>%
+    filter(CRISPR_target == targ) %>%
+    dplyr::select(CRISPR_target, ensembl_gene_id) %>% 
+    unique() %>%
+    mutate(gene_name = CRISPR_target, hsapiens_paralog_associated_gene_name = ensembl_gene_id)
+  
+  if(is.null(dim(targselfids))) {
+    targselfids <- targselfid
+  } else {
+    targselfids %<>% bind_rows(targselfid)
+  }
+  
+}
+
+paralogTFcheck <- geneParaList %>%
+  dplyr::rename(gene_name = hsapiens_paralog_associated_gene_name,
+                CRISPR_target = external_gene_name) %>%
+  bind_rows(targselfids) %>%
+  mutate(CRISPR_target_isTF = ensembl_gene_id %in% tfTab$ensembl_gene_id,
+         paralog_isTF = hsapiens_paralog_ensembl_gene %in% tfTab$ensembl_gene_id
+  ) %>% as_tibble() %>% 
+  dplyr::select(CRISPR_target, gene_name, CRISPR_target_isTF, paralog_isTF)
+
+# draft map of reference genes and paralogs to their downstream targets, if TFs, and if in Marbach T-cell network
+paralog_and_target_regulons <- paralogTFcheck %>%
+  dplyr::rename(TF = gene_name) %>%
+  left_join(tcellNet, by = 'TF')
 
 # process single-cell data
 # sccounts$condition[1:10]
@@ -382,6 +422,11 @@ for (crispr_target in target_genes) {
   
   if(nrow(paralogs_of_target) > 0) {
     
+    upreg_paralogs_bulk_stim_targ <- paralogs_of_target %>%
+      dplyr::rename(gene_name = hsapiens_paralog_associated_gene_name,
+                    CRISPR_target = external_gene_name) %>%
+      left_join(upreg_paralogs_bulk_stim, by = c('gene_name', 'CRISPR_target'))
+    
     control_rpms <- scrpms[c(paralogs_of_target$hsapiens_paralog_associated_gene_name, crispr_target), control_cells$cell]
     targeted_rpms <- scrpms[c(paralogs_of_target$hsapiens_paralog_associated_gene_name, crispr_target), targeted_cells$cell]
     
@@ -400,18 +445,24 @@ for (crispr_target in target_genes) {
     
     max_exp <- max(c(control_rpms_tall$rpm, targeted_rpms_tall$rpm))
     
-    sc_histograms <- ggplot(bind_rows(control_rpms_tall, targeted_rpms_tall), aes(rpm)) +
-      geom_histogram() +
+    sc_histograms <- ggplot() +
+      geom_histogram(data = bind_rows(control_rpms_tall, targeted_rpms_tall), aes(rpm)) +
+      geom_text(data = upreg_paralogs_bulk_stim_targ, aes(x=max_exp/2, y = 100, label = ifelse(!is.na(meanRPM_CTRL),
+                                                                                               paste0('Bulk mean ', as.character(meanRPM_CTRL),'\nLFC = ', as.character(lfc_RPM)),''))) +
       facet_grid(CRISPR_target ~ gene_name, scales = 'free') +
       theme_classic() +
       ggtitle(paste0('Paralog expression before and after ', crispr_target ,' mutation\n', as.character(nrow(control_cells)), ' control cells, ', as.character(nrow(targeted_cells)), ' targeted cells'))
     ggsave(sc_histograms, file = paste0(plotdir, 'singleCell_', crispr_target, '_paralog_stimulated_histograms.pdf'), width = 2+0.8*nrow(paralogs_of_target), height = 7)
     
-    sc_densityplots <- ggplot(bind_rows(control_rpms_tall, targeted_rpms_tall), aes(rpm)) +
-      geom_histogram(aes(y=(..count..)/tapply(..count..,..PANEL..,sum)[..PANEL..])) +
+    sc_densityplots <- ggplot() +
+      geom_histogram(data = bind_rows(control_rpms_tall, targeted_rpms_tall), aes(x=rpm, y=(..count..)/tapply(..count..,..PANEL..,sum)[..PANEL..])) +
+      geom_text(data = upreg_paralogs_bulk_stim_targ, aes(x=max_exp/2, y = 0.8, label = ifelse(!is.na(meanRPM_CTRL),
+                                                                                               paste0('Bulk mean ', as.character(meanRPM_CTRL),'\nLFC = ', as.character(lfc_RPM)),''))) +
       facet_grid(CRISPR_target ~ gene_name, scales = 'free') +
       theme_classic() +
       ggtitle(paste0('Paralog expression before and after ', crispr_target ,' mutation\n', as.character(nrow(control_cells)), ' control cells, ', as.character(nrow(targeted_cells)), ' targeted cells'))
     ggsave(sc_densityplots, file = paste0(plotdir, 'singleCell_', crispr_target, '_paralog_stimulated_densityplots.pdf'), width = 2+0.8*nrow(paralogs_of_target), height = 7)
   }
 }
+
+
