@@ -465,6 +465,25 @@ for (crispr_target in target_genes) {
       theme_classic() +
       ggtitle(paste0('Paralog expression before and after ', crispr_target ,' mutation\n', as.character(nrow(control_cells)), ' control cells, ', as.character(nrow(targeted_cells)), ' targeted cells'))
     ggsave(sc_densityplots, file = paste0(plotdir, 'singleCell_', crispr_target, '_paralog_stimulated_densityplots.pdf'), width = 2+0.8*nrow(paralogs_of_target), height = 7)
+    
+    sc_violins <- ggplot() +
+      geom_violin(data = bind_rows(control_rpms_tall, targeted_rpms_tall), aes(x=gene_name, y=rpm, fill=CRISPR_target, color=CRISPR_target)) +
+      geom_text(data = upreg_paralogs_bulk_stim_targ, aes(x=gene_name, y = max_exp*0.9, label = ifelse(!is.na(meanRPM_CTRL),
+                                                                                               paste0('Bulk mean ', as.character(meanRPM_CTRL),'\nLFC = ', as.character(lfc_RPM)),''))) +
+      # facet_grid(CRISPR_target ~ gene_name, scales = 'free') +
+      theme_classic() +
+      ggtitle(paste0('Paralog expression before and after ', crispr_target ,' mutation\n', as.character(nrow(control_cells)), ' control cells, ', as.character(nrow(targeted_cells)), ' targeted cells'))
+    ggsave(sc_violins, file = paste0(plotdir, 'singleCell_', crispr_target, '_paralog_stimulated_rpm_violins.pdf'), width = 2+0.8*nrow(paralogs_of_target), height = 7)
+    
+    sc_violins_log <- ggplot() +
+      geom_violin(data = bind_rows(control_rpms_tall, targeted_rpms_tall), aes(x=gene_name, y=log2(rpm+1), fill=CRISPR_target, color=CRISPR_target)) +
+      geom_text(data = upreg_paralogs_bulk_stim_targ, aes(x=gene_name, y = log2(max_exp+1)*0.9, label = ifelse(!is.na(meanRPM_CTRL),
+                                                                                                       paste0('Bulk mean ', as.character(meanRPM_CTRL),'\nLFC = ', as.character(lfc_RPM)),''))) +
+      # facet_grid(CRISPR_target ~ gene_name, scales = 'free') +
+      theme_classic() +
+      ggtitle(paste0('Paralog expression (log2(RPM+1)) before and after ', crispr_target ,' mutation\n', as.character(nrow(control_cells)), ' control cells, ', as.character(nrow(targeted_cells)), ' targeted cells'))
+    ggsave(sc_violins_log, file = paste0(plotdir, 'singleCell_', crispr_target, '_paralog_stimulated_logrpm_violins.pdf'), width = 2+0.8*nrow(paralogs_of_target), height = 7)
+    
   }
 }
 
