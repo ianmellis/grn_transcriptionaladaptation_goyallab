@@ -47,11 +47,14 @@ geneParaList <- getBM(attributes = c("ensembl_gene_id",
 lengthtbl<- as_tibble(read.csv(file = '~/code/grn_nitc/Resources/hg38.ncbiRefSeq.txLengthPerGene.csv', header = T, stringsAsFactors = F)) %>%
   dplyr::rename(gene_name = gene_id)
 
-# load T-cell network from Marbach et al. (TO DOWNLOAD)
-tcellNet = as_tibble(read.table("extractedData/Networks/Network_compendium/Tissue-specific_regulatory_networks_FANTOM5-v1/32_high-level_networks/21_heart.txt", sep = "\t", header = F, stringsAsFactors = F)) # change to T-cell
-colnames(tcellNet) = c("TF", "Target", "edgeWt")
-tcellNet = unique(tcellNet$TF)
+# # load T-cell network from Marbach et al. (TO DOWNLOAD) - no longer available unfortunately
+# tcellNet = as_tibble(read.table("extractedData/Networks/Network_compendium/Tissue-specific_regulatory_networks_FANTOM5-v1/32_high-level_networks/21_heart.txt", sep = "\t", header = F, stringsAsFactors = F)) # change to T-cell
+# colnames(tcellNet) = c("TF", "Target", "edgeWt")
+# tcellNet = unique(tcellNet$TF)
 
+# Load human regulons from Saez lab 2019 Genome Research paper (BiocManager::install("dorothea"); library dorothea)
+# requires R v4.0 or later. I think it may be time
+regulons <- dorothea::dorothea_hs
 
 # look for nitc in bulk results
 bulk_counts_tall <- as.data.frame(bulk_countmat) %>%
@@ -375,8 +378,8 @@ paralogTFcheck <- geneParaList %>%
 
 # draft map of reference genes and paralogs to their downstream targets, if TFs, and if in Marbach T-cell network
 paralog_and_target_regulons <- paralogTFcheck %>%
-  dplyr::rename(TF = gene_name) %>%
-  left_join(tcellNet, by = 'TF')
+  dplyr::rename(tf = gene_name) %>%
+  left_join(regulons %>% filter(confidence %in% c('A', 'B', 'C')), by = 'tf')
 
 # process single-cell data
 # sccounts$condition[1:10]
