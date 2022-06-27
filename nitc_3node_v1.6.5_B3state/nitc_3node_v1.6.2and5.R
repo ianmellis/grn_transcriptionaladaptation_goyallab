@@ -9,7 +9,7 @@ library(ggrepel)
 library(corrplot)
 library(tibble)
 library(svglite)
-library()
+library(entropy)
 source('~/code/grn_nitc/Functions/grn_analysis_utilities.R')
 
 
@@ -301,11 +301,17 @@ write.csv(all_species_q300, file = paste0('/Volumes/IAMYG1/grn_nitc_data/v1.6.2a
 
 
 # summary stats on all data from the collated table, without reloading each file
-allstats_full1 <- list()
+all_species_q300 <- as_tibble(read.csv('/Volumes/IAMYG1/grn_nitc_data/v1.6.2and5/all_species_q300.csv', header = T, stringsAsFactors = F))
+
+lhs_sets_all <- bind_rows(lhs_sets2_Hn5 %>% mutate(version = '1.6.2'), lhs_sets5 %>% mutate(version = '1.6.5'))
+
 psets <- data.frame(
   version = as.character(c(rep('1.6.2', length(paramsets2)), rep('1.6.5', length(paramsets5)))),
   paramset = c(paramsets2, paramsets5)
-)
+) 
+
+allstats_full1 <- list()
+
 for (i in 1:nrow(psets)){
   
   # cat(paste0('Working on ', as.character(paramset), '\n'))
@@ -331,7 +337,7 @@ for (i in 1:nrow(psets)){
   }
   
   spstats <- species_sample %>%
-    group_by(mutated_alleles, product, paramset) %>%
+    group_by(mutated_alleles, product, paramset, version) %>%
     summarise(mean_product = mean(abundance),
               sd_product = sd(abundance),
               cv_product = sd_product/(mean_product + 0.01),
@@ -392,7 +398,7 @@ for (i in 1:nrow(psets)){
   
 }
 
-
+write.csv(allstats_full1, file = paste0(plotdir, 'summary_stats_perGenotype_maxHilln5.csv'))
 
 # pull specific parameter sets and plot histograms and traces for figure (svg files)
 
