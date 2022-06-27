@@ -3,6 +3,7 @@ library(magrittr)
 library(ineq)
 library(Hmisc)
 library(gridExtra)
+library(grid)
 library(diptest)
 library(e1071)
 library(ggrepel)
@@ -535,7 +536,7 @@ lhs_sets_full <- bind_rows(lhs_sets2 %>% mutate(version = '1.6.2'), lhs_sets5 %>
 
 pseud = 0.01
 
-compared_stats <- allstats_full %>% 
+compared_stats <- allstats_full1 %>% 
   group_by(version, paramset, product, mutated_alleles) %>% 
   pivot_longer(names_to = 'stat', values_to = 'value', cols = mean_product:entropy90) %>% 
   pivot_wider(names_from = mutated_alleles, values_from = value) %>% 
@@ -547,15 +548,15 @@ compared_stats <- allstats_full %>%
          delta20 = `2`-`0`) %>%
   dplyr::select(-c(`0`:`2`)) %>% 
   pivot_longer(names_to = 'compare', values_to = 'diff', cols = lfc10:delta20) %>%
-  inner_join(allstats_full %>% 
+  inner_join(allstats_full1 %>% 
                dplyr::select(mutated_alleles, product, paramset, version, mean_product) %>%
                pivot_wider(names_from = mutated_alleles, values_from = mean_product), by = c('product', 'paramset', 'version')) %>%
   mutate(mean_denom = case_when(
     compare %in% c('lfc10', 'delta10', 'lfc20', 'delta20') ~ `0`,
     compare %in% c('lfc21', 'delta21') ~ `1`))
 
-# filter to Hill n < 5
-compared_stats %<>% ungroup() %>% inner_join(lhs_sets_full %>% filter(Hill_coefficient_n < 5) %>% dplyr::select(version, paramset), by = c('version','paramset'))
+# filter to Hill n < 5 - now already done for allstats_full1
+#compared_stats %<>% ungroup() %>% inner_join(lhs_sets_fall %>% filter(Hill_coefficient_n < 5) %>% dplyr::select(version, paramset), by = c('version','paramset'))
 
 # plot wt/mut summary stats against mean expression
 
@@ -1174,6 +1175,105 @@ for (stat in unistats[unistats != 'mean_product']) {
   
 }
 
+# repeat for all parameter sets
+loess_fitted_allstats_all <- allstats_full1
+for (stat in unistats[unistats != 'mean_product']) {
+  
+  cat(paste0('working on ', stat, '\n'))
+  statdat <- list()
+  
+  for (gene in c('A1', 'Anonsense1', 'Aprime1', 'B1')) {
+    
+    # for (ma in 0:2) {
+    
+    tempdat <- allstats_full1 %>% 
+      filter(#mutated_alleles == ma,
+        product == gene) %>%
+      dplyr::select(mutated_alleles, product, version, paramset, mean_product, stat)
+    
+    loess1 <- loess(eval(as.symbol(stat)) ~ mean_product, data = tempdat, span = 0.1)
+    
+    l1dat <- data.frame(mean_product = loess1$x,
+                        stat = loess1$fitted,
+                        resid = loess1$residuals,
+                        version = tempdat$version,
+                        paramset = tempdat$paramset,
+                        product = gene,
+                        mutated_alleles = tempdat$mutated_alleles)
+    colnames(l1dat)[2] <- paste0(stat,'_fitted')
+    colnames(l1dat)[3] <- paste0(stat,'_residual')
+    
+    lplot1 <- ggplot() +
+      geom_point(data = tempdat, aes(mean_product, eval(as.symbol(stat))), alpha = 0.1) +
+      geom_point(data = l1dat, aes(mean_product, eval(as.symbol(paste0(stat,'_fitted')))), color = 'red') +
+      theme_classic() +
+      ylab(stat) +
+      xlab('Mean') +
+      ggtitle(paste0(stat, ' vs mean, with LOESS fit to mean\nGene product: ', gene))#, ', mutated alleles: ', as.character(ma)))
+    
+    lplot2 <- ggplot() +
+      geom_point(data = tempdat, aes(log(mean_product), eval(as.symbol(stat))), alpha = 0.1) +
+      geom_point(data = l1dat, aes(log(mean_product), eval(as.symbol(paste0(stat,'_fitted')))), color = 'red') +
+      theme_classic() +
+      ylab(stat) +
+      xlab('Log(Mean)') +
+      ggtitle(paste0(stat, ' vs log(mean), with LOESS fit to mean\nGene product: ', gene))#, ', mutated alleles: ', as.character(ma)))
+    
+    ggsave(lplot1, file = paste0(plotdir, 'LOESS_', stat, 'vsMean_',gene,'_v1.6.2and5.pdf'), width = 5, height = 5)#'_mutAlleles',ma,'_v1.6.2only.pdf'), width = 5, height = 5)
+    ggsave(lplot2, file = paste0(plotdir, 'LOESS_', stat, 'vsMean_',gene,'_v1.6.2and5.pdf'), width = 5, height = 5)#'_mutAlleles',ma,'_log_v1.6.2only.pdf'), width = 5, height = 5)
+    
+    if(is.null(dim(statdat))){
+      statdat <- l1dat
+    } else {
+      statdat %<>% bind_rows(l1dat)
+    }
+    #}
+    
+  }
+  
+  statdat$version <- as.character(statdat$version)
+  statdat$product <- as.character(statdat$product)
+  statdat$paramset <- as.numeric(statdat$paramset)
+  
+  loess_fitted_allstats_all %<>% left_join(as_tibble(statdat) %>% dplyr::select(-mean_product), by = c('version', 'paramset', 'mutated_alleles', 'product'))
+  
+  cat('sliding window normalizing...\n')
+  statdat1 <- sliding_window_normalize(as_tibble(statdat) %>% filter(mean_product>10), 'mean_product', paste0(stat,'_residual'), 25)
+  
+  loess_fitted_allstats_all %<>% left_join(statdat1 %>% dplyr::select(-c('mean_product', paste0(stat,'_residual'), paste0(stat,'_fitted'))), by = c('version', 'paramset', 'mutated_alleles', 'product'))
+  
+  td1<-allstats_full1 %>% 
+    dplyr::select(mutated_alleles, product, version, paramset, mean_product, stat)
+  
+  lplot_all_stat <- ggplot() +
+    geom_point(data = td1 %>% filter(mean_product>10), aes(log(mean_product), eval(as.symbol(stat))), stroke=0, alpha = 0.05) +
+    geom_density2d(data = td1 %>% filter(mutated_alleles == 0, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(stat))), color = 'blue') +
+    geom_density2d(data = td1 %>% filter(mutated_alleles == 1, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(stat))), color = 'red') +
+    geom_density2d(data = td1 %>% filter(mutated_alleles == 2, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(stat))), color = 'green') +
+    theme_classic()
+  
+  lplot_all_statLOESS <-  ggplot() +
+    geom_point(data = statdat %>% filter(mean_product>10), aes(log(mean_product), eval(as.symbol(paste0(stat,'_residual')))), stroke=0, alpha = 0.05) +
+    geom_density2d(data = statdat %>% filter(mutated_alleles == 0, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual')))), color = 'blue') +
+    geom_density2d(data = statdat %>% filter(mutated_alleles == 1, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual')))), color = 'red') +
+    geom_density2d(data = statdat %>% filter(mutated_alleles == 2, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual')))), color = 'green') +
+    theme_classic()
+  
+  lplot_all_statLOESSSWN <-  ggplot() +
+    geom_point(data = statdat1 %>% filter(mean_product>10), aes(log(mean_product), eval(as.symbol(paste0(stat,'_residual_swn')))), stroke=0, alpha = 0.05) +
+    geom_density2d(data = statdat1 %>% filter(mutated_alleles == 0, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual_swn')))), color = 'blue') +
+    geom_density2d(data = statdat1 %>% filter(mutated_alleles == 1, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual_swn')))), color = 'red') +
+    geom_density2d(data = statdat1 %>% filter(mutated_alleles == 2, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual_swn')))), color = 'green') +
+    theme_classic()
+  
+  pdf(paste0(paste0(plotdir, 'LOESSplots_', stat, 'vsLogMean_B1_v1.6.2and5.pdf')), width = 10, height = 7)
+  grid.arrange(lplot_all_stat,lplot_all_statLOESS,lplot_all_statLOESSSWN, ncol=3,
+               top = textGrob(paste0(stat, ' vs. log(mean_product)\nStat, LOESS residual, Squeezed LOESS residual'),gp=gpar(fontsize=20,font=3)))
+  dev.off()
+  
+  cat(paste0('Done with ', stat, '\n'))
+  
+}
 
 
 bimfilt <- 0.15
