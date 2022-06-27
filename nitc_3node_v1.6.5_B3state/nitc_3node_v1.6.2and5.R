@@ -327,13 +327,13 @@ for (i in 1:nrow(psets)){
   
   paramset = paramset1
   if(paramset %% 100 == 0) {
-    cat(paste0('Working on ', as.character(paramset), '\n'))
+    cat(paste0('Working on ',ver, ' set ', as.character(paramset), '\n'))
     dist_plot<-ggplot(species_sample, aes(abundance)) +
       geom_histogram() +
       facet_grid(mutated_alleles~product) +
       ggtitle(paste0('Parameter set ', as.character(paramset))) +
       theme_classic()
-    ggsave(dist_plot, file = paste0(plotdir, 'distributions_q300_v1.6.5_paramset_', as.character(paramset), '_2.pdf'))
+    ggsave(dist_plot, file = paste0(plotdir, 'distributions_q300_v',ver,'_paramset_', as.character(paramset), '_2.pdf'))
   }
   
   spstats <- species_sample %>%
