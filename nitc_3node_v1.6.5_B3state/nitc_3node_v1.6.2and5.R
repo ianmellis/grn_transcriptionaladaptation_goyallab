@@ -343,6 +343,7 @@ for (i in 1:nrow(psets)){
               sd_product = sd(abundance),
               cv_product = sd_product/(mean_product + 0.01),
               fano_product = sd_product^2/(mean_product + 0.01),
+              skewness = skewness(abundance + 0.01),
               gini_product = ineq(abundance + 1, type = 'Gini', na.rm = T),
               bimodality_coef = calculate_bimodality(abundance),
               entropy = entropy(discretize(abundance, numBins = 30, r=c(0,max(1,max(abundance))))), .groups = 'keep')
@@ -1238,7 +1239,7 @@ for (stat in unistats[unistats != 'mean_product']) {
   loess_fitted_allstats_all %<>% left_join(as_tibble(statdat) %>% dplyr::select(-mean_product), by = c('version', 'paramset', 'mutated_alleles', 'product'))
   
   cat('sliding window normalizing...\n')
-  statdat1 <- sliding_window_normalize(as_tibble(statdat) %>% filter(mean_product>10), 'mean_product', paste0(stat,'_residual'), 25)
+  statdat1 <- sliding_window_normalize(as_tibble(statdat) %>% filter(mean_product>10), 'mean_product', paste0(stat,'_residual'), 50)
   
   loess_fitted_allstats_all %<>% left_join(statdat1 %>% dplyr::select(-c('mean_product', paste0(stat,'_residual'), paste0(stat,'_fitted'))), by = c('version', 'paramset', 'mutated_alleles', 'product'))
   
@@ -1268,7 +1269,7 @@ for (stat in unistats[unistats != 'mean_product']) {
   
   pdf(paste0(paste0(plotdir, 'LOESSplots_', stat, 'vsLogMean_B1_v1.6.2and5.pdf')), width = 10, height = 7)
   grid.arrange(lplot_all_stat,lplot_all_statLOESS,lplot_all_statLOESSSWN, ncol=3,
-               top = textGrob(paste0(stat, ' vs. log(mean_product)\nStat, LOESS residual, Squeezed LOESS residual'),gp=gpar(fontsize=20,font=3)))
+               top = textGrob(paste0(stat, ' vs. log(mean_product)\nStat, LOESS residual, Squeezed LOESS residual (radius=50)'),gp=gpar(fontsize=20,font=3)))
   dev.off()
   
   cat(paste0('Done with ', stat, '\n'))
