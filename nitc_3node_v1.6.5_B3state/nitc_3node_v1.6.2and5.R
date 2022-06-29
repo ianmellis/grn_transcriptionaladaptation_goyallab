@@ -1301,6 +1301,46 @@ for (stat in unistats[unistats != 'mean_product']) {
   
 }
 
+for (stat in unistats[unistats != 'mean_product']) {
+  
+  cat(paste0('working on ', stat, '\n'))
+  statdat <- list()
+  
+  for (gene in c('A1', 'Anonsense1', 'Aprime1', 'B1')) {
+    
+
+    statdatA = loess_fitted_allstats_all %>%
+      dplyr::select(mutated_alleles, product, version, paramset, mean_product, stat, as.symbol(paste0(stat, '_residual')), as.symbol(paste0(stat, '_residual_swn'))) %>%
+      filter(product == gene) 
+    
+    lplot_all_stat_con <- ggplot() +
+      geom_point(data = statdatA %>% filter(mean_product>10), aes(log(mean_product), eval(as.symbol(stat))), stroke=0, alpha = 0.05) +
+      geom_density2d(data = td1 %>% filter(mutated_alleles == 0, mean_product>10), aes(log(mean_product),eval(as.symbol(stat))), color = 'blue') +
+      geom_density2d(data = td1 %>% filter(mutated_alleles == 1, mean_product>10), aes(log(mean_product),eval(as.symbol(stat))), color = 'red') +
+      geom_density2d(data = td1 %>% filter(mutated_alleles == 2, mean_product>10), aes(log(mean_product),eval(as.symbol(stat))), color = 'green') +
+      theme_classic()
+    
+    lplot_all_statLOESS_con <-  ggplot() +
+      geom_point(data = statdatA %>% filter(mean_product>10), aes(log(mean_product), eval(as.symbol(paste0(stat,'_residual')))), stroke=0, alpha = 0.05) +
+      geom_density2d(data = statdat %>% filter(mutated_alleles == 0,mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual')))), color = 'blue') +
+      geom_density2d(data = statdat %>% filter(mutated_alleles == 1,mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual')))), color = 'red') +
+      geom_density2d(data = statdat %>% filter(mutated_alleles == 2,mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual')))), color = 'green') +
+      theme_classic()
+    
+    lplot_all_statLOESSSWN_con <-  ggplot() +
+      geom_point(data = statdatA %>% filter(mean_product>10), aes(log(mean_product), eval(as.symbol(paste0(stat,'_residual_swn')))), stroke=0, alpha = 0.05) +
+      geom_density2d(data = statdat1 %>% filter(mutated_alleles == 0,mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual_swn')))), color = 'blue') +
+      geom_density2d(data = statdat1 %>% filter(mutated_alleles == 1,mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual_swn')))), color = 'red') +
+      geom_density2d(data = statdat1 %>% filter(mutated_alleles == 2,mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual_swn')))), color = 'green') +
+      theme_classic()
+    
+    pdf(paste0(paste0(plotdir, 'LOESSplots_', stat, 'vsLogMean_B1_v1.6.2and5.pdf')), width = 10, height = 7)
+    grid.arrange(lplot_all_stat_con,lplot_all_statLOESS_con,lplot_all_statLOESSSWN_con, ncol=3,
+                 top = textGrob(paste0(stat, ' vs. log(mean_product), ', gene, '\nStat, LOESS residual, Squeezed LOESS residual (radius=50)'),gp=gpar(fontsize=20,font=3)))
+    dev.off()
+    
+  }
+}
 
 bimfilt <- 0.15
 high_bimodality <- loess_fitted_allstats_full %>% 
@@ -1310,10 +1350,10 @@ unimodal_symmetric <- loess_fitted_allstats_full %>%
   filter(bimodality_residual <= bimfilt) # and not exponential (skewness limit?)
 
 unimodal_exponential <- loess_fitted_allstats_full %>% 
-  filter(skewness > 1, skewness < 3) #skewness limit?
+  filter(bimodality_residual <= bimfilt, skewness > 1, skewness < 3) #skewness limit?
 
 unimodal_subexponential <- loess_fitted_allstats_full %>% 
-  filter(skewness >= 3) #skewness limit higher? Techinically skewness of exp = 2
+  filter(bimodality_residual <= bimfilt, skewness >= 3) #skewness limit higher? Techinically skewness of exp = 2
 
 entfilt <- 0.15
 high_entropy <- loess_fitted_allstats_full %>% 
