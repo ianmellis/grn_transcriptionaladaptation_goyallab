@@ -1242,7 +1242,7 @@ for (stat in unistats[unistats != 'mean_product']) {
   
   loess_fitted_allstats_all %<>% left_join(as_tibble(statdat) %>% dplyr::select(-mean_product), by = c('version', 'paramset', 'mutated_alleles', 'product'))
   
-  cat('sliding window normalizing...\n')
+  cat('sliding window normalizing...\n') # do this per-gene over all genotypes, rather than all genes over all genotypes...
   statdat1 <- sliding_window_normalize(as_tibble(statdat) %>% filter(mean_product>10), 'mean_product', paste0(stat,'_residual'), 50)
   
   loess_fitted_allstats_all %<>% left_join(statdat1 %>% dplyr::select(-c('mean_product', paste0(stat,'_residual'), paste0(stat,'_fitted'))), by = c('version', 'paramset', 'mutated_alleles', 'product'))
