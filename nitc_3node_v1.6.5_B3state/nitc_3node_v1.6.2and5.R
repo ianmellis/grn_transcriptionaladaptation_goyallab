@@ -1184,7 +1184,7 @@ for (stat in unistats[unistats != 'mean_product']) {
   
   cat(paste0('working on ', stat, '\n'))
   statdat <- list()
-  
+  statdat1 <- list()
   for (gene in c('A1', 'Anonsense1', 'Aprime1', 'B1')) {
     
     # for (ma in 0:2) {
@@ -1222,29 +1222,38 @@ for (stat in unistats[unistats != 'mean_product']) {
       xlab('Log(Mean)') +
       ggtitle(paste0(stat, ' vs log(mean), with LOESS fit to mean\nGene product: ', gene))#, ', mutated alleles: ', as.character(ma)))
     
-    ggsave(lplot1, file = paste0(plotdir, 'LOESS_', stat, 'vsMean_',gene,'_v1.6.2and5.pdf'), width = 5, height = 5)#'_mutAlleles',ma,'_v1.6.2only.pdf'), width = 5, height = 5)
-    ggsave(lplot2, file = paste0(plotdir, 'LOESS_', stat, 'vsMean_',gene,'_v1.6.2and5.pdf'), width = 5, height = 5)#'_mutAlleles',ma,'_log_v1.6.2only.pdf'), width = 5, height = 5)
+    # ggsave(lplot1, file = paste0(plotdir, 'LOESS_', stat, 'vsMean_',gene,'_v1.6.2and5.pdf'), width = 5, height = 5)#'_mutAlleles',ma,'_v1.6.2only.pdf'), width = 5, height = 5)
+    # ggsave(lplot2, file = paste0(plotdir, 'LOESS_', stat, 'vsMean_',gene,'_v1.6.2and5.pdf'), width = 5, height = 5)#'_mutAlleles',ma,'_log_v1.6.2only.pdf'), width = 5, height = 5)
+    
+    l1dat$version <- as.character(l1dat$version)
+    l1dat$product <- as.character(l1dat$product)
+    l1dat$paramset <- as.numeric(l1dat$paramset)
+    
+    cat('sliding window normalizing...\n') # do this per-gene over all genotypes, rather than all genes over all genotypes...
+    l1dat1 <- sliding_window_normalize(as_tibble(l1dat) %>% filter(mean_product>10), 'mean_product', paste0(stat,'_residual'), 50)
     
     if(is.null(dim(statdat))){
       statdat <- l1dat
+      statdat1 <- l1dat1
     } else {
       statdat %<>% bind_rows(l1dat)
+      statdat1 %<>% bind_rows(l1dat1)
     }
-    #}
+    
     
   }
   
   # Need to split analysis over all genes #
   
-  statdat$version <- as.character(statdat$version)
-  statdat$product <- as.character(statdat$product)
-  statdat$paramset <- as.numeric(statdat$paramset)
+  # statdat$version <- as.character(statdat$version)
+  # statdat$product <- as.character(statdat$product)
+  # statdat$paramset <- as.numeric(statdat$paramset)
   
-  loess_fitted_allstats_all %<>% left_join(as_tibble(statdat) %>% dplyr::select(-mean_product), by = c('version', 'paramset', 'mutated_alleles', 'product'))
-  
-  cat('sliding window normalizing...\n') # do this per-gene over all genotypes, rather than all genes over all genotypes...
-  statdat1 <- sliding_window_normalize(as_tibble(statdat) %>% filter(mean_product>10), 'mean_product', paste0(stat,'_residual'), 50)
-  
+  # loess_fitted_allstats_all %<>% left_join(as_tibble(statdat) %>% dplyr::select(-mean_product), by = c('version', 'paramset', 'mutated_alleles', 'product'))
+  # 
+  # cat('sliding window normalizing...\n') # do this per-gene over all genotypes, rather than all genes over all genotypes...
+  # statdat1 <- sliding_window_normalize(as_tibble(statdat) %>% filter(mean_product>10), 'mean_product', paste0(stat,'_residual'), 50)
+  # 
   loess_fitted_allstats_all %<>% left_join(statdat1 %>% dplyr::select(-c('mean_product', paste0(stat,'_residual'), paste0(stat,'_fitted'))), by = c('version', 'paramset', 'mutated_alleles', 'product'))
   
   td1<-allstats_full1 %>% 
