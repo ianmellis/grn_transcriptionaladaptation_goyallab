@@ -1249,101 +1249,104 @@ for (stat in unistats[unistats != 'mean_product']) {
   # statdat$product <- as.character(statdat$product)
   # statdat$paramset <- as.numeric(statdat$paramset)
   
-  # loess_fitted_allstats_all %<>% left_join(as_tibble(statdat) %>% dplyr::select(-mean_product), by = c('version', 'paramset', 'mutated_alleles', 'product'))
+  loess_fitted_allstats_all %<>% left_join(as_tibble(statdat) %>% dplyr::select(-mean_product), by = c('version', 'paramset', 'mutated_alleles', 'product'))
   # 
   # cat('sliding window normalizing...\n') # do this per-gene over all genotypes, rather than all genes over all genotypes...
   # statdat1 <- sliding_window_normalize(as_tibble(statdat) %>% filter(mean_product>10), 'mean_product', paste0(stat,'_residual'), 50)
   # 
+  
   loess_fitted_allstats_all %<>% left_join(statdat1 %>% dplyr::select(-c('mean_product', paste0(stat,'_residual'), paste0(stat,'_fitted'))), by = c('version', 'paramset', 'mutated_alleles', 'product'))
-  
-  td1<-allstats_full1 %>% 
-    dplyr::select(mutated_alleles, product, version, paramset, mean_product, stat)
-  
-  lplot_all_stat <- ggplot() +
-    geom_point(data = td1 %>% filter(mean_product>10), aes(log(mean_product), eval(as.symbol(stat))), stroke=0, alpha = 0.05) +
-    # geom_density2d(data = td1 %>% filter(mutated_alleles == 0, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(stat))), color = 'blue') +
-    # geom_density2d(data = td1 %>% filter(mutated_alleles == 1, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(stat))), color = 'red') +
-    # geom_density2d(data = td1 %>% filter(mutated_alleles == 2, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(stat))), color = 'green') +
-    theme_classic()
-  
-  lplot_all_statLOESS <-  ggplot() +
-    geom_point(data = statdat %>% filter(mean_product>10), aes(log(mean_product), eval(as.symbol(paste0(stat,'_residual')))), stroke=0, alpha = 0.05) +
-    # geom_density2d(data = statdat %>% filter(mutated_alleles == 0, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual')))), color = 'blue') +
-    # geom_density2d(data = statdat %>% filter(mutated_alleles == 1, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual')))), color = 'red') +
-    # geom_density2d(data = statdat %>% filter(mutated_alleles == 2, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual')))), color = 'green') +
-    theme_classic()
-  
-  lplot_all_statLOESSSWN <-  ggplot() +
-    geom_point(data = statdat1 %>% filter(mean_product>10), aes(log(mean_product), eval(as.symbol(paste0(stat,'_residual_swn')))), stroke=0, alpha = 0.05) +
-    # geom_density2d(data = statdat1 %>% filter(mutated_alleles == 0, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual_swn')))), color = 'blue') +
-    # geom_density2d(data = statdat1 %>% filter(mutated_alleles == 1, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual_swn')))), color = 'red') +
-    # geom_density2d(data = statdat1 %>% filter(mutated_alleles == 2, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual_swn')))), color = 'green') +
-    theme_classic()
-  
-  lplot_all_stat_con <- ggplot() +
-    geom_point(data = td1 %>% filter(mean_product>10), aes(log(mean_product), eval(as.symbol(stat))), stroke=0, alpha = 0.05) +
-    geom_density2d(data = td1 %>% filter(mutated_alleles == 0, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(stat))), color = 'blue') +
-    geom_density2d(data = td1 %>% filter(mutated_alleles == 1, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(stat))), color = 'red') +
-    geom_density2d(data = td1 %>% filter(mutated_alleles == 2, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(stat))), color = 'green') +
-    theme_classic()
-  
-  lplot_all_statLOESS_con <-  ggplot() +
-    geom_point(data = statdat %>% filter(mean_product>10), aes(log(mean_product), eval(as.symbol(paste0(stat,'_residual')))), stroke=0, alpha = 0.05) +
-    geom_density2d(data = statdat %>% filter(mutated_alleles == 0, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual')))), color = 'blue') +
-    geom_density2d(data = statdat %>% filter(mutated_alleles == 1, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual')))), color = 'red') +
-    geom_density2d(data = statdat %>% filter(mutated_alleles == 2, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual')))), color = 'green') +
-    theme_classic()
-  
-  lplot_all_statLOESSSWN_con <-  ggplot() +
-    geom_point(data = statdat1 %>% filter(mean_product>10), aes(log(mean_product), eval(as.symbol(paste0(stat,'_residual_swn')))), stroke=0, alpha = 0.05) +
-    geom_density2d(data = statdat1 %>% filter(mutated_alleles == 0, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual_swn')))), color = 'blue') +
-    geom_density2d(data = statdat1 %>% filter(mutated_alleles == 1, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual_swn')))), color = 'red') +
-    geom_density2d(data = statdat1 %>% filter(mutated_alleles == 2, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual_swn')))), color = 'green') +
-    theme_classic()
-  
-  pdf(paste0(paste0(plotdir, 'LOESSplots_', stat, 'vsLogMean_B1_v1.6.2and5.pdf')), width = 10, height = 7)
-  grid.arrange(lplot_all_stat,lplot_all_statLOESS,lplot_all_statLOESSSWN,lplot_all_stat_con,lplot_all_statLOESS_con,lplot_all_statLOESSSWN_con, ncol=3, nrow=2,
-               top = textGrob(paste0(stat, ' vs. log(mean_product)\nStat, LOESS residual, Squeezed LOESS residual (radius=50)'),gp=gpar(fontsize=20,font=3)))
-  dev.off()
+  # 
+  # td1<-allstats_full1 %>% 
+  #   dplyr::select(mutated_alleles, product, version, paramset, mean_product, stat)
+  # 
+  # lplot_all_stat <- ggplot() +
+  #   geom_point(data = td1 %>% filter(mean_product>10), aes(log(mean_product), eval(as.symbol(stat))), stroke=0, alpha = 0.05) +
+  #   # geom_density2d(data = td1 %>% filter(mutated_alleles == 0, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(stat))), color = 'blue') +
+  #   # geom_density2d(data = td1 %>% filter(mutated_alleles == 1, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(stat))), color = 'red') +
+  #   # geom_density2d(data = td1 %>% filter(mutated_alleles == 2, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(stat))), color = 'green') +
+  #   theme_classic()
+  # 
+  # lplot_all_statLOESS <-  ggplot() +
+  #   geom_point(data = statdat %>% filter(mean_product>10), aes(log(mean_product), eval(as.symbol(paste0(stat,'_residual')))), stroke=0, alpha = 0.05) +
+  #   # geom_density2d(data = statdat %>% filter(mutated_alleles == 0, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual')))), color = 'blue') +
+  #   # geom_density2d(data = statdat %>% filter(mutated_alleles == 1, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual')))), color = 'red') +
+  #   # geom_density2d(data = statdat %>% filter(mutated_alleles == 2, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual')))), color = 'green') +
+  #   theme_classic()
+  # 
+  # lplot_all_statLOESSSWN <-  ggplot() +
+  #   geom_point(data = statdat1 %>% filter(mean_product>10), aes(log(mean_product), eval(as.symbol(paste0(stat,'_residual_swn')))), stroke=0, alpha = 0.05) +
+  #   # geom_density2d(data = statdat1 %>% filter(mutated_alleles == 0, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual_swn')))), color = 'blue') +
+  #   # geom_density2d(data = statdat1 %>% filter(mutated_alleles == 1, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual_swn')))), color = 'red') +
+  #   # geom_density2d(data = statdat1 %>% filter(mutated_alleles == 2, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual_swn')))), color = 'green') +
+  #   theme_classic()
+  # 
+  # lplot_all_stat_con <- ggplot() +
+  #   geom_point(data = td1 %>% filter(mean_product>10), aes(log(mean_product), eval(as.symbol(stat))), stroke=0, alpha = 0.05) +
+  #   geom_density2d(data = td1 %>% filter(mutated_alleles == 0, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(stat))), color = 'blue') +
+  #   geom_density2d(data = td1 %>% filter(mutated_alleles == 1, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(stat))), color = 'red') +
+  #   geom_density2d(data = td1 %>% filter(mutated_alleles == 2, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(stat))), color = 'green') +
+  #   theme_classic()
+  # 
+  # lplot_all_statLOESS_con <-  ggplot() +
+  #   geom_point(data = statdat %>% filter(mean_product>10), aes(log(mean_product), eval(as.symbol(paste0(stat,'_residual')))), stroke=0, alpha = 0.05) +
+  #   geom_density2d(data = statdat %>% filter(mutated_alleles == 0, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual')))), color = 'blue') +
+  #   geom_density2d(data = statdat %>% filter(mutated_alleles == 1, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual')))), color = 'red') +
+  #   geom_density2d(data = statdat %>% filter(mutated_alleles == 2, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual')))), color = 'green') +
+  #   theme_classic()
+  # 
+  # lplot_all_statLOESSSWN_con <-  ggplot() +
+  #   geom_point(data = statdat1 %>% filter(mean_product>10), aes(log(mean_product), eval(as.symbol(paste0(stat,'_residual_swn')))), stroke=0, alpha = 0.05) +
+  #   geom_density2d(data = statdat1 %>% filter(mutated_alleles == 0, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual_swn')))), color = 'blue') +
+  #   geom_density2d(data = statdat1 %>% filter(mutated_alleles == 1, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual_swn')))), color = 'red') +
+  #   geom_density2d(data = statdat1 %>% filter(mutated_alleles == 2, product == 'B1',mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual_swn')))), color = 'green') +
+  #   theme_classic()
+  # 
+  # pdf(paste0(paste0(plotdir, 'LOESSplots_', stat, 'vsLogMean_B1_v1.6.2and5.pdf')), width = 10, height = 7)
+  # grid.arrange(lplot_all_stat,lplot_all_statLOESS,lplot_all_statLOESSSWN,lplot_all_stat_con,lplot_all_statLOESS_con,lplot_all_statLOESSSWN_con, ncol=3, nrow=2,
+  #              top = textGrob(paste0(stat, ' vs. log(mean_product)\nStat, LOESS residual, Squeezed LOESS residual (radius=50)'),gp=gpar(fontsize=20,font=3)))
+  # dev.off()
   
   cat(paste0('Done with ', stat, '\n'))
   
 }
 
+write.csv(loess_fitted_allstats_all, file = paste0(plotdir, 'loess_fitted_allstats_all_snwRadius100.csv'), quote = F, row.names = F)
+
 for (stat in unistats[unistats != 'mean_product']) {
   
   cat(paste0('working on ', stat, '\n'))
-  statdat <- list()
+  # statdat <- list()
   
   for (gene in c('A1', 'Anonsense1', 'Aprime1', 'B1')) {
     
 
     statdatA = loess_fitted_allstats_all %>%
       dplyr::select(mutated_alleles, product, version, paramset, mean_product, stat, as.symbol(paste0(stat, '_residual')), as.symbol(paste0(stat, '_residual_swn'))) %>%
-      filter(product == gene) 
+      filter(product == gene, mean_product>10) 
     
     lplot_all_stat_con <- ggplot() +
-      geom_point(data = statdatA %>% filter(mean_product>10), aes(log(mean_product), eval(as.symbol(stat))), stroke=0, alpha = 0.05) +
-      geom_density2d(data = td1 %>% filter(mutated_alleles == 0, mean_product>10), aes(log(mean_product),eval(as.symbol(stat))), color = 'blue') +
-      geom_density2d(data = td1 %>% filter(mutated_alleles == 1, mean_product>10), aes(log(mean_product),eval(as.symbol(stat))), color = 'red') +
-      geom_density2d(data = td1 %>% filter(mutated_alleles == 2, mean_product>10), aes(log(mean_product),eval(as.symbol(stat))), color = 'green') +
+      geom_point(data = statdatA, aes(log(mean_product), eval(as.symbol(stat))), stroke=0, alpha = 0.05) +
+      geom_density2d(data = statdatA %>% filter(mutated_alleles == 0, mean_product>10), aes(log(mean_product),eval(as.symbol(stat))), color = 'blue') +
+      geom_density2d(data = statdatA %>% filter(mutated_alleles == 1, mean_product>10), aes(log(mean_product),eval(as.symbol(stat))), color = 'red') +
+      geom_density2d(data = statdatA %>% filter(mutated_alleles == 2, mean_product>10), aes(log(mean_product),eval(as.symbol(stat))), color = 'green') +
       theme_classic()
     
     lplot_all_statLOESS_con <-  ggplot() +
-      geom_point(data = statdatA %>% filter(mean_product>10), aes(log(mean_product), eval(as.symbol(paste0(stat,'_residual')))), stroke=0, alpha = 0.05) +
-      geom_density2d(data = statdat %>% filter(mutated_alleles == 0,mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual')))), color = 'blue') +
-      geom_density2d(data = statdat %>% filter(mutated_alleles == 1,mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual')))), color = 'red') +
-      geom_density2d(data = statdat %>% filter(mutated_alleles == 2,mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual')))), color = 'green') +
+      geom_point(data = statdatA, aes(log(mean_product), eval(as.symbol(paste0(stat,'_residual')))), stroke=0, alpha = 0.05) +
+      geom_density2d(data = statdatA %>% filter(mutated_alleles == 0,mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual')))), color = 'blue') +
+      geom_density2d(data = statdatA %>% filter(mutated_alleles == 1,mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual')))), color = 'red') +
+      geom_density2d(data = statdatA %>% filter(mutated_alleles == 2,mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual')))), color = 'green') +
       theme_classic()
     
     lplot_all_statLOESSSWN_con <-  ggplot() +
-      geom_point(data = statdatA %>% filter(mean_product>10), aes(log(mean_product), eval(as.symbol(paste0(stat,'_residual_swn')))), stroke=0, alpha = 0.05) +
-      geom_density2d(data = statdat1 %>% filter(mutated_alleles == 0,mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual_swn')))), color = 'blue') +
-      geom_density2d(data = statdat1 %>% filter(mutated_alleles == 1,mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual_swn')))), color = 'red') +
-      geom_density2d(data = statdat1 %>% filter(mutated_alleles == 2,mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual_swn')))), color = 'green') +
+      geom_point(data = statdatA, aes(log(mean_product), eval(as.symbol(paste0(stat,'_residual_swn')))), stroke=0, alpha = 0.05) +
+      geom_density2d(data = statdatA %>% filter(mutated_alleles == 0,mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual_swn')))), color = 'blue') +
+      geom_density2d(data = statdatA %>% filter(mutated_alleles == 1,mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual_swn')))), color = 'red') +
+      geom_density2d(data = statdatA %>% filter(mutated_alleles == 2,mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual_swn')))), color = 'green') +
       theme_classic()
     
-    pdf(paste0(paste0(plotdir, 'LOESSplots_', stat, 'vsLogMean_B1_v1.6.2and5.pdf')), width = 10, height = 7)
+    pdf(paste0(paste0(plotdir, 'LOESSplots_', stat, 'vsLogMean_', gene,'_v1.6.2and5.pdf')), width = 10, height = 7)
     grid.arrange(lplot_all_stat_con,lplot_all_statLOESS_con,lplot_all_statLOESSSWN_con, ncol=3,
                  top = textGrob(paste0(stat, ' vs. log(mean_product), ', gene, '\nStat, LOESS residual, Squeezed LOESS residual (radius=50)'),gp=gpar(fontsize=20,font=3)))
     dev.off()
