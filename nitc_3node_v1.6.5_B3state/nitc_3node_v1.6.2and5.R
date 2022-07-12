@@ -11,6 +11,7 @@ library(corrplot)
 library(tibble)
 library(svglite)
 library(entropy)
+library(ggalluvial)
 source('~/code/grn_nitc/Functions/grn_analysis_utilities.R')
 
 
@@ -1354,22 +1355,73 @@ for (stat in unistats[unistats != 'mean_product']) {
   }
 }
 
+# classification
+# focus on LOESS residuals except when specifically indicated (e.g., skewness for exponential dist assignment). sliding window is not normalizing stably enough as intended.
+
+
 bimfilt <- 0.15
-high_bimodality <- loess_fitted_allstats_full %>% 
-  filter(bimodality_residual > bimfilt)
+high_bimodality <- loess_fitted_allstats_all %>% 
+  filter(bimodality_coef_residual > bimfilt)
 
-unimodal_symmetric <- loess_fitted_allstats_full %>% 
-  filter(bimodality_residual <= bimfilt) # and not exponential (skewness limit?)
+unimodal_symmetric <- loess_fitted_allstats_all %>% 
+  filter(bimodality_coef_residual <= bimfilt, abs(skewness) < 1) # and not exponential (skewness limit?)
 
-unimodal_exponential <- loess_fitted_allstats_full %>% 
-  filter(bimodality_residual <= bimfilt, skewness > 1, skewness < 3) #skewness limit?
+unimodal_exponential <- loess_fitted_allstats_all %>% 
+  filter(bimodality_coef_residual <= bimfilt, skewness > 1, skewness < 3) #skewness limit?
 
-unimodal_subexponential <- loess_fitted_allstats_full %>% 
-  filter(bimodality_residual <= bimfilt, skewness >= 3) #skewness limit higher? Techinically skewness of exp = 2
+unimodal_subexponential <- loess_fitted_allstats_all %>% 
+  filter(bimodality_coef_residual <= bimfilt, skewness >= 3) #skewness limit higher? Techinically skewness of exp = 2
 
 entfilt <- 0.15
 high_entropy <- loess_fitted_allstats_full %>% 
   filter(entropy_residual > entfilt)
+
+basic_class_assignment_all <- loess_fitted_allstats_all %>%
+  mutate(class_assignment = case_when(
+    mean_product < 10 ~ 'low-average',
+    bimodality_coef_residual > bimfilt ~ 'bimodal',
+    bimodality_coef_residual <= bimfilt & abs(skewness) < 1 ~ 'unimodal symmetric',
+    bimodality_coef_residual <= bimfilt & skewness > 1 & skewness < 3 ~ 'exponential',
+    bimodality_coef_residual <= bimfilt & skewness >= 3 ~ 'subexponential',
+    bimodality_coef_residual <= bimfilt & skewness <= -1 ~ 'left-skewed unimodal'
+    
+  )) 
+
+basic_class_assignment_all_forSankey <- basic_class_assignment_all %>%
+  dplyr::select(version, paramset, product, mutated_alleles, class_assignment) %>%
+  group_by(version, paramset, product) %>%
+  pivot_wider(names_from = mutated_alleles, values_from = class_assignment) %>%
+  group_by(product, `0`, `1`, `2`) %>%
+  summarise(Freq = length(`0`)) %>%
+  ungroup() %>%
+  mutate(alluvID = 1:length(product)) %>%
+  pivot_longer(`0`:`2`, names_to = 'mutated_alleles', values_to = 'class_assignment')
+  
+ggplot(basic_class_assignment_all_forSankey, aes(x = mutated_alleles, y=Freq,
+                                       stratum = class_assignment, alluvium = alluvID, fill = class_assignment, label = class_assignment)) +
+  facet_grid(product~.) +
+  geom_flow() +
+  geom_stratum(alpha = 0.5) +
+  geom_text(stat = 'stratum', size = 3) + 
+  theme(legend.position = 'none')
+  
+
+basic_class_totals <-  basic_class_assignment_all%>%
+  group_by(class_assignment, mutated_alleles, product) %>%
+  summarise(length(class_assignment))
+
+
+# change analysis
+
+loess_fitted_allstats_all %>%
+  group_by(version, paramset, product) %>%
+  pivot_longer(mean_product:entropy90_residual_swn, names_to='statistic', values_to = 'value') %>%
+  group_by(version, paramset, product, statistic) %>%
+  pivot_wider(names_from = 'mutated_alleles', values_from = 'value') %>%
+  mutate(delta10=`1`-`0`,
+         delta20=`2`-`0`,
+         delta21=`2`-`1`)
+
 
 
 
