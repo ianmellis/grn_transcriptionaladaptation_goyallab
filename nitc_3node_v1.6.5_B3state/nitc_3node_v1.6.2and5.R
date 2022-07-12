@@ -1359,7 +1359,7 @@ for (stat in unistats[unistats != 'mean_product']) {
 # focus on LOESS residuals except when specifically indicated (e.g., skewness for exponential dist assignment). sliding window is not normalizing stably enough as intended.
 
 
-bimfilt <- 0.15
+bimfilt <- 0.05
 high_bimodality <- loess_fitted_allstats_all %>% 
   filter(bimodality_coef_residual > bimfilt)
 
@@ -1405,6 +1405,43 @@ ggplot(basic_class_assignment_all_forSankey, aes(x = mutated_alleles, y=Freq,
   geom_text(stat = 'stratum', size = 3) + 
   theme(legend.position = 'none')
   
+# sample paramsets from the sankey flow to visually inspect accuracy of assignments/changes
+set.seed(7845)
+basic_class_assignment_all_forSankey_forsamples <- basic_class_assignment_all %>%
+  dplyr::select(version, paramset, product, mutated_alleles, class_assignment) %>%
+  group_by(version, paramset, product) %>%
+  pivot_wider(names_from = mutated_alleles, values_from = class_assignment) 
+
+for (gene in genes) {
+  cat(paste0('Working on ', gene, '...\n'))
+  for (c1 in classes) {
+    for (c2 in classes) {
+      for (c3 in classes) {
+        
+        tempsets <- basic_class_assignment_all_forSankey_forsamples %>%
+          filter(`0` == c1,
+                 `1` == c2,
+                 `2` == c3)
+        
+        nParamsets = nrow(tempsets)
+        
+        if (nParamsets > 0) {
+          
+          sNum = nParamsets
+          
+          if(sNum > 5) {sNum = 5}
+          
+          tempsets1 <- tempsets %>%
+            slice_sample(n=sNum)
+          
+          plot_histograms(gene, )
+          
+        }
+        
+      }
+    }
+  }
+}
 
 basic_class_totals <-  basic_class_assignment_all%>%
   group_by(class_assignment, mutated_alleles, product) %>%
