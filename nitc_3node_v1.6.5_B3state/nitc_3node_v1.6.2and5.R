@@ -1471,15 +1471,16 @@ for (class in classes) {
   }
   
 }
-write.csv(sampledSets1, file = paste0(plotdir,'stats_class_assignment_check_v1.csv'), quote=F, row.names = F)
+write.csv(sampledSets1, file = paste0(plotdir,'stats_class_assignment_check_v1/stats_class_assignment_check_v1.csv'), quote=F, row.names = F)
 
-sampledSets1_checked <- as_tibble(read.csv(paste0(plotdir,'stats_class_assignment_check_v1.csv'), header = T, stringsAsFactors = F))
+sampledSets1_checked <- as_tibble(read.csv(paste0(plotdir,'stats_class_assignment_check_v1/stats_class_assignment_check_v1.csv'), header = T, stringsAsFactors = F))
 
-sampledSets1_checked_fracagree <- ggplot(sampledSets1_checked %>% group_by(class_assignment) %>% summarise(frac_agree = sum(agreement)/length(agreement)), aes(class_assignment, frac_agree)) +
-  geom_bar() +
+sampledSets1_checked_fracagree <- ggplot(sampledSets1_checked %>% group_by(class_assignment) %>% summarise(frac_agree = sum(agreement)/length(agreement)), aes(x=class_assignment, y=frac_agree)) +
+  geom_bar(stat='identity') +
   ylim(c(0,1)) +
-  ylab('Fraction of sets agreed manually')
-
+  ylab('Fraction of sets agreed manually') +
+  theme(axis.text.x = element_text(angle=45))
+ggsave(sampledSets1_checked_fracagree, file = paste0(plotdir,'stats_class_assignment_check_v1/stats_class_assignment_check_v1_fracagreeplot.pdf'))
 
 basic_class_totals <-  basic_class_assignment_all%>%
   group_by(class_assignment, mutated_alleles, product) %>%
