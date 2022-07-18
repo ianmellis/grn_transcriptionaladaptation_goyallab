@@ -1408,40 +1408,78 @@ ggplot(basic_class_assignment_all_forSankey, aes(x = mutated_alleles, y=Freq,
 # sample paramsets from the sankey flow to visually inspect accuracy of assignments/changes
 set.seed(7845)
 basic_class_assignment_all_forSankey_forsamples <- basic_class_assignment_all %>%
-  dplyr::select(version, paramset, product, mutated_alleles, class_assignment) %>%
-  group_by(version, paramset, product) %>%
-  pivot_wider(names_from = mutated_alleles, values_from = class_assignment) 
+  dplyr::select(version, paramset, product, mutated_alleles, class_assignment)  
 
-for (gene in genes) {
-  cat(paste0('Working on ', gene, '...\n'))
-  for (c1 in classes) {
-    for (c2 in classes) {
-      for (c3 in classes) {
-        
-        tempsets <- basic_class_assignment_all_forSankey_forsamples %>%
-          filter(`0` == c1,
-                 `1` == c2,
-                 `2` == c3)
-        
-        nParamsets = nrow(tempsets)
-        
-        if (nParamsets > 0) {
-          
-          sNum = nParamsets
-          
-          if(sNum > 5) {sNum = 5}
-          
-          tempsets1 <- tempsets %>%
-            slice_sample(n=sNum)
-          
-          plot_histograms(gene, )
-          
-        }
-        
-      }
-    }
+classes = unique(basic_class_assignment_all$class_assignment)
+
+if(!dir.exists(paste0(plotdir, 'stats_class_assignment_check_v1'))) {
+dir.create(paste0(plotdir, 'stats_class_assignment_check_v1'))
   }
+
+set.seed(7432)
+sampledSets1 <- list() 
+for (class in classes) {
+  cat(paste0('Working on ', class, '...\n'))
+  
+  tempsets <- basic_class_assignment_all_forSankey_forsamples %>%
+    filter(class_assignment == class)
+  
+  nParamsets = nrow(tempsets)
+  
+  if (nParamsets > 0) {
+    
+    sNum = nParamsets
+    
+    if(sNum > 20) {sNum = 20}
+    
+    tempsets1 <- tempsets %>%
+      ungroup() %>%
+      slice_sample(n=sNum)
+    
+    for (sid in 1:sNum) {
+      
+      currSet <- tempsets1[sid,]
+      ver <- currSet$version
+      paramset1 <- currSet$paramset
+      ma <- currSet$mutated_alleles
+      class_assigned <- currSet$class_assignment
+      gene <- currSet$product
+      
+      species <- all_species_q300 %>% ungroup() %>%
+        dplyr::select(c('version', 'paramset', 'mutated_alleles', eval(gene))) %>%
+        filter(version == ver & paramset == paramset1 & mutated_alleles == ma)
+      # 
+      # species_sample <- species %>%
+      #   pivot_longer(cols = eval(as.symbol(currSet$product)), names_to = 'product', values_to = 'abundance')
+      # 
+      
+      dist_plot<-ggplot(species, aes(eval(as.symbol(gene)))) +
+        geom_histogram() +
+        ggtitle(paste(ver, as.character(paramset1), as.character(ma), gene, class_assigned, sep = '_')) +
+        theme_classic()
+      ggsave(dist_plot, file = paste0(plotdir, 'stats_class_assignment_check_v1/distributions_q300_class_',class_assigned,'_sampledSetID_', as.character(sid), '.pdf'))
+      
+    }
+    
+    
+    if(is.null(dim(sampledSets1))) {
+      sampledSets1 <- tempsets1
+    } else {
+      sampledSets1 %<>% bind_rows(tempsets1)
+    }
+    
+  }
+  
 }
+write.csv(sampledSets1, file = paste0(plotdir,'stats_class_assignment_check_v1.csv'), quote=F, row.names = F)
+
+sampledSets1_checked <- as_tibble(read.csv(paste0(plotdir,'stats_class_assignment_check_v1.csv'), header = T, stringsAsFactors = F))
+
+sampledSets1_checked_fracagree <- ggplot(sampledSets1_checked %>% group_by(class_assignment) %>% summarise(frac_agree = sum(agreement)/length(agreement)), aes(class_assignment, frac_agree)) +
+  geom_bar() +
+  ylim(c(0,1)) +
+  ylab('Fraction of sets agreed manually')
+
 
 basic_class_totals <-  basic_class_assignment_all%>%
   group_by(class_assignment, mutated_alleles, product) %>%
