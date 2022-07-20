@@ -1358,8 +1358,8 @@ for (stat in unistats[unistats != 'mean_product']) {
 # classification
 # focus on LOESS residuals except when specifically indicated (e.g., skewness for exponential dist assignment). sliding window is not normalizing stably enough as intended.
 
-
-bimfilt <- 0.05
+anver <- 2 # increase minimum bimodality_residual filter and make left-skew filter more stringent
+bimfilt <- 0.1
 high_bimodality <- loess_fitted_allstats_all %>% 
   filter(bimodality_coef_residual > bimfilt)
 
@@ -1383,7 +1383,7 @@ basic_class_assignment_all <- loess_fitted_allstats_all %>%
     bimodality_coef_residual <= bimfilt & abs(skewness) < 1 ~ 'unimodal symmetric',
     bimodality_coef_residual <= bimfilt & skewness > 1 & skewness < 3 ~ 'exponential',
     bimodality_coef_residual <= bimfilt & skewness >= 3 ~ 'subexponential',
-    bimodality_coef_residual <= bimfilt & skewness <= -1 ~ 'left-skewed unimodal'
+    bimodality_coef_residual <= bimfilt & skewness <= -1.5 ~ 'left-skewed unimodal'
     
   )) 
 
@@ -1397,14 +1397,6 @@ basic_class_assignment_all_forSankey <- basic_class_assignment_all %>%
   mutate(alluvID = 1:length(product)) %>%
   pivot_longer(`0`:`2`, names_to = 'mutated_alleles', values_to = 'class_assignment')
   
-ggplot(basic_class_assignment_all_forSankey, aes(x = mutated_alleles, y=Freq,
-                                       stratum = class_assignment, alluvium = alluvID, fill = class_assignment, label = class_assignment)) +
-  facet_grid(product~.) +
-  geom_flow() +
-  geom_stratum(alpha = 0.5) +
-  geom_text(stat = 'stratum', size = 3) + 
-  theme(legend.position = 'none')
-  
 # sample paramsets from the sankey flow to visually inspect accuracy of assignments/changes
 set.seed(7845)
 basic_class_assignment_all_forSankey_forsamples <- basic_class_assignment_all %>%
@@ -1412,9 +1404,18 @@ basic_class_assignment_all_forSankey_forsamples <- basic_class_assignment_all %>
 
 classes = unique(basic_class_assignment_all$class_assignment)
 
-if(!dir.exists(paste0(plotdir, 'stats_class_assignment_check_v1'))) {
-dir.create(paste0(plotdir, 'stats_class_assignment_check_v1'))
-  }
+if(!dir.exists(paste0(plotdir, 'stats_class_assignment_check_v', as.character(anver)))) {
+dir.create(paste0(plotdir, 'stats_class_assignment_check_v', as.character(anver)))
+}
+
+classes_sankey <- ggplot(basic_class_assignment_all_forSankey, aes(x = mutated_alleles, y=Freq,
+                                                                   stratum = class_assignment, alluvium = alluvID, fill = class_assignment, label = class_assignment)) +
+  facet_grid(product~.) +
+  geom_flow() +
+  geom_stratum(alpha = 0.5) +
+  geom_text(stat = 'stratum', size = 3) + 
+  theme(legend.position = 'none')
+ggsave(classes_sankey, file = paste0(plotdir, 'stats_class_assignment_check_v', as.character(anver),'/classes_sankey.pdf'))
 
 set.seed(7432)
 sampledSets1 <- list() 
@@ -1455,9 +1456,9 @@ for (class in classes) {
       
       dist_plot<-ggplot(species, aes(eval(as.symbol(gene)))) +
         geom_histogram() +
-        ggtitle(paste(ver, as.character(paramset1), as.character(ma), gene, class_assigned, sep = '_')) +
+        ggtitle(paste('AnalysisVersion', as.character(anver), ver, as.character(paramset1), as.character(ma), gene, class_assigned, sep = '_')) +
         theme_classic()
-      ggsave(dist_plot, file = paste0(plotdir, 'stats_class_assignment_check_v1/distributions_q300_class_',class_assigned,'_sampledSetID_', as.character(sid), '.pdf'))
+      ggsave(dist_plot, file = paste0(plotdir, 'stats_class_assignment_check_v', as.character(anver), '/distributions_q300_class_',class_assigned,'_sampledSetID_', as.character(sid), '.pdf'))
       
     }
     
@@ -1471,16 +1472,16 @@ for (class in classes) {
   }
   
 }
-write.csv(sampledSets1, file = paste0(plotdir,'stats_class_assignment_check_v1/stats_class_assignment_check_v1.csv'), quote=F, row.names = F)
+write.csv(sampledSets1, file = paste0(plotdir,'stats_class_assignment_check_v', as.character(anver), '/stats_class_assignment_check_v', as.character(anver), '.csv'), quote=F, row.names = F)
 
-sampledSets1_checked <- as_tibble(read.csv(paste0(plotdir,'stats_class_assignment_check_v1/stats_class_assignment_check_v1.csv'), header = T, stringsAsFactors = F))
+sampledSets1_checked <- as_tibble(read.csv(paste0(plotdir,'stats_class_assignment_check_v', as.character(anver), '/stats_class_assignment_check_v', as.character(anver), '.csv'), header = T, stringsAsFactors = F))
 
 sampledSets1_checked_fracagree <- ggplot(sampledSets1_checked %>% group_by(class_assignment) %>% summarise(frac_agree = sum(agreement)/length(agreement)), aes(x=class_assignment, y=frac_agree)) +
   geom_bar(stat='identity') +
   ylim(c(0,1)) +
   ylab('Fraction of sets agreed manually') +
   theme(axis.text.x = element_text(angle=45))
-ggsave(sampledSets1_checked_fracagree, file = paste0(plotdir,'stats_class_assignment_check_v1/stats_class_assignment_check_v1_fracagreeplot.pdf'))
+ggsave(sampledSets1_checked_fracagree, file = paste0(plotdir,'stats_class_assignment_check_v', as.character(anver), '/stats_class_assignment_check_v1_fracagreeplot.pdf'))
 
 basic_class_totals <-  basic_class_assignment_all%>%
   group_by(class_assignment, mutated_alleles, product) %>%
