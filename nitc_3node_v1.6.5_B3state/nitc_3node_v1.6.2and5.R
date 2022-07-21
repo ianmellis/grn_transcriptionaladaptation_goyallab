@@ -1358,7 +1358,7 @@ for (stat in unistats[unistats != 'mean_product']) {
 # classification
 # focus on LOESS residuals except when specifically indicated (e.g., skewness for exponential dist assignment). sliding window is not normalizing stably enough as intended.
 
-anver <- 3 # increase minimum bimodality_residual filter and make left-skew filter more stringent
+anver <- 4 # increase minimum bimodality_residual filter and make left-skew filter more stringent
 bimfilt <- 0.1
 # high_bimodality <- loess_fitted_allstats_all %>% 
 #   filter(bimodality_coef_residual > bimfilt)
@@ -1379,11 +1379,11 @@ entfilt <- 0.15
 basic_class_assignment_all <- loess_fitted_allstats_all %>%
   mutate(class_assignment = case_when(
     mean_product < 10 ~ 'low-average',
-    bimodality_coef_residual > bimfilt ~ 'bimodal',
-    bimodality_coef_residual <= bimfilt & abs(skewness) < 1.5 ~ 'unimodal symmetric',
-    bimodality_coef_residual <= bimfilt & skewness > 1.5 & skewness < 3 ~ 'exponential',
-    bimodality_coef_residual <= bimfilt & skewness >= 3 ~ 'subexponential',
-    bimodality_coef_residual <= bimfilt & skewness <= -1.5 ~ 'left-skewed unimodal'
+    bimodality_coef_residual > bimfilt & bimodality_coef > 0.555 ~ 'bimodal',
+    (bimodality_coef_residual <= bimfilt | bimodality_coef <= 0.555) & abs(skewness) < 1.5 ~ 'unimodal symmetric',
+    (bimodality_coef_residual <= bimfilt | bimodality_coef <= 0.555) & skewness > 1.5 & skewness < 3 ~ 'exponential',
+    (bimodality_coef_residual <= bimfilt | bimodality_coef <= 0.555) & skewness >= 3 ~ 'subexponential',
+    (bimodality_coef_residual <= bimfilt | bimodality_coef <= 0.555) & skewness <= -1.5 ~ 'left-skewed unimodal'
     
   )) 
 
