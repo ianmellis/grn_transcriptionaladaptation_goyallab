@@ -1454,9 +1454,12 @@ for (class in classes) {
       #   pivot_longer(cols = eval(as.symbol(currSet$product)), names_to = 'product', values_to = 'abundance')
       # 
       
+      statstemp <- loess_fitted_allstats_all %>%
+        filter(version == ver, paramset == paramset1, product == gene, mutated_alleles == ma)
+      
       dist_plot<-ggplot(species, aes(eval(as.symbol(gene)))) +
         geom_histogram() +
-        ggtitle(paste('AnalysisVersion', as.character(anver), ver, as.character(paramset1), as.character(ma), gene, class_assigned, sep = '_')) +
+        ggtitle(paste('AnalysisVersion', as.character(anver), ver, as.character(paramset1), as.character(ma), gene, '\nbc', as.character(round(statstemp$bimodality_coef,2)), 'bcres', as.character(round(statstemp$bimodality_coef_residual,2)),'skew', as.character(round(statstemp$skewness,2)), class_assigned, sep = '_')) +
         theme_classic()
       ggsave(dist_plot, file = paste0(plotdir, 'stats_class_assignment_check_v', as.character(anver), '/distributions_q300_class_',class_assigned,'_sampledSetID_', as.character(sid), '.pdf'))
       
