@@ -1314,6 +1314,9 @@ for (stat in unistats[unistats != 'mean_product']) {
 
 write.csv(loess_fitted_allstats_all, file = paste0(plotdir, 'loess_fitted_allstats_all_snwRadius100.csv'), quote = F, row.names = F)
 
+# load as needed
+# loess_fitted_allstats_all <- as_tibble(read.csv(paste0(plotdir, 'loess_fitted_allstats_all_snwRadius100.csv'), header=T, stringsAsFactors = F))
+
 for (stat in unistats[unistats != 'mean_product']) {
   
   cat(paste0('working on ', stat, '\n'))
@@ -1398,7 +1401,7 @@ basic_class_assignment_all_forSankey <- basic_class_assignment_all %>%
   pivot_longer(`0`:`2`, names_to = 'mutated_alleles', values_to = 'class_assignment')
   
 # sample paramsets from the sankey flow to visually inspect accuracy of assignments/changes
-set.seed(7845)
+set.seed(73245)
 basic_class_assignment_all_forSankey_forsamples <- basic_class_assignment_all %>%
   dplyr::select(version, paramset, product, mutated_alleles, class_assignment)  
 
@@ -1417,7 +1420,7 @@ classes_sankey <- ggplot(basic_class_assignment_all_forSankey, aes(x = mutated_a
   theme(legend.position = 'none')
 ggsave(classes_sankey, file = paste0(plotdir, 'stats_class_assignment_check_v', as.character(anver),'/classes_sankey.pdf'))
 
-set.seed(7432)
+set.seed(73245)
 sampledSets1 <- list() 
 for (class in classes) {
   cat(paste0('Working on ', class, '...\n'))
