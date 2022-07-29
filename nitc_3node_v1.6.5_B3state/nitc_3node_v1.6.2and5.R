@@ -1420,6 +1420,18 @@ classes_sankey <- ggplot(basic_class_assignment_all_forSankey, aes(x = mutated_a
   theme(legend.position = 'none')
 ggsave(classes_sankey, file = paste0(plotdir, 'stats_class_assignment_check_v', as.character(anver),'/classes_sankey.pdf'))
 
+basic_class_assignment_all_forpie <- basic_class_assignment_all %>%
+  group_by(mutated_alleles, product, class_assignment) %>%
+  summarise(nSets = length(product))
+
+classes_pies <- ggplot(basic_class_assignment_all_forpie, aes(x="", y=nSets, fill=class_assignment)) +
+  geom_bar(stat='identity', width=1, color='white') +
+  coord_polar('y', start=0) +
+  facet_grid(product~mutated_alleles) +
+  theme_void() +
+  ggtitle('classes of all distributions in v1.6.2 and v1.6.5\nparameter sets with Hill n < 5\neach gene in each genotype')
+ggsave(classes_pies, file = paste0(plotdir, 'stats_class_assignment_check_v', as.character(anver),'/classes_pies.pdf'))
+
 set.seed(73245)
 sampledSets1 <- list() 
 for (class in classes) {
