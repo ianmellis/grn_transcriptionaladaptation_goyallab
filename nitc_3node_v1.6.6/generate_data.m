@@ -6,8 +6,8 @@
 % dataset.
 
 % EDIT THESE OUTPUT DIRECTORIES AS NEEDED
-trace_outdir = '/Volumes/IAMYG1/grn_nitc_data/v1.6.6/';
-psc_outdir = '~/code/grn_nitc/nitc_3node_v1.6.6/';
+trace_outdir = '/Volumes/IAMYG1/grn_nitc_data/v1.6.6/fullTraces/';
+psc_outdir = '/Volumes/IAMYG1/grn_nitc_data/v1.6.6/samples/';
 psc_refdir = '~/code/grn_nitc/nitc_3node_v1.6.6/refs/';
 
 if ~exist(trace_outdir, 'dir')
@@ -35,14 +35,14 @@ end
 % multiple strength decrease of Aprime1 relative to A1 in causing B1-on
 % - A1_Aprime_prodon_ratio = d_Aprime_B1 = scalar multiple descrease in
 % production rate of B1 burst when turned on by para instead of orig
-
-%%
+%  - r_onbasal_Aprime_ratio = r_onbasal_A1/r_onbasal_Aprime1 = scalar
+%
 rng(8363);
 
 nruns = 10000;
 
 fseeds = 358238:4:3409332;
-simseeds = fseeds(1:(nruns+1));
+simseeds = fseeds(1:nruns);
 
 min_range = [repmat(0.1,1,1),...        %basal_nitc_on_ratio (0.1,10) - is 10 high enough?
     repmat(0.01,1,1),...                %onbasalA1_off_ratio (0.01,2) - per Larsson this is the bulk of the distribution (very quick off-burst)
@@ -101,7 +101,6 @@ lhs_1_s.Properties.VariableNames = {'basal_nitc_on_ratio',...
     'Hill_coefficient_n',...
     'r_onbasal_A1',...
     'r_onbasal_Aprime_ratio'};
-lhs_1_s = [trimLHS; lhs_1_s];
 %%
 writetable(lhs_1_s,lhs_1_f,'Delimiter',',')
 writetable(lhs_1_s,lhs_1_f2,'Delimiter',',')
