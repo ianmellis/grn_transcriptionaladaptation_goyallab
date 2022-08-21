@@ -987,9 +987,13 @@ for ind = 1:(length(bounds)-1)
     
     s_store = cell(200,1); % 2GB chunks in working memory at a time
     
-    parfor i = (bounds(ind)+1):bounds(ind+1)
+    lenbd = bounds(ind+1) - (bounds(ind));
+    
+    lowbd = bounds(ind);
+    
+    parfor j = 1:lenbd
         
-        storeind = i-refind;
+        i = j+lowbd;
         
         % Set seed
         %
@@ -1198,7 +1202,7 @@ for ind = 1:(length(bounds)-1)
         %     [times,savespecies] = gillespie_burstshistomex_B3state(0,sp_1,ra_1,pr_1,sum(clock*100),maxgillespie,maxgillespie);
         [times,savespecies] = gillespie_burstshistomex_B3state(0,sp_1,ra_1,pr_1,simseeds(i),maxgillespie,maxgillespie);
         
-        s_store{storeind} = savespecies;
+        s_store{j} = savespecies;
     end
     
     for i = (bounds(ind)+1):bounds(ind+1)
