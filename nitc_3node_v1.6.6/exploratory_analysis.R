@@ -23,7 +23,7 @@ setwd(datadir6)
 if(!dir.exists(plotdir6)){
   dir.create(plotdir6)
 }
-paramsets6 <- 1:3
+paramsets6 <- 1:9900
 lhs_sets6 <- as_tibble(read.csv('latinhyp_sampledSets.csv')) 
 lhs_sets6 %<>%
   mutate(paramset = 1:nrow(lhs_sets6))
@@ -54,7 +54,7 @@ for (paramset in paramsets6){
     dplyr::select(A1, Aprime1, Anonsense1, B1, paramset, time, mutated_alleles) %>%
     pivot_longer(cols = A1:B1, names_to = 'product', values_to = 'abundance')
   
-  if(paramset %% 1 == 0) {
+  if(paramset %% 100 == 0 | paramset %in% c(1,2,3)) {
     cat(paste0('Working on ', as.character(paramset), '\n'))
     dist_plot<-ggplot(species_sample, aes(abundance)) +
       geom_histogram() +
