@@ -381,3 +381,12 @@ classes_pies6 <- ggplot(basic_class_assignment_all_forpie6, aes(x="", y=nSets, f
   theme_void() +
   ggtitle('classes of all distributions in v1.6.6\nparameter sets with Hill n < 5\neach gene in each genotype')
 ggsave(classes_pies6, file = paste0(plotdir6, 'stats_class_assignment_check_classv', as.character(anver),'/classes_pies.pdf'))
+
+# decision tree for classes
+# separate by gene and genotype
+# use parameters as features, use class ID as label
+# then: don't separate by genotype, use parameters as feature and vector of class IDs as label
+# then: don't separate by gene (at least jointly analyze A1 and B1), use parameters as features and vector of classIDs for A1 and B1 as labels
+# consider regression trees in https://www.datacamp.com/tutorial/decision-trees-R
+
+
