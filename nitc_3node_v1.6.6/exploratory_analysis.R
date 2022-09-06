@@ -387,6 +387,6 @@ ggsave(classes_pies6, file = paste0(plotdir6, 'stats_class_assignment_check_clas
 # use parameters as features, use class ID as label
 # then: don't separate by genotype, use parameters as feature and vector of class IDs as label
 # then: don't separate by gene (at least jointly analyze A1 and B1), use parameters as features and vector of classIDs for A1 and B1 as labels
-# consider regression trees in https://www.datacamp.com/tutorial/decision-trees-R
+# consider trees in base R https://www.datacamp.com/tutorial/decision-trees-R and tidymodels https://bcullen.rbind.io/post/2020-06-02-tidymodels-decision-tree-learning-in-r/
 
 
