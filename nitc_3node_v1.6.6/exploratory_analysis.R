@@ -237,8 +237,8 @@ for (stat in unistats[unistats != 'mean_product']) {
       xlab('Log(Mean)') +
       ggtitle(paste0(stat, ' vs log(mean), with LOESS fit to mean\nGene product: ', gene))#, ', mutated alleles: ', as.character(ma)))
     
-    ggsave(lplot1, file = paste0(plotdir, 'LOESS_', stat, 'vsMean_',gene,'_v1.6.6.pdf'), width = 5, height = 5)#'_mutAlleles',ma,'_v1.6.2only.pdf'), width = 5, height = 5)
-    ggsave(lplot2, file = paste0(plotdir, 'LOESS_', stat, 'vsMean_',gene,'_v1.6.6.pdf'), width = 5, height = 5)#'_mutAlleles',ma,'_log_v1.6.2only.pdf'), width = 5, height = 5)
+    ggsave(lplot1, file = paste0(plotdir6, 'LOESS_', stat, 'vsMean_',gene,'_v1.6.6.pdf'), width = 5, height = 5)#'_mutAlleles',ma,'_v1.6.2only.pdf'), width = 5, height = 5)
+    ggsave(lplot2, file = paste0(plotdir6, 'LOESS_', stat, 'vsMean_',gene,'_v1.6.6.pdf'), width = 5, height = 5)#'_mutAlleles',ma,'_log_v1.6.2only.pdf'), width = 5, height = 5)
     
     l1dat$version <- as.character(l1dat$version)
     l1dat$product <- as.character(l1dat$product)
@@ -266,4 +266,4 @@ for (stat in unistats[unistats != 'mean_product']) {
   
 }
 
-write.csv(loess_fitted_allstats_all, file = paste0(plotdir, 'loess_fitted_allstats_all_snwRadius100.csv'), quote = F, row.names = F)
+write.csv(loess_fitted_allstats_all, file = paste0(plotdir6, 'loess_fitted_allstats_all_snwRadius100.csv'), quote = F, row.names = F)
