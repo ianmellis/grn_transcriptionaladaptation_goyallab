@@ -131,6 +131,8 @@ for (paramset in paramsets6){
   }
   
 }
+write.csv(allstats6, file = paste0(plotdir6, 'summary_stats_perGenotype.csv'))
+
 
 all_species_q300 <- list()
 for (paramset in paramsets6){
@@ -177,7 +179,7 @@ compared_stats <- allstats6 %>%
          delta20 = `2`-`0`) %>%
   dplyr::select(-c(`0`:`2`)) %>% 
   pivot_longer(names_to = 'compare', values_to = 'diff', cols = lfc10:delta20) %>%
-  inner_join(allstats_full1 %>% 
+  inner_join(allstats6 %>% 
                dplyr::select(mutated_alleles, product, paramset, version, mean_product) %>%
                pivot_wider(names_from = mutated_alleles, values_from = mean_product), by = c('product', 'paramset', 'version')) %>%
   mutate(mean_denom = case_when(
@@ -202,7 +204,7 @@ for (stat in unistats[unistats != 'mean_product']) {
     
     # for (ma in 0:2) {
     
-    tempdat <- allstats_full1 %>% 
+    tempdat <- allstats6 %>% 
       filter(#mutated_alleles == ma,
         product == gene) %>%
       dplyr::select(mutated_alleles, product, version, paramset, mean_product, stat)
@@ -235,8 +237,8 @@ for (stat in unistats[unistats != 'mean_product']) {
       xlab('Log(Mean)') +
       ggtitle(paste0(stat, ' vs log(mean), with LOESS fit to mean\nGene product: ', gene))#, ', mutated alleles: ', as.character(ma)))
     
-    # ggsave(lplot1, file = paste0(plotdir, 'LOESS_', stat, 'vsMean_',gene,'_v1.6.2and5.pdf'), width = 5, height = 5)#'_mutAlleles',ma,'_v1.6.2only.pdf'), width = 5, height = 5)
-    # ggsave(lplot2, file = paste0(plotdir, 'LOESS_', stat, 'vsMean_',gene,'_v1.6.2and5.pdf'), width = 5, height = 5)#'_mutAlleles',ma,'_log_v1.6.2only.pdf'), width = 5, height = 5)
+    ggsave(lplot1, file = paste0(plotdir, 'LOESS_', stat, 'vsMean_',gene,'_v1.6.6.pdf'), width = 5, height = 5)#'_mutAlleles',ma,'_v1.6.2only.pdf'), width = 5, height = 5)
+    ggsave(lplot2, file = paste0(plotdir, 'LOESS_', stat, 'vsMean_',gene,'_v1.6.6.pdf'), width = 5, height = 5)#'_mutAlleles',ma,'_log_v1.6.2only.pdf'), width = 5, height = 5)
     
     l1dat$version <- as.character(l1dat$version)
     l1dat$product <- as.character(l1dat$product)
