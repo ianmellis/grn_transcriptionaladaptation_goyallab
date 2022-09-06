@@ -194,7 +194,7 @@ compared_stats <- allstats6 %>%
 unistats<-unique(compared_stats$stat)
 
 
-loess_fitted_allstats_all <- allstats6 
+loess_fitted_allstats_all6 <- allstats6 
 for (stat in unistats[unistats != 'mean_product']) {
   
   cat(paste0('working on ', stat, '\n'))
@@ -258,12 +258,126 @@ for (stat in unistats[unistats != 'mean_product']) {
     
   }
   
-  loess_fitted_allstats_all %<>% left_join(as_tibble(statdat) %>% dplyr::select(-mean_product), by = c('version', 'paramset', 'mutated_alleles', 'product'))
+  loess_fitted_allstats_all6 %<>% left_join(as_tibble(statdat) %>% dplyr::select(-mean_product), by = c('version', 'paramset', 'mutated_alleles', 'product'))
   
-  loess_fitted_allstats_all %<>% left_join(statdat1 %>% dplyr::select(-c('mean_product', paste0(stat,'_residual'), paste0(stat,'_fitted'))), by = c('version', 'paramset', 'mutated_alleles', 'product'))
+  loess_fitted_allstats_all6 %<>% left_join(statdat1 %>% dplyr::select(-c('mean_product', paste0(stat,'_residual'), paste0(stat,'_fitted'))), by = c('version', 'paramset', 'mutated_alleles', 'product'))
   
   cat(paste0('Done with ', stat, '\n'))
   
 }
 
-write.csv(loess_fitted_allstats_all, file = paste0(plotdir6, 'loess_fitted_allstats_all_snwRadius100.csv'), quote = F, row.names = F)
+write.csv(loess_fitted_allstats_all6, file = paste0(plotdir6, 'loess_fitted_allstats_all_snwRadius100.csv'), quote = F, row.names = F)
+
+
+
+for (stat in unistats[unistats != 'mean_product']) {
+  
+  cat(paste0('working on ', stat, '\n'))
+  # statdat <- list()
+  
+  for (gene in c('A1', 'Anonsense1', 'Aprime1', 'B1')) {
+    
+    
+    statdatA = loess_fitted_allstats_all6 %>%
+      dplyr::select(mutated_alleles, product, version, paramset, mean_product, stat, as.symbol(paste0(stat, '_residual')), as.symbol(paste0(stat, '_residual_swn'))) %>%
+      filter(product == gene, mean_product>10) 
+    
+    lplot_all_stat_con <- ggplot() +
+      geom_point(data = statdatA, aes(log(mean_product), eval(as.symbol(stat))), stroke=0, alpha = 0.05) +
+      geom_density2d(data = statdatA %>% filter(mutated_alleles == 0, mean_product>10), aes(log(mean_product),eval(as.symbol(stat))), color = 'blue') +
+      geom_density2d(data = statdatA %>% filter(mutated_alleles == 1, mean_product>10), aes(log(mean_product),eval(as.symbol(stat))), color = 'red') +
+      geom_density2d(data = statdatA %>% filter(mutated_alleles == 2, mean_product>10), aes(log(mean_product),eval(as.symbol(stat))), color = 'green') +
+      theme_classic()
+    
+    lplot_all_statLOESS_con <-  ggplot() +
+      geom_point(data = statdatA, aes(log(mean_product), eval(as.symbol(paste0(stat,'_residual')))), stroke=0, alpha = 0.05) +
+      geom_density2d(data = statdatA %>% filter(mutated_alleles == 0,mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual')))), color = 'blue') +
+      geom_density2d(data = statdatA %>% filter(mutated_alleles == 1,mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual')))), color = 'red') +
+      geom_density2d(data = statdatA %>% filter(mutated_alleles == 2,mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual')))), color = 'green') +
+      theme_classic()
+    
+    lplot_all_statLOESSSWN_con <-  ggplot() +
+      geom_point(data = statdatA, aes(log(mean_product), eval(as.symbol(paste0(stat,'_residual_swn')))), stroke=0, alpha = 0.05) +
+      geom_density2d(data = statdatA %>% filter(mutated_alleles == 0,mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual_swn')))), color = 'blue') +
+      geom_density2d(data = statdatA %>% filter(mutated_alleles == 1,mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual_swn')))), color = 'red') +
+      geom_density2d(data = statdatA %>% filter(mutated_alleles == 2,mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual_swn')))), color = 'green') +
+      theme_classic()
+    
+    pdf(paste0(paste0(plotdir6, 'LOESSplots_', stat, 'vsLogMean_', gene,'_v1.6.6.pdf')), width = 10, height = 7)
+    grid.arrange(lplot_all_stat_con,lplot_all_statLOESS_con,lplot_all_statLOESSSWN_con, ncol=3,
+                 top = textGrob(paste0(stat, ' vs. log(mean_product), ', gene, '\nStat, LOESS residual, Squeezed LOESS residual (radius=50)'),gp=gpar(fontsize=20,font=3)))
+    dev.off()
+    
+  }
+}
+
+anver <- 5 # increase minimum bimodality_residual filter and make left-skew filter more stringent
+bimfilt <- 0.1
+# high_bimodality <- loess_fitted_allstats_all %>% 
+#   filter(bimodality_coef_residual > bimfilt)
+# 
+# unimodal_symmetric <- loess_fitted_allstats_all %>% 
+#   filter(bimodality_coef_residual <= bimfilt, abs(skewness) < 1) # and not exponential (skewness limit?)
+# 
+# unimodal_exponential <- loess_fitted_allstats_all %>% 
+#   filter(bimodality_coef_residual <= bimfilt, skewness > 1, skewness < 3) #skewness limit?
+# 
+# unimodal_subexponential <- loess_fitted_allstats_all %>% 
+#   filter(bimodality_coef_residual <= bimfilt, skewness >= 3) #skewness limit higher? Techinically skewness of exp = 2
+
+entfilt <- 0.15
+# high_entropy <- loess_fitted_allstats_full %>% 
+#   filter(entropy_residual > entfilt)
+
+basic_class_assignment_all <- loess_fitted_allstats_all %>%
+  mutate(class_assignment = case_when(
+    mean_product < 10 ~ 'low-average',
+    bimodality_coef_residual > bimfilt & bimodality_coef > 0.555 ~ 'bimodal',
+    (bimodality_coef_residual <= bimfilt | bimodality_coef <= 0.555) & abs(skewness) < 1 ~ 'unimodal symmetric',
+    (bimodality_coef_residual <= bimfilt | bimodality_coef <= 0.555) & skewness >= 1 & skewness < 3 ~ 'exponential',
+    (bimodality_coef_residual <= bimfilt | bimodality_coef <= 0.555) & skewness >= 3 ~ 'subexponential',
+    (bimodality_coef_residual <= bimfilt | bimodality_coef <= 0.555) & skewness <= -1 ~ 'left-skewed unimodal'
+    
+  )) 
+
+basic_class_assignment_all_forSankey <- basic_class_assignment_all %>%
+  dplyr::select(version, paramset, product, mutated_alleles, class_assignment) %>%
+  group_by(version, paramset, product) %>%
+  pivot_wider(names_from = mutated_alleles, values_from = class_assignment) %>%
+  group_by(product, `0`, `1`, `2`) %>%
+  summarise(Freq = length(`0`)) %>%
+  ungroup() %>%
+  mutate(alluvID = 1:length(product)) %>%
+  pivot_longer(`0`:`2`, names_to = 'mutated_alleles', values_to = 'class_assignment')
+
+# sample paramsets from the sankey flow to visually inspect accuracy of assignments/changes
+set.seed(73245)
+basic_class_assignment_all_forSankey_forsamples <- basic_class_assignment_all %>%
+  dplyr::select(version, paramset, product, mutated_alleles, class_assignment)  
+
+classes = unique(basic_class_assignment_all$class_assignment)
+
+if(!dir.exists(paste0(plotdir, 'stats_class_assignment_check_v', as.character(anver)))) {
+  dir.create(paste0(plotdir, 'stats_class_assignment_check_v', as.character(anver)))
+}
+
+classes_sankey <- ggplot(basic_class_assignment_all_forSankey, aes(x = mutated_alleles, y=Freq,
+                                                                   stratum = class_assignment, alluvium = alluvID, fill = class_assignment, label = class_assignment)) +
+  facet_grid(product~.) +
+  geom_flow() +
+  geom_stratum(alpha = 0.5) +
+  geom_text(stat = 'stratum', size = 3) + 
+  theme(legend.position = 'none')
+ggsave(classes_sankey, file = paste0(plotdir, 'stats_class_assignment_check_v', as.character(anver),'/classes_sankey.pdf'))
+
+basic_class_assignment_all_forpie <- basic_class_assignment_all %>%
+  group_by(mutated_alleles, product, class_assignment) %>%
+  summarise(nSets = length(product))
+
+classes_pies <- ggplot(basic_class_assignment_all_forpie, aes(x="", y=nSets, fill=class_assignment)) +
+  geom_bar(stat='identity', width=1, color='white') +
+  coord_polar('y', start=0) +
+  facet_grid(product~mutated_alleles) +
+  theme_void() +
+  ggtitle('classes of all distributions in v1.6.6\nparameter sets with Hill n < 5\neach gene in each genotype')
+ggsave(classes_pies, file = paste0(plotdir6, 'stats_class_assignment_check_classv', as.character(anver),'/classes_pies.pdf'))
