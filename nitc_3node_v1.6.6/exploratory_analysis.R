@@ -329,7 +329,7 @@ entfilt <- 0.15
 # high_entropy <- loess_fitted_allstats_full %>% 
 #   filter(entropy_residual > entfilt)
 
-basic_class_assignment_all <- loess_fitted_allstats_all %>%
+basic_class_assignment_all6 <- loess_fitted_allstats_all6 %>%
   mutate(class_assignment = case_when(
     mean_product < 10 ~ 'low-average',
     bimodality_coef_residual > bimfilt & bimodality_coef > 0.555 ~ 'bimodal',
@@ -340,7 +340,7 @@ basic_class_assignment_all <- loess_fitted_allstats_all %>%
     
   )) 
 
-basic_class_assignment_all_forSankey <- basic_class_assignment_all %>%
+basic_class_assignment_all_forSankey6 <- basic_class_assignment_all6 %>%
   dplyr::select(version, paramset, product, mutated_alleles, class_assignment) %>%
   group_by(version, paramset, product) %>%
   pivot_wider(names_from = mutated_alleles, values_from = class_assignment) %>%
@@ -352,32 +352,32 @@ basic_class_assignment_all_forSankey <- basic_class_assignment_all %>%
 
 # sample paramsets from the sankey flow to visually inspect accuracy of assignments/changes
 set.seed(73245)
-basic_class_assignment_all_forSankey_forsamples <- basic_class_assignment_all %>%
+basic_class_assignment_all_forSankey_forsamples6 <- basic_class_assignment_all6 %>%
   dplyr::select(version, paramset, product, mutated_alleles, class_assignment)  
 
-classes = unique(basic_class_assignment_all$class_assignment)
+classes6 = unique(basic_class_assignment_all6$class_assignment)
 
-if(!dir.exists(paste0(plotdir, 'stats_class_assignment_check_v', as.character(anver)))) {
-  dir.create(paste0(plotdir, 'stats_class_assignment_check_v', as.character(anver)))
+if(!dir.exists(paste0(plotdir6, 'stats_class_assignment_check_classv', as.character(anver)))) {
+  dir.create(paste0(plotdir6, 'stats_class_assignment_check_classv', as.character(anver)))
 }
 
-classes_sankey <- ggplot(basic_class_assignment_all_forSankey, aes(x = mutated_alleles, y=Freq,
+classes_sankey6 <- ggplot(basic_class_assignment_all_forSankey6, aes(x = mutated_alleles, y=Freq,
                                                                    stratum = class_assignment, alluvium = alluvID, fill = class_assignment, label = class_assignment)) +
   facet_grid(product~.) +
   geom_flow() +
   geom_stratum(alpha = 0.5) +
   geom_text(stat = 'stratum', size = 3) + 
   theme(legend.position = 'none')
-ggsave(classes_sankey, file = paste0(plotdir, 'stats_class_assignment_check_v', as.character(anver),'/classes_sankey.pdf'))
+ggsave(classes_sankey6, file = paste0(plotdir6, 'stats_class_assignment_check_classv', as.character(anver),'/classes_sankey.pdf'))
 
-basic_class_assignment_all_forpie <- basic_class_assignment_all %>%
+basic_class_assignment_all_forpie6 <- basic_class_assignment_all6 %>%
   group_by(mutated_alleles, product, class_assignment) %>%
   summarise(nSets = length(product))
 
-classes_pies <- ggplot(basic_class_assignment_all_forpie, aes(x="", y=nSets, fill=class_assignment)) +
+classes_pies6 <- ggplot(basic_class_assignment_all_forpie6, aes(x="", y=nSets, fill=class_assignment)) +
   geom_bar(stat='identity', width=1, color='white') +
   coord_polar('y', start=0) +
   facet_grid(product~mutated_alleles) +
   theme_void() +
   ggtitle('classes of all distributions in v1.6.6\nparameter sets with Hill n < 5\neach gene in each genotype')
-ggsave(classes_pies, file = paste0(plotdir6, 'stats_class_assignment_check_classv', as.character(anver),'/classes_pies.pdf'))
+ggsave(classes_pies6, file = paste0(plotdir6, 'stats_class_assignment_check_classv', as.character(anver),'/classes_pies.pdf'))
