@@ -405,9 +405,21 @@ temp_class_for_tree <- classes_for_trees %>%
 
 temp_class_for_tree$is_bimodal <- as.factor(temp_class_for_tree$is_bimodal)
 
-temp.tree <- ctree(is_bimodal ~ basal_nitc_on_ratio + onbasalA1_off_ratio + A1_Aprime1_addon_ratio + A1_Aprime_prodon_ratio + r_prod_on, data = temp_class_for_tree)
+temp.tree <- ctree(is_bimodal ~ basal_nitc_on_ratio + onbasalA1_off_ratio + A1_Aprime1_addon_ratio + A1_Aprime_prodon_ratio + r_addon_byA1_B1 + r_onbasal_A1 + r_onbasal_Aprime_ratio, data = temp_class_for_tree)
 
-summary(temp.tree)
+
+# decision tree for B1 unimodal symm to unimodal symm vs unimodal symm to other
+
+
+temp_class_for_tree <- classes_for_trees %>%
+  filter(`0_B1` == 'unimodal symmetric') %>%
+  mutate(is_robust = ifelse(`0_B1` == `1_B1`, T, F)) %>%
+  dplyr::select(colnames(lhs_sets6), is_robust) %>% ungroup() %>%
+  dplyr::select(-paramset) 
+
+temp_class_for_tree$is_robust <- as.factor(temp_class_for_tree$is_robust)
+
+temp.tree <- ctree(is_robust ~ basal_nitc_on_ratio + onbasalA1_off_ratio + A1_Aprime1_addon_ratio + A1_Aprime_prodon_ratio , data = temp_class_for_tree)
 
 
 
