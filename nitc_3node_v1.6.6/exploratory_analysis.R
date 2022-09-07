@@ -389,4 +389,24 @@ ggsave(classes_pies6, file = paste0(plotdir6, 'stats_class_assignment_check_clas
 # then: don't separate by gene (at least jointly analyze A1 and B1), use parameters as features and vector of classIDs for A1 and B1 as labels
 # consider trees in base R https://www.datacamp.com/tutorial/decision-trees-R and tidymodels https://bcullen.rbind.io/post/2020-06-02-tidymodels-decision-tree-learning-in-r/
 
+# get data into format: each row is a paramset, with cols: sampled LHS (numeric) and classes (factor) of each gene in each genotype
+
+basic_class_assignment_all6_wide <- basic_class_assignment_all6 %>% 
+  dplyr::select(version, paramset, mutated_alleles, product, class_assignment) %>%
+  pivot_wider(names_from = c('mutated_alleles', 'product'), values_from = 'class_assignment')
+
+classes_for_trees <- inner_join(basic_class_assignment_all6_wide, lhs_sets6, by = 'paramset')
+
+temp_class_for_tree <- classes_for_trees %>%
+  dplyr::select(colnames(lhs_sets6), `1_B1`) %>% ungroup() %>%
+  dplyr::select(-paramset)
+
+temp_class_for_tree$`1_B1` <- as.factor(temp_class_for_tree$`1_B1`)
+
+temp.tree <- ctree(`1_B1` ~ ., data = temp_class_for_tree)
+
+summary(temp.tree)
+
+
+
 
