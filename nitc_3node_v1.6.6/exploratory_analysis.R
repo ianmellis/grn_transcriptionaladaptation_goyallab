@@ -399,11 +399,13 @@ classes_for_trees <- inner_join(basic_class_assignment_all6_wide, lhs_sets6, by 
 
 temp_class_for_tree <- classes_for_trees %>%
   dplyr::select(colnames(lhs_sets6), `1_B1`) %>% ungroup() %>%
-  dplyr::select(-paramset)
+  dplyr::select(-paramset) %>%
+  mutate(is_bimodal = ifelse(`1_B1` == 'bimodal', T, F)) %>%
+  dplyr::select(-`1_B1`)
 
-temp_class_for_tree$`1_B1` <- as.factor(temp_class_for_tree$`1_B1`)
+temp_class_for_tree$is_bimodal <- as.factor(temp_class_for_tree$is_bimodal)
 
-temp.tree <- ctree(`1_B1` ~ ., data = temp_class_for_tree)
+temp.tree <- ctree(is_bimodal ~ basal_nitc_on_ratio + onbasalA1_off_ratio + A1_Aprime1_addon_ratio + A1_Aprime_prodon_ratio + r_prod_on, data = temp_class_for_tree)
 
 summary(temp.tree)
 
