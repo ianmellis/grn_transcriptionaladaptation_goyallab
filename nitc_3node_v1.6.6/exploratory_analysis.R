@@ -419,7 +419,7 @@ temp_class_for_tree <- classes_for_trees %>%
 
 temp_class_for_tree$is_robust <- as.factor(temp_class_for_tree$is_robust)
 
-temp.tree <- ctree(is_robust ~ basal_nitc_on_ratio + onbasalA1_off_ratio + A1_Aprime1_addon_ratio + A1_Aprime_prodon_ratio , data = temp_class_for_tree)
+temp.tree <- ctree(is_robust ~ basal_nitc_on_ratio + onbasalA1_off_ratio + A1_Aprime1_addon_ratio + A1_Aprime_prodon_ratio + r_addon_byA1_B1 , data = temp_class_for_tree)
 
 
 
