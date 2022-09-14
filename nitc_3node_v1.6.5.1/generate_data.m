@@ -557,7 +557,7 @@ tic
 
 s_store = cell(200,1);
 
-parfor i = 4:103
+parfor i = 4:100
     
     % Set seed
     %
@@ -768,7 +768,7 @@ parfor i = 4:103
     s_store{i} = savespecies;
 end
 
-for i = 4:103
+for i = 4:100
     % rate ratios
     % r_onbasal_A1/r_nitc = relative on-rates of wt A1 and NITC-regulated
     % alleles
