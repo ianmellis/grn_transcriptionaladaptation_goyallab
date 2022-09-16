@@ -50,12 +50,19 @@ void zigset(unsigned long jsrseed);
 //INCLUDE NUMRXNS HERE
 #define NUMRXNS 28
 
-#define max(a,b)             \
-({                           \
-    __typeof__ (a) _a = (a); \
-    __typeof__ (b) _b = (b); \
-    _a > _b ? _a : _b;       \
-})
+/* function returning the max between two numbers from https://www.tutorialspoint.com/cprogramming/c_functions.htm */
+int max(int num1, int num2) {
+
+   /* local variable declaration */
+   int result;
+ 
+   if (num1 > num2)
+      result = num1;
+   else
+      result = num2;
+ 
+   return result; 
+}
 
 //void gillespie(long m, double *times_out,double *species_out,double currT,double *species,double *rates,double *propensities,double *rand1,double *rand2)
 

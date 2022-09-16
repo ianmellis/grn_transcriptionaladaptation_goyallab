@@ -5,9 +5,9 @@
 % Switch to inhibitory interaction ({A1,Aprime1} inhibits B1)
 
 % EDIT THESE OUTPUT DIRECTORIES AS NEEDED
-trace_outdir = '/Volumes/IAMYG1/grn_nitc_data/v1.6.6/fullTraces/';
-psc_outdir = '/Volumes/IAMYG1/grn_nitc_data/v1.6.6/samples/';
-psc_refdir = '~/code/grn_nitc/nitc_3node_v1.6.6/refs/';
+trace_outdir = '/Volumes/IAMYG1/grn_nitc_data/v1.6.7/fullTraces/';
+psc_outdir = '/Volumes/IAMYG1/grn_nitc_data/v1.6.7/samples/';
+psc_refdir = '~/code/grn_nitc/nitc_3node_v1.6.7/refs/';
 
 if ~exist(trace_outdir, 'dir')
     mkdir(trace_outdir)
