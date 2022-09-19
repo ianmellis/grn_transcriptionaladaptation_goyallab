@@ -16,32 +16,26 @@ source('~/code/grn_nitc/Functions/grn_analysis_utilities.R')
 
 
 # edit as needed
-datadir7 <- '/Volumes/IAMYG1/grn_nitc_data/v1.6.7/samples/'
-plotdir7 <- '/Volumes/IAMYG1/grn_nitc_data/v1.6.7/exploratory_analysis/'
-setwd(datadir7)
+datadir6 <- '/Volumes/IAMYG1/grn_nitc_data/v1.6.6/samples/'
+plotdir6 <- '/Volumes/IAMYG1/grn_nitc_data/v1.6.6/exploratory_analysis/'
+setwd(datadir6)
 
-if(!dir.exists(plotdir7)){
-  dir.create(plotdir7)
+if(!dir.exists(plotdir6)){
+  dir.create(plotdir6)
 }
-paramsets7 <- 1:9900
-lhs_sets7 <- as_tibble(read.csv('latinhyp_sampledSets.csv')) 
-lhs_sets7 %<>%
-  mutate(paramset = 1:nrow(lhs_sets7))
+paramsets6 <- 1:9900
+lhs_sets6 <- as_tibble(read.csv('latinhyp_sampledSets.csv')) 
+lhs_sets6 %<>%
+  mutate(paramset = 1:nrow(lhs_sets6))
 
-lhs_sets7_Hn5<- lhs_sets7 %>% filter(Hill_coefficient_n < 5)
+lhs_sets6_Hn5<- lhs_sets6 %>% filter(Hill_coefficient_n < 5)
 
-pset = 1
-species<-as_tibble(read.csv(paste0('../fullTraces/initialsim_species',as.character(pset),'.csv'), header = T)) %>%
-  mutate(time = 1:300000)
-
-traceplot0n <- plot_traces_ver_nonons(species, 7500, 8000, 'WT/WT')
-traceplot1n <- plot_traces_ver_nonons(species, 107500, 108000, 'WT/MUT')
-traceplot2n <- plot_traces_ver_nonons(species, 207500, 208000, 'MUT/MUT')
+# paramsets6 <- lhs_sets6_Hn5$paramset
 
 # calculate stats
-allstats7 <- list()
-allparams7 <- list()
-for (paramset in paramsets7){
+allstats6 <- list()
+allparams6 <- list()
+for (paramset in paramsets6){
   
   # cat(paste0('Working on ', as.character(paramset), '\n'))
   
@@ -67,7 +61,7 @@ for (paramset in paramsets7){
       facet_grid(mutated_alleles~product) +
       ggtitle(paste0('Parameter set ', as.character(paramset))) +
       theme_classic()
-    ggsave(dist_plot, file = paste0(plotdir7, 'distributions_q300_v1.6.7_paramset_', as.character(paramset), '.pdf'))
+    ggsave(dist_plot, file = paste0(plotdir6, 'distributions_q300_v1.6.6_paramset_', as.character(paramset), '.pdf'))
   }
   
   spstats <- species_sample %>%
@@ -141,7 +135,7 @@ write.csv(allstats6, file = paste0(plotdir6, 'summary_stats_perGenotype.csv'))
 
 
 all_species_q300 <- list()
-for (paramset in paramsets7){
+for (paramset in paramsets6){
   
   if(paramset %% 100 == 0){cat(paste0('Working on ', as.character(paramset), '\n'))}
   
@@ -149,7 +143,7 @@ for (paramset in paramsets7){
   
   species_sample <- species %>%
     mutate(paramset = paramset,
-           version = '1.6.7') %>%
+           version = '1.6.6') %>%
     filter((time > 400 & time < 100001) | (time > 100400 & time < 200001) | (time > 200400 & time < 300001)) %>%
     mutate(mutated_alleles = case_when(
       time < 100001 ~ 0,
@@ -166,14 +160,14 @@ for (paramset in paramsets7){
   }
   
 }
-write.csv(all_species_q300, file = paste0('/Volumes/IAMYG1/grn_nitc_data/v1.6.7/all_species_q300.csv'))
+write.csv(all_species_q300, file = paste0('/Volumes/IAMYG1/grn_nitc_data/v1.6.6/all_species_q300.csv'))
 
 pseud = 0.01
 
 allstats6 %<>% mutate(skewness = ifelse(is.na(skewness), 0, skewness),
-                      version = 'v1.6.7')
+                      version = 'v1.6.6')
 
-compared_stats <- allstats7 %>% 
+compared_stats <- allstats6 %>% 
   group_by(version, paramset, product, mutated_alleles) %>% 
   pivot_longer(names_to = 'stat', values_to = 'value', cols = mean_product:entropy90) %>% 
   pivot_wider(names_from = mutated_alleles, values_from = value) %>% 
@@ -200,7 +194,7 @@ compared_stats <- allstats7 %>%
 unistats<-unique(compared_stats$stat)
 
 
-loess_fitted_allstats_all7 <- allstats7
+loess_fitted_allstats_all6 <- allstats6 
 for (stat in unistats[unistats != 'mean_product']) {
   
   cat(paste0('working on ', stat, '\n'))
@@ -243,8 +237,8 @@ for (stat in unistats[unistats != 'mean_product']) {
       xlab('Log(Mean)') +
       ggtitle(paste0(stat, ' vs log(mean), with LOESS fit to mean\nGene product: ', gene))#, ', mutated alleles: ', as.character(ma)))
     
-    ggsave(lplot1, file = paste0(plotdir6, 'LOESS_', stat, 'vsMean_',gene,'_v1.6.7.pdf'), width = 5, height = 5)#'_mutAlleles',ma,'_v1.6.2only.pdf'), width = 5, height = 5)
-    ggsave(lplot2, file = paste0(plotdir6, 'LOESS_', stat, 'vsMean_',gene,'_v1.6.7.pdf'), width = 5, height = 5)#'_mutAlleles',ma,'_log_v1.6.2only.pdf'), width = 5, height = 5)
+    ggsave(lplot1, file = paste0(plotdir6, 'LOESS_', stat, 'vsMean_',gene,'_v1.6.6.pdf'), width = 5, height = 5)#'_mutAlleles',ma,'_v1.6.2only.pdf'), width = 5, height = 5)
+    ggsave(lplot2, file = paste0(plotdir6, 'LOESS_', stat, 'vsMean_',gene,'_v1.6.6.pdf'), width = 5, height = 5)#'_mutAlleles',ma,'_log_v1.6.2only.pdf'), width = 5, height = 5)
     
     l1dat$version <- as.character(l1dat$version)
     l1dat$product <- as.character(l1dat$product)
@@ -264,15 +258,15 @@ for (stat in unistats[unistats != 'mean_product']) {
     
   }
   
-  loess_fitted_allstats_all7 %<>% left_join(as_tibble(statdat) %>% dplyr::select(-mean_product), by = c('version', 'paramset', 'mutated_alleles', 'product'))
+  loess_fitted_allstats_all6 %<>% left_join(as_tibble(statdat) %>% dplyr::select(-mean_product), by = c('version', 'paramset', 'mutated_alleles', 'product'))
   
-  loess_fitted_allstats_all7 %<>% left_join(statdat1 %>% dplyr::select(-c('mean_product', paste0(stat,'_residual'), paste0(stat,'_fitted'))), by = c('version', 'paramset', 'mutated_alleles', 'product'))
+  loess_fitted_allstats_all6 %<>% left_join(statdat1 %>% dplyr::select(-c('mean_product', paste0(stat,'_residual'), paste0(stat,'_fitted'))), by = c('version', 'paramset', 'mutated_alleles', 'product'))
   
   cat(paste0('Done with ', stat, '\n'))
   
 }
 
-write.csv(loess_fitted_allstats_all7, file = paste0(plotdir7, 'loess_fitted_allstats_all_snwRadius100.csv'), quote = F, row.names = F)
+write.csv(loess_fitted_allstats_all6, file = paste0(plotdir6, 'loess_fitted_allstats_all_snwRadius100.csv'), quote = F, row.names = F)
 
 
 
@@ -309,7 +303,7 @@ for (stat in unistats[unistats != 'mean_product']) {
       geom_density2d(data = statdatA %>% filter(mutated_alleles == 2,mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual_swn')))), color = 'green') +
       theme_classic()
     
-    pdf(paste0(paste0(plotdir7, 'LOESSplots_', stat, 'vsLogMean_', gene,'_v1.6.7.pdf')), width = 10, height = 7)
+    pdf(paste0(paste0(plotdir6, 'LOESSplots_', stat, 'vsLogMean_', gene,'_v1.6.6.pdf')), width = 10, height = 7)
     grid.arrange(lplot_all_stat_con,lplot_all_statLOESS_con,lplot_all_statLOESSSWN_con, ncol=3,
                  top = textGrob(paste0(stat, ' vs. log(mean_product), ', gene, '\nStat, LOESS residual, Squeezed LOESS residual (radius=50)'),gp=gpar(fontsize=20,font=3)))
     dev.off()
@@ -368,7 +362,7 @@ if(!dir.exists(paste0(plotdir6, 'stats_class_assignment_check_classv', as.charac
 }
 
 classes_sankey6 <- ggplot(basic_class_assignment_all_forSankey6, aes(x = mutated_alleles, y=Freq,
-                                                                     stratum = class_assignment, alluvium = alluvID, fill = class_assignment, label = class_assignment)) +
+                                                                   stratum = class_assignment, alluvium = alluvID, fill = class_assignment, label = class_assignment)) +
   facet_grid(product~.) +
   geom_flow() +
   geom_stratum(alpha = 0.5) +
@@ -425,7 +419,7 @@ temp_class_for_tree <- classes_for_trees %>%
 
 temp_class_for_tree$is_robust <- as.factor(temp_class_for_tree$is_robust)
 
-temp.tree <- ctree(is_robust ~ basal_nitc_on_ratio + onbasalA1_off_ratio + A1_Aprime1_addon_ratio + A1_Aprime_prodon_ratio + r_addon_byA1_B1 , data = temp_class_for_tree)
+temp.tree <- ctree(is_robust ~ basal_nitc_on_ratio + onbasalA1_off_ratio + A1_Aprime1_addon_ratio + A1_Aprime_prodon_ratio , data = temp_class_for_tree)
 
 
 
