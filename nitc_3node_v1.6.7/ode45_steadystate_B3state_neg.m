@@ -14,55 +14,52 @@ outdir = '~/code/grn_nitc/nitc_3node_v1.6.7_B3state_neg/';
 % single-cell RNA-seq data. They inferred r_on, r_off, and r_prod relative
 % to r_deg for individual alleles. 
 % 
-% Fixed parameter values: r_deg = 1, x= 0.5. 
+% Fixed parameter values: r_deg = 1, x= 0.5. Can do sweep over x later.
 % 
 % search over: basal_nitc_on_ratio, onbasalA1_off_ratio,
 % A1_Aprime1_addon_ratio, A1_Aprime_prodon_ratio,
 % r_prod_on, r_addon_byA1_B1, n (Hill coefficient n), r_onbasal_A1
-rng(8734);
+%
+% Ratio definitions:
+% - basal_nitc_on_ratio = r_onbasal_A1/r_nitc = relative on-rates of wt A1 and NITC-regulated
+% - onbasalA1_off_ratio = r_onbasal_A1/r_off = on-off ratio, for speed of burst-off
+% - A1_Aprime1_addon_ratio = r_addon_byA1_B1/r_addon_byAprime1_B1 = scalar
+% multiple strength decrease of Aprime1 relative to A1 in causing B1-on
+% - A1_Aprime_prodon_ratio = d_Aprime_B1 = scalar multiple descrease in
+% production rate of B1 burst when turned on by para instead of orig
+%  - r_onbasal_Aprime_ratio = r_onbasal_A1/r_onbasal_Aprime1 = scalar
+%
+rng(8363);
 
-nruns = 100;
+nruns = 10000;
+
+fseeds = 358238:4:3409332;
+simseeds = fseeds(1:nruns);
 
 min_range = [repmat(0.1,1,1),...        %basal_nitc_on_ratio (0.1,10) - is 10 high enough?
-    repmat(0.01,1,1),...                %onbasalA1_off_ratio (0.01,1) - per Larsson this is the bulk of the distribution (very quick off-burst)
+    repmat(0.01,1,1),...                %onbasalA1_off_ratio (0.01,2) - per Larsson this is the bulk of the distribution (very quick off-burst)
     repmat(0.1,1,1),...                 %A1_Aprime1_addon_ratio (0.1,10)
     repmat(0.1,1,1),...                 %A1_Aprime_prodon_ratio (0.1,10)
     repmat(1,1,1),...                   %r_prod_on (1,1000)
     repmat(0.1,1,1),...                 %r_addon_byA1_B1 (0.1,10)
-    repmat(0.1,1,1),...                 %n (Hill coefficient n) (0.1,10) too large a range?
-    repmat(0.1,1,1)];                   %r_onbasal_A1 (0.1, 10)
+    repmat(0.1,1,1),...                 %n (Hill coefficient n) (0.1,5) too large a range? I think so, but having some non-linearity is good. Perhaps ok with 10000 paramsets.
+    repmat(0.1,1,1),...                 %r_onbasal_A1 (0.1, 10)
+    repmat(1,1,1)];                     %r_onbasal_Aprime_ratio (1, 100)
 %                                       
 
 max_range = [repmat(10,1,1),...         %basal_nitc_on_ratio (0.1,10) - is 10 high enough?
-    repmat(1,1,1),...                   %onbasalA1_off_ratio (0.01,1) - per Larsson this is the bulk of the distribution (very quick off-burst)
+    repmat(2,1,1),...                   %onbasalA1_off_ratio (0.01,2) - per Larsson this is the bulk of the distribution (very quick off-burst)
     repmat(10,1,1),...                  %A1_Aprime1_addon_ratio (0.1,10)
     repmat(10,1,1),...                  %A1_Aprime_prodon_ratio (0.1,10)
     repmat(1000,1,1),...                %r_prod_on (1,1000)
     repmat(10,1,1),...                  %r_addon_byA1_B1 (0.1,10)
-    repmat(10,1,1),...                  %n (Hill coefficient n) (0.1,10) too large a range?
-    repmat(10,1,1)];                    %r_onbasal_A1 (0.1, 10)
+    repmat(5,1,1),...                   %n (Hill coefficient n) (0.1,5) too large a range?
+    repmat(10,1,1),...                  %r_onbasal_A1 (0.1, 10)
+    repmat(100,1,1)];                   %r_onbasal_Aprime_ratio (1, 100)
 
 latinhyp = lhsdesign_modified(nruns, min_range, max_range);
 
-% %%
-% latinhyp_prod = repmat(latinhyp(:,1),1,n_species);
-% latinhyp_deg = repmat(latinhyp(:,2),1,n_species);
-% latinhyp_onbasal = repmat(latinhyp(:,3),1,n_species_upstr);
-% latinhyp_n = repmat(latinhyp(:,4),1,n_species);
-% latinhyp_ondep = repmat(latinhyp(:,5),1,n_species_downstr);
-% latinhyp_off = repmat(latinhyp(:,6),1,n_species);
-% latinhyp_proddiff = repmat(latinhyp(:,7),1,n_species);
-% 
-% %     new parameters
-% latinhyp_onbasal_multiple_aprime = repmat(latinhyp(:,8),1,n_species_paralog); % change this to only apply to paralogs
-% latinhyp_onbasal_multiple_b = repmat(latinhyp(:,9),1,n_species_downstr);
-% latinhyp_ondep_multiple_prime = repmat(latinhyp(:,10),1,n_species_downstr);
-% latinhyp_nitc = repmat(latinhyp(:,11),1,n_species_paralog);
-% 
-% x = 0.5;
-% 
-% %% wrap for multiple paramsets
-% 
+%%
 % % rate ratios
 % % r_onbasal_A1/r_nitc = relative on-rates of wt A1 and NITC-regulated
 % % alleles
@@ -83,7 +80,8 @@ latinhyp = lhsdesign_modified(nruns, min_range, max_range);
 % % r_bind_byA1_B1/r_unbind_byA1_B1 = relative bind-unbind rates. Assume same
 % % unbind rate for Aprime regardless of Aprime bind rate
 % bindbyA1_unbindbyA1_ratios = [100, 100, 100, 100, 10];
-lhs_1_f = [outdir, 'latinhyp_sampledSets.csv'];
+lhs_1_f = [psc_outdir, 'latinhyp_sampledSets.csv'];
+lhs_1_f2 = [trace_outdir, 'latinhyp_sampledSets.csv'];
 
 lhs_1_s = array2table(latinhyp);
 lhs_1_s.Properties.VariableNames = {'basal_nitc_on_ratio',... 
@@ -93,9 +91,8 @@ lhs_1_s.Properties.VariableNames = {'basal_nitc_on_ratio',...
     'r_prod_on',...
     'r_addon_byA1_B1',...
     'Hill_coefficient_n',...
-    'r_onbasal_A1'};
-
-
+    'r_onbasal_A1',...
+    'r_onbasal_Aprime_ratio'};
 %% het for all 100 paramsets
 ssSP_ww = zeros(100,5);
 ssSP_wm = zeros(100,5);
@@ -104,7 +101,7 @@ for i = 1:100
     
     % Set seed
     %
-    rng(8574);
+    rng(8363);
     
     % rate ratios
     % r_onbasal_A1/r_nitc = relative on-rates of wt A1 and NITC-regulated
@@ -130,7 +127,8 @@ for i = 1:100
     r_prod_on = latinhyp(i, 5);
     r_deg = 1;
     r_onbasal_A1 = latinhyp(i, 8);
-    r_onbasal_other = 0;
+    r_onbasal_Aprime = r_onbasal_A1/latinhyp(i, 9);
+    r_onbasal_other = r_onbasal_A1; % basal B1 expression same as A1
     r_nitc_byAnonsense1_A1 = r_onbasal_A1/basal_nitc_on_ratio;
     r_nitc_byAnonsense1_Anonsense1 = r_nitc_byAnonsense1_A1;
     r_nitc_byAnonsense1_Aprime1 = r_nitc_byAnonsense1_A1;
@@ -159,14 +157,14 @@ for i = 1:100
     r_deg_B1 = r_deg;
     r_onbasal_A1 = r_onbasal_A1;
     r_onbasal_Anonsense1 = r_onbasal_A1;
-    r_onbasal_Aprime1 = r_onbasal_other;
+    r_onbasal_Aprime1 = r_onbasal_Aprime;
     r_onbasal_B1 = r_onbasal_other;
     
     r_nitc_byAnonsense1_A1 = r_nitc_byAnonsense1_A1;
     r_nitc_byAnonsense1_Anonsense1 = r_nitc_byAnonsense1_Anonsense1;
     r_nitc_byAnonsense1_Aprime1 = r_nitc_byAnonsense1_Aprime1;
-    r_addon_byA1_B1 = r_addon_byA1_B1;
-    r_addon_byAprime1_B1 = r_addon_byAprime1_B1/A1_Aprime1_addon_ratio;
+    r_addon_byA1_B1 = (-1)*r_addon_byA1_B1;
+    r_addon_byAprime1_B1 = (-1)*r_addon_byAprime1_B1;
     
     r_off_A1 = r_off;
     r_off_Anonsense1 = r_off;
@@ -186,7 +184,7 @@ for i = 1:100
     
     ra_1 = [r_prodbasal_A1,...
         r_prodbasal_Anonsense1,...
-        r_prodbasal_Aprime1,...2
+        r_prodbasal_Aprime1,...
         r_prodbasal_B1,...
         r_prodon_A1,...
         r_prodon_Anonsense1,...
@@ -224,7 +222,7 @@ for i = 1:100
     ra_1_s = array2table(ra_1);
     ra_1_s.Properties.VariableNames = {'r_prodbasal_A1',...
         'r_prodbasal_Anonsense1',...
-        'r_prodbasal_Aprime1',...2
+        'r_prodbasal_Aprime1',...
         'r_prodbasal_B1',...
         'r_prodon_A1',...
         'r_prodon_Anonsense1',...
@@ -263,7 +261,7 @@ for i = 1:100
         0;1;0;1;0;...
         0;0;1;0;0;1;0];
     
-    [t,y] = ode45(@(t,y) odefun_wtwt_B3state(t,y,ra_1), ts, ic_wtwt); 
+    [t,y] = ode45(@(t,y) odefun_wtwt_B3state_neg(t,y,ra_1), ts, ic_wtwt); 
     
     ss_A1 = real(y(size(y,1),5));
     ss_Anons1 = real(y(size(y,1),6));
@@ -274,7 +272,7 @@ for i = 1:100
     
     ic_wtmut = ic_wtwt;
     
-    [t,y] = ode45(@(t,y) odefun_wtmut_B3state(t,y,ra_1), ts, ic_wtmut);
+    [t,y] = ode45(@(t,y) odefun_wtmut_B3state_neg(t,y,ra_1), ts, ic_wtmut);
     
     ss_A1 = real(y(size(y,1),5));
     ss_Anons1 = real(y(size(y,1),6));
@@ -285,7 +283,7 @@ for i = 1:100
     
     ic_mutmut = ic_wtwt;
     
-    [t,y] = ode45(@(t,y) odefun_mutmut_B3state(t,y,ra_1), ts, ic_mutmut);
+    [t,y] = ode45(@(t,y) odefun_mutmut_B3state_neg(t,y,ra_1), ts, ic_mutmut);
     
     ss_A1 = real(y(size(y,1),5));
     ss_Anons1 = real(y(size(y,1),6));
@@ -299,15 +297,15 @@ for i = 1:100
 end
 
 %%
-ss_file = [outdir, 'steady_state_ODE45_wtwt_B3state.csv'];
+ss_file = [outdir, 'steady_state_ODE45_wtwt_B3state_neg.csv'];
 ss_table = array2table(ssSP_ww, 'VariableNames', {'paramset', 'ss_A1','ss_Anons1','ss_Aprim1','ss_B1'});
 writetable(ss_table, ss_file, 'Delimiter', ',')
 
-ss_file = [outdir, 'steady_state_ODE45_wtmut_B3state.csv'];
+ss_file = [outdir, 'steady_state_ODE45_wtmut_B3state_neg.csv'];
 ss_table = array2table(ssSP_wm, 'VariableNames', {'paramset', 'ss_A1','ss_Anons1','ss_Aprim1','ss_B1'});
 writetable(ss_table, ss_file, 'Delimiter', ',')
 
-ss_file = [outdir, 'steady_state_ODE45_mutmut_B3state.csv'];
+ss_file = [outdir, 'steady_state_ODE45_mutmut_B3state_neg.csv'];
 ss_table = array2table(ssSP_mm, 'VariableNames', {'paramset', 'ss_A1','ss_Anons1','ss_Aprim1','ss_B1'});
 writetable(ss_table, ss_file, 'Delimiter', ',')
 
