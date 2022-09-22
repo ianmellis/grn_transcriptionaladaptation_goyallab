@@ -309,7 +309,7 @@ ss_file = [outdir, 'steady_state_ODE45_mutmut_B3state_neg.csv'];
 ss_table = array2table(ssSP_mm, 'VariableNames', {'paramset', 'ss_A1','ss_Anons1','ss_Aprim1','ss_B1'});
 writetable(ss_table, ss_file, 'Delimiter', ',')
 
-%% het for all 100 paramsets - consecutive starting conditions
+%% het for all 100 paramsets - consecutive starting conditions - don't run
 ssSP_ww = zeros(100,5);
 ssSP_wm = zeros(100,5);
 ssSP_mm = zeros(100,5);
