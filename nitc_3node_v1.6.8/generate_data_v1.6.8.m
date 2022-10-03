@@ -316,7 +316,7 @@ parfor i = 1:3
     %
     
 %     [times,savespecies] = gillespie_burstshistomex_B3state(0,sp_1,ra_1,pr_1,sum(clock*100),maxgillespie,maxgillespie);
-    [times,savespecies] = gillespie_burstshistomex_B3state_neg(0,sp_1,ra_1,pr_1,simseeds(i),maxgillespie,maxgillespie);
+    [times,savespecies] = gillespie_burstshistomex_B3state_negOffRate(0,sp_1,ra_1,pr_1,simseeds(i),maxgillespie,maxgillespie);
     
     s_store{i} = savespecies;
 end
