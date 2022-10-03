@@ -619,8 +619,8 @@ parfor i = 4:103
     r_nitc_byAnonsense1_A1 = r_nitc_byAnonsense1_A1;
     r_nitc_byAnonsense1_Anonsense1 = r_nitc_byAnonsense1_Anonsense1;
     r_nitc_byAnonsense1_Aprime1 = r_nitc_byAnonsense1_Aprime1;
-    r_addon_byA1_B1 = (-1)*r_addon_byA1_B1;
-    r_addon_byAprime1_B1 = (-1)*r_addon_byAprime1_B1;
+    r_addon_byA1_B1 = r_addon_byA1_B1;
+    r_addon_byAprime1_B1 = r_addon_byAprime1_B1;
     
     r_off_A1 = r_off;
     r_off_Anonsense1 = r_off;
@@ -760,7 +760,7 @@ parfor i = 4:103
     
     %
 %     [times,savespecies] = gillespie_burstshistomex_B3state(0,sp_1,ra_1,pr_1,sum(clock*100),maxgillespie,maxgillespie);
-    [times,savespecies] = gillespie_burstshistomex_B3state_neg(0,sp_1,ra_1,pr_1,simseeds(i),maxgillespie,maxgillespie);    
+    [times,savespecies] = gillespie_burstshistomex_B3state_negOffRate(0,sp_1,ra_1,pr_1,simseeds(i),maxgillespie,maxgillespie);    
     
     s_store{i} = savespecies;
 end
@@ -826,8 +826,8 @@ for i = 4:103
     r_nitc_byAnonsense1_A1 = r_nitc_byAnonsense1_A1;
     r_nitc_byAnonsense1_Anonsense1 = r_nitc_byAnonsense1_Anonsense1;
     r_nitc_byAnonsense1_Aprime1 = r_nitc_byAnonsense1_Aprime1;
-    r_addon_byA1_B1 = (-1)*r_addon_byA1_B1;
-    r_addon_byAprime1_B1 = (-1)*r_addon_byAprime1_B1;
+    r_addon_byA1_B1 = r_addon_byA1_B1;
+    r_addon_byAprime1_B1 = r_addon_byAprime1_B1;
     
     r_off_A1 = r_off;
     r_off_Anonsense1 = r_off;
@@ -1058,8 +1058,8 @@ for ind = 1:(length(bounds)-1)
         r_nitc_byAnonsense1_A1 = r_nitc_byAnonsense1_A1;
         r_nitc_byAnonsense1_Anonsense1 = r_nitc_byAnonsense1_Anonsense1;
         r_nitc_byAnonsense1_Aprime1 = r_nitc_byAnonsense1_Aprime1;
-        r_addon_byA1_B1 = (-1)*r_addon_byA1_B1;
-        r_addon_byAprime1_B1 = (-1)*r_addon_byAprime1_B1;
+        r_addon_byA1_B1 = r_addon_byA1_B1;
+        r_addon_byAprime1_B1 = r_addon_byAprime1_B1;
         
         r_off_A1 = r_off;
         r_off_Anonsense1 = r_off;
@@ -1199,7 +1199,7 @@ for ind = 1:(length(bounds)-1)
         
         %
         %     [times,savespecies] = gillespie_burstshistomex_B3state(0,sp_1,ra_1,pr_1,sum(clock*100),maxgillespie,maxgillespie);
-        [times,savespecies] = gillespie_burstshistomex_B3state_neg(0,sp_1,ra_1,pr_1,simseeds(i),maxgillespie,maxgillespie);
+        [times,savespecies] = gillespie_burstshistomex_B3state_negOffRate(0,sp_1,ra_1,pr_1,simseeds(i),maxgillespie,maxgillespie);
         
         s_store{j} = savespecies;
     end
@@ -1268,8 +1268,8 @@ for ind = 1:(length(bounds)-1)
         r_nitc_byAnonsense1_A1 = r_nitc_byAnonsense1_A1;
         r_nitc_byAnonsense1_Anonsense1 = r_nitc_byAnonsense1_Anonsense1;
         r_nitc_byAnonsense1_Aprime1 = r_nitc_byAnonsense1_Aprime1;
-        r_addon_byA1_B1 = (-1)*r_addon_byA1_B1;
-        r_addon_byAprime1_B1 = (-1)*r_addon_byAprime1_B1;
+        r_addon_byA1_B1 = r_addon_byA1_B1;
+        r_addon_byAprime1_B1 = r_addon_byAprime1_B1;
         
         r_off_A1 = r_off;
         r_off_Anonsense1 = r_off;
