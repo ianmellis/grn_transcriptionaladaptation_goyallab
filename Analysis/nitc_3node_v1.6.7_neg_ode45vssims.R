@@ -105,7 +105,8 @@ ssAp_plot <- ggplot(inner_join(allstats %>%
   theme_bw() +
   ggtitle('Steady-state approximation of A1 vs simulation\nWT/WT genotype, 100 parameter sets') +
   xlab('Simulated pseduo-single-cell mean Aprime1') +
-  ylab('ODE45 steady-state Aprime1') 
+  ylab('ODE45 steady-state Aprime1') +
+  ylim(c(0,250))
 
 ssB_plot <- ggplot(inner_join(allstats %>% 
                                 filter(mutated_alleles == 0) %>% 
@@ -117,7 +118,8 @@ ssB_plot <- ggplot(inner_join(allstats %>%
   theme_bw() +
   ggtitle('Steady-state approximation of B1 vs simulation\nWT/WT genotype, 100 parameter sets') +
   xlab('Simulated pseduo-single-cell mean B1') +
-  ylab('ODE45 steady-state B1')
+  ylab('ODE45 steady-state B1')+
+  ylim(c(0,500))
 
 pdf(paste0(plotdir, 'steadystate_wtwt_AB.pdf'), width = 10, height = 5)
 ss_wt<-grid.arrange(ssA_plot, ssB_plot, ncol=2)
