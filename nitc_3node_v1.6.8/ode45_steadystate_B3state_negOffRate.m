@@ -163,8 +163,8 @@ for i = 1:100
     r_nitc_byAnonsense1_A1 = r_nitc_byAnonsense1_A1;
     r_nitc_byAnonsense1_Anonsense1 = r_nitc_byAnonsense1_Anonsense1;
     r_nitc_byAnonsense1_Aprime1 = r_nitc_byAnonsense1_Aprime1;
-    r_addon_byA1_B1 = (-1)*r_addon_byA1_B1;
-    r_addon_byAprime1_B1 = (-1)*r_addon_byAprime1_B1;
+    r_addon_byA1_B1 = r_addon_byA1_B1;
+    r_addon_byAprime1_B1 = r_addon_byAprime1_B1;
     
     r_off_A1 = r_off;
     r_off_Anonsense1 = r_off;

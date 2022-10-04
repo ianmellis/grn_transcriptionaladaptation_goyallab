@@ -104,9 +104,9 @@ dydt(13) = (r_onbasal_B1)*y(14) - (r_offpara_B1 + r_addon_byAprime1_B1*y(11)^n_A
 dydt(14) = -y(14)*((r_onbasal_B1) + (r_onbasal_B1)) ...
     + (r_offorig_B1 + r_addon_byA1_B1*y(5)^n_A1/(k_A1^n_A1 + y(5)^n_A1))*y(12) + (r_offpara_B1 + r_addon_byAprime1_B1*y(11)^n_Aprime1/(k_Aprime1^n_Aprime1 + y(11)^n_Aprime1))*y(13);
 % y(15) = onborig_2
-dydt(15) = (r_onbasal_B1 + r_addon_byA1_B1*y(5)^n_A1/(k_A1^n_A1 + y(5)^n_A1))*y(17) - r_offorig_B1*y(15);
+dydt(15) = (r_onbasal_B1)*y(17) - (r_offorig_B1 + r_addon_byA1_B1*y(5)^n_A1/(k_A1^n_A1 + y(5)^n_A1))*y(15);
 % y(16) = onbpara_2
-dydt(16) = (r_onbasal_B1 + r_addon_byAprime1_B1*y(11)^n_Aprime1/(k_Aprime1^n_Aprime1 + y(11)^n_Aprime1))*y(17) - r_offpara_B1*y(16);
+dydt(16) = (r_onbasal_B1)*y(17) - (r_offpara_B1 + r_addon_byAprime1_B1*y(11)^n_Aprime1/(k_Aprime1^n_Aprime1 + y(11)^n_Aprime1))*y(16);
 % y(17) = offb_2
 dydt(17) = -y(17)*((r_onbasal_B1) + (r_onbasal_B1)) ...
     + (r_offorig_B1 + r_addon_byA1_B1*y(5)^n_A1/(k_A1^n_A1 + y(5)^n_A1))*y(15) + (r_offpara_B1 + r_addon_byAprime1_B1*y(11)^n_Aprime1/(k_Aprime1^n_Aprime1 + y(11)^n_Aprime1))*y(16);

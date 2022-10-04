@@ -30,7 +30,7 @@ lhs_sets8 %<>%
 
 lhs_sets8_Hn5<- lhs_sets8 %>% filter(Hill_coefficient_n < 5)
 
-pset = 2
+pset = 3
 ver = '1.6.8'
 species<-as_tibble(read.csv(paste0('../fullTraces/initialsim_species',as.character(pset),'.csv'), header = T)) %>%
   mutate(time = 1:300000)
