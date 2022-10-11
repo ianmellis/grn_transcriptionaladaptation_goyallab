@@ -261,7 +261,7 @@ for i = 1:100
         0;1;0;1;0;...
         1;0;0;1;0;0;0];
     
-    [t,y] = ode45(@(t,y) odefun_wtwt_B3state_negOffRate(t,y,ra_1), ts, ic_wtwt); 
+    [t,y] = ode45(@(t,y) odefun_wtwt_B3state_neg2OffRate1on(t,y,ra_1), ts, ic_wtwt); 
     
     ss_A1 = real(y(size(y,1),5));
     ss_Anons1 = real(y(size(y,1),6));
@@ -272,7 +272,7 @@ for i = 1:100
     
     ic_wtmut = ic_wtwt;
     
-    [t,y] = ode45(@(t,y) odefun_wtmut_B3state_negOffRate(t,y,ra_1), ts, ic_wtmut);
+    [t,y] = ode45(@(t,y) odefun_wtmut_B3state_neg2OffRate1on(t,y,ra_1), ts, ic_wtmut);
     
     ss_A1 = real(y(size(y,1),5));
     ss_Anons1 = real(y(size(y,1),6));
@@ -283,7 +283,7 @@ for i = 1:100
     
     ic_mutmut = ic_wtwt;
     
-    [t,y] = ode45(@(t,y) odefun_mutmut_B3state_negOffRate(t,y,ra_1), ts, ic_mutmut);
+    [t,y] = ode45(@(t,y) odefun_mutmut_B3state_neg2OffRate1on(t,y,ra_1), ts, ic_mutmut);
     
     ss_A1 = real(y(size(y,1),5));
     ss_Anons1 = real(y(size(y,1),6));
