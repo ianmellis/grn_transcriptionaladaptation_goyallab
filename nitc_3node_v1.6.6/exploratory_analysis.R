@@ -132,7 +132,7 @@ for (paramset in paramsets6){
   
 }
 write.csv(allstats6, file = paste0(plotdir6, 'summary_stats_perGenotype.csv'))
-
+# allstats6 <- as_tibble(read.csv(paste0(plotdir6, 'summary_stats_perGenotype.csv'), header = T, stringsAsFactors = F))
 
 all_species_q300 <- list()
 for (paramset in paramsets6){
@@ -161,6 +161,7 @@ for (paramset in paramsets6){
   
 }
 write.csv(all_species_q300, file = paste0('/Volumes/IAMYG1/grn_nitc_data/v1.6.6/all_species_q300.csv'))
+# all_species_q300 <- as_tibble(read.csv(paste0('/Volumes/IAMYG1/grn_nitc_data/v1.6.6/all_species_q300.csv'), header = T, stringsAsFactors = F))
 
 pseud = 0.01
 
@@ -267,7 +268,7 @@ for (stat in unistats[unistats != 'mean_product']) {
 }
 
 write.csv(loess_fitted_allstats_all6, file = paste0(plotdir6, 'loess_fitted_allstats_all_snwRadius100.csv'), quote = F, row.names = F)
-
+# loess_fitted_allstats_all6 <- as_tibble(read.csv(paste0(plotdir6, 'loess_fitted_allstats_all_snwRadius100.csv'), header = T, stringsAsFactors = F))
 
 
 for (stat in unistats[unistats != 'mean_product']) {
@@ -405,7 +406,9 @@ temp_class_for_tree <- classes_for_trees %>%
 
 temp_class_for_tree$is_bimodal <- as.factor(temp_class_for_tree$is_bimodal)
 
-temp.tree <- ctree(is_bimodal ~ basal_nitc_on_ratio + onbasalA1_off_ratio + A1_Aprime1_addon_ratio + A1_Aprime_prodon_ratio + r_addon_byA1_B1 + r_onbasal_A1 + r_onbasal_Aprime_ratio, data = temp_class_for_tree)
+temp.tree <- ctree(is_bimodal ~ basal_nitc_on_ratio + onbasalA1_off_ratio + A1_Aprime1_addon_ratio + 
+                     A1_Aprime_prodon_ratio + r_addon_byA1_B1 + r_onbasal_A1 + r_onbasal_Aprime_ratio, 
+                   data = temp_class_for_tree)
 
 
 # decision tree for B1 unimodal symm to unimodal symm vs unimodal symm to other
