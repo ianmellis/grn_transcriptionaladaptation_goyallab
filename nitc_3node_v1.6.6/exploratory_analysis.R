@@ -12,6 +12,7 @@ library(tibble)
 library(svglite)
 library(entropy)
 library(ggalluvial)
+library(partykit)
 source('~/code/grn_nitc/Functions/grn_analysis_utilities.R')
 
 
@@ -392,6 +393,10 @@ ggsave(classes_pies6, file = paste0(plotdir6, 'stats_class_assignment_check_clas
 
 # get data into format: each row is a paramset, with cols: sampled LHS (numeric) and classes (factor) of each gene in each genotype
 
+if(!dir.exists(paste0(plotdir6, 'trees'))){
+  dir.create(paste0(plotdir6, 'trees'))
+}
+
 basic_class_assignment_all6_wide <- basic_class_assignment_all6 %>% 
   dplyr::select(version, paramset, mutated_alleles, product, class_assignment) %>%
   pivot_wider(names_from = c('mutated_alleles', 'product'), values_from = 'class_assignment')
@@ -408,7 +413,8 @@ temp_class_for_tree$is_bimodal <- as.factor(temp_class_for_tree$is_bimodal)
 
 temp.tree <- ctree(is_bimodal ~ basal_nitc_on_ratio + onbasalA1_off_ratio + A1_Aprime1_addon_ratio + 
                      A1_Aprime_prodon_ratio + r_addon_byA1_B1 + r_onbasal_A1 + r_onbasal_Aprime_ratio, 
-                   data = temp_class_for_tree)
+                   data = temp_class_for_tree,
+                   control = ctree_control(alpha = 0.01))
 
 
 # decision tree for B1 unimodal symm to unimodal symm vs unimodal symm to other
@@ -422,8 +428,13 @@ temp_class_for_tree <- classes_for_trees %>%
 
 temp_class_for_tree$is_robust <- as.factor(temp_class_for_tree$is_robust)
 
-temp.tree <- ctree(is_robust ~ basal_nitc_on_ratio + onbasalA1_off_ratio + A1_Aprime1_addon_ratio + A1_Aprime_prodon_ratio + r_addon_byA1_B1 , data = temp_class_for_tree)
+temp.tree <- ctree(is_robust ~ basal_nitc_on_ratio + onbasalA1_off_ratio + A1_Aprime1_addon_ratio + 
+                     A1_Aprime_prodon_ratio + r_prod_on + r_addon_byA1_B1 + 
+                     Hill_coefficient_n + r_onbasal_A1 + r_onbasal_Aprime_ratio, 
+                   data = temp_class_for_tree,
+                   control = ctree_control(alpha = 0.01))
 
-
-
+pdf(paste0(plotdir6, 'trees/unimodal_symmetric_robust_tree_allparams_anver', as.character(anver),'.pdf'), width = 40)
+plot(temp.tree)
+dev.off()
 
