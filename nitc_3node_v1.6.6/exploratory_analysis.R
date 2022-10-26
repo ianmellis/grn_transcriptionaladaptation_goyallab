@@ -384,6 +384,70 @@ classes_pies6 <- ggplot(basic_class_assignment_all_forpie6, aes(x="", y=nSets, f
   ggtitle('classes of all distributions in v1.6.6\nparameter sets with Hill n < 5\neach gene in each genotype')
 ggsave(classes_pies6, file = paste0(plotdir6, 'stats_class_assignment_check_classv', as.character(anver),'/classes_pies.pdf'))
 
+
+set.seed(73245)
+sampledSets6 <- list() 
+for (class in classes6) {
+  cat(paste0('Working on ', class, '...\n'))
+  
+  tempsets <- basic_class_assignment_all_forSankey_forsamples6 %>%
+    filter(class_assignment == class)
+  
+  nParamsets = nrow(tempsets)
+  
+  if (nParamsets > 0) {
+    
+    sNum = nParamsets
+    
+    if(sNum > 20) {sNum = 20}
+    
+    tempsets1 <- tempsets %>%
+      ungroup() %>%
+      slice_sample(n=sNum)
+    
+    for (sid in 1:sNum) {
+      
+      currSet <- tempsets1[sid,]
+      # ver <- currSet$version EDIT AS NEEDED
+      ver <- '1.6.6'
+      paramset1 <- currSet$paramset
+      ma <- currSet$mutated_alleles
+      class_assigned <- currSet$class_assignment
+      gene <- currSet$product
+      
+      species <- all_species_q300 %>% ungroup() %>%
+        dplyr::select(c('version', 'paramset', 'mutated_alleles', eval(gene))) %>%
+        filter(version == ver & paramset == paramset1 & mutated_alleles == ma)
+      # 
+      # species_sample <- species %>%
+      #   pivot_longer(cols = eval(as.symbol(currSet$product)), names_to = 'product', values_to = 'abundance')
+      # 
+      
+      statstemp <- loess_fitted_allstats_all6 %>%
+        filter(version == ver, paramset == paramset1, product == gene, mutated_alleles == ma)
+      
+      dist_plot<-ggplot(species, aes(eval(as.symbol(gene)))) +
+        geom_histogram() +
+        ggtitle(paste('AnalysisVersion', as.character(anver), ver, as.character(paramset1), as.character(ma), gene, '\nbc', as.character(round(statstemp$bimodality_coef,2)), 'bcres', as.character(round(statstemp$bimodality_coef_residual,2)),'skew', as.character(round(statstemp$skewness,2)), class_assigned, sep = '_')) +
+        theme_classic()
+      ggsave(dist_plot, file = paste0(plotdir6, 'stats_class_assignment_check_classv', as.character(anver), '/distributions_q300_class_',class_assigned,'_sampledSetID_', as.character(sid), '.pdf'))
+      ggsave(dist_plot, file = paste0(plotdir6, 'stats_class_assignment_check_classv', as.character(anver), '/distributions_q300_class_',class_assigned,'_sampledSetID_', as.character(sid), '.svg'))
+      
+    }
+    
+    
+    if(is.null(dim(sampledSets6))) {
+      sampledSets6 <- tempsets1
+    } else {
+      sampledSets6 %<>% bind_rows(tempsets1)
+    }
+    
+  }
+  
+}
+write.csv(sampledSets6, file = paste0(plotdir6,'stats_class_assignment_check_classv', as.character(anver), '/stats_class_assignment_check_v', as.character(anver), '.csv'), quote=F, row.names = F)
+
+
 # decision tree for classes
 # separate by gene and genotype
 # use parameters as features, use class ID as label
@@ -434,7 +498,16 @@ temp.tree <- ctree(is_robust ~ basal_nitc_on_ratio + onbasalA1_off_ratio + A1_Ap
                    data = temp_class_for_tree,
                    control = ctree_control(alpha = 0.01))
 
-pdf(paste0(plotdir6, 'trees/unimodal_symmetric_robust_tree_allparams_anver', as.character(anver),'.pdf'), width = 40)
+pdf(paste0(plotdir6, 'trees/unimodal_symmetric_robust_tree_allparams_anver', as.character(anver),'.pdf'), width = 40, height = 12)
 plot(temp.tree)
 dev.off()
 
+temp.tree <- ctree(is_robust ~ basal_nitc_on_ratio + onbasalA1_off_ratio + A1_Aprime1_addon_ratio + 
+                     A1_Aprime_prodon_ratio + r_prod_on + r_addon_byA1_B1 + 
+                     r_onbasal_A1 + r_onbasal_Aprime_ratio, 
+                   data = temp_class_for_tree,
+                   control = ctree_control(alpha = 0.01))
+
+pdf(paste0(plotdir6, 'trees/unimodal_symmetric_robust_tree_noHilln_anver', as.character(anver),'.pdf'), width = 40, height = 12)
+plot(temp.tree)
+dev.off()

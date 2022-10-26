@@ -23,7 +23,7 @@ setwd(datadir51)
 if(!dir.exists(plotdir51)){
   dir.create(plotdir51)
 }
-paramsets51 <- 1:3
+paramsets51 <- 1:100
 lhs_sets51 <- as_tibble(read.csv('latinhyp_sampledSets.csv')) 
 lhs_sets51 %<>%
   mutate(paramset = 1:nrow(lhs_sets51))
