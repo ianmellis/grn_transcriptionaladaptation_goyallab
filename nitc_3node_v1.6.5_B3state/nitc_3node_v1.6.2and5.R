@@ -407,10 +407,21 @@ write.csv(allstats_full1, file = paste0(plotdir, 'summary_stats_perGenotype_maxH
 
 setsToPlot <- tibble(
   version = c('1.6.2', '1.6.5', '1.6.2', '1.6.5', '1.6.5', '1.6.2', '1.6.2', '1.6.2', '1.6.2', 
-              '1.6.5', '1.6.5', '1.6.5', '1.6.5', '1.6.5', '1.6.5', '1.6.2', '1.6.2', '1.6.2', '1.6.2'),
+              '1.6.5', '1.6.5', '1.6.5', '1.6.5', '1.6.5', '1.6.5', '1.6.2', '1.6.2', '1.6.2', 
+              '1.6.2', '1.6.5', '1.6.5', '1.6.5', '1.6.5', '1.6.5', '1.6.5', '1.6.2', '1.6.2',
+              '1.6.2', '1.6.2', '1.6.5', '1.6.5'),
   paramset = c(7000, 4900, 9400, 3000, 8100, 2800, 3300, 5800, 9900, 600, 3500, 
-               4365, 3664, 4738, 7118, 4274, 574, 5873, 4290),
-  classID = c('exponential', 'bimodal', 'gaussian', 'uniform', 'heavyTail', 'uniform', 'uniform', 'uniform', 'uniform', 'uniform', 'uniform', 'gaussian', 'gaussian', 'gaussian', 'gaussian', 'uniform', 'uniform', 'uniform', 'uniform')
+               4365, 3664, 4738, 7118, 4274, 574, 5873, 4290, 3357, 9571, 3354,
+               6118, 3610, 735, 9638, 4038, 2318, 7063, 4365, 8016),
+  classID = c('exponential', 'bimodal', 'gaussian', 'uniform', 'heavyTail', 
+              'uniform', 'uniform', 'uniform', 'uniform', 'uniform', 'uniform', 
+              'gaussian', 'gaussian', 'gaussian', 'gaussian', 
+              'uniform', 'uniform', 'uniform', 'uniform',
+              'left-skewed', 'left-skewed', 'left-skewed',
+              'low-average', 'low-average', 'low-average',
+              'right-skewed', 'right-skewed', 'right-skewed',
+              'unimodal-symmetric', 'unimodal-symmetric',
+              'bimodal')
 )
 
 if(!dir.exists(paste0(plotdir, 'panel_drafts/'))){
