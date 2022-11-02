@@ -513,4 +513,6 @@ temp.tree <- ctree(is_robust ~ basal_nitc_on_ratio + onbasalA1_off_ratio + A1_Ap
                    data = temp_class_for_tree52,
                    control = ctree_control(alpha = 0.01))
 
-
+pdf(paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/isRobust_unimodalsymmetric_tree.pdf'), width = 20, height = 10)
+plot(temp.tree)
+dev.off()
