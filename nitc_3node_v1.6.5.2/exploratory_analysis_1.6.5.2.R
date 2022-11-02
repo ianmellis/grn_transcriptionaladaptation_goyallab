@@ -163,7 +163,7 @@ write.csv(all_species_q300, file = paste0('/Volumes/IAMYG1/grn_nitc_data/v1.6.5.
 
 # summary stats draft1
 allstats_full52 <- allstats52 %>% mutate(version = '1.6.5.2')
-allparams_full52 <- allparams52 %>% mutate(paramset = 1:9900, version = '1.6.5.2')
+allparams_full52 <- allparams52 %>% mutate(paramset = 1:10000, version = '1.6.5.2')
 lhs_sets_full52 <- lhs_sets52 %>% mutate(version = '1.6.5.2')
 
 pseud = 0.01
@@ -196,7 +196,7 @@ compared_stats52 <- allstats_full52 %>%
 
 unistats52<-unique(compared_stats52$stat)
 
-for (st in unistats) {
+for (st in unistats52) {
   
   pvs1 <- ggplot(allstats_full52 %>% inner_join(lhs_sets_full52, by = c('version', 'paramset')) %>% filter(product == 'B1', Hill_coefficient_n<5)) + 
     geom_point(aes(mean_product, eval(as.symbol(st)))) +
@@ -454,7 +454,7 @@ if(!dir.exists(paste0(plotdir52, 'stats_class_assignment_check_v', as.character(
   dir.create(paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver)))
 }
 
-classes_sankey <- ggplot(basic_class_assignment_all_forSankey, aes(x = mutated_alleles, y=Freq,
+classes_sankey <- ggplot(basic_class_assignment_all_forSankey52, aes(x = mutated_alleles, y=Freq,
                                                                    stratum = class_assignment, alluvium = alluvID, fill = class_assignment, label = class_assignment)) +
   facet_grid(product~.) +
   geom_flow() +
@@ -474,5 +474,43 @@ classes_pies <- ggplot(basic_class_assignment_all_forpie52, aes(x="", y=nSets, f
   theme_void() +
   ggtitle('classes of all distributions in v1.6.5.2\neach gene in each genotype')
 ggsave(classes_pies, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/classes_pies.pdf'))
+
+# get data into format: each row is a paramset, with cols: sampled LHS (numeric) and classes (factor) of each gene in each genotype
+
+basic_class_assignment_all52_wide <- basic_class_assignment_all52 %>% 
+  dplyr::select(version, paramset, mutated_alleles, product, class_assignment) %>%
+  pivot_wider(names_from = c('mutated_alleles', 'product'), values_from = 'class_assignment')
+
+classes_for_trees52 <- inner_join(basic_class_assignment_all52_wide, lhs_sets52, by = 'paramset')
+
+temp_class_for_tree52 <- classes_for_trees52 %>%
+  dplyr::select(colnames(lhs_sets52), `1_B1`) %>% ungroup() %>%
+  dplyr::select(-paramset) %>%
+  mutate(is_bimodal = ifelse(`1_B1` == 'bimodal', T, F)) %>%
+  dplyr::select(-`1_B1`)
+
+temp_class_for_tree52$is_bimodal <- as.factor(temp_class_for_tree52$is_bimodal)
+
+temp.tree <- ctree(is_bimodal ~ basal_nitc_on_ratio + onbasalA1_off_ratio + A1_Aprime1_addon_ratio + 
+                     A1_Aprime_prodon_ratio + r_prod_on + r_addon_byA1_B1 + r_onbasal_A1, 
+                   data = temp_class_for_tree52,
+                   control = ctree_control(alpha = 0.01))
+
+
+# decision tree for B1 unimodal symm to unimodal symm vs unimodal symm to other
+
+
+temp_class_for_tree52 <- classes_for_trees52 %>%
+  filter(`0_B1` == 'unimodal symmetric') %>%
+  mutate(is_robust = ifelse(`0_B1` == `1_B1`, T, F)) %>%
+  dplyr::select(colnames(lhs_sets52), is_robust) %>% ungroup() %>%
+  dplyr::select(-paramset) 
+
+temp_class_for_tree52$is_robust <- as.factor(temp_class_for_tree52$is_robust)
+
+temp.tree <- ctree(is_robust ~ basal_nitc_on_ratio + onbasalA1_off_ratio + A1_Aprime1_addon_ratio + 
+                     A1_Aprime_prodon_ratio + r_prod_on + r_addon_byA1_B1 + r_onbasal_A1, 
+                   data = temp_class_for_tree52,
+                   control = ctree_control(alpha = 0.01))
 
 
