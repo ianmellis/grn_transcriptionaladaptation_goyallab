@@ -409,10 +409,11 @@ setsToPlot <- tibble(
   version = c('1.6.2', '1.6.5', '1.6.2', '1.6.5', '1.6.5', '1.6.2', '1.6.2', '1.6.2', '1.6.2', 
               '1.6.5', '1.6.5', '1.6.5', '1.6.5', '1.6.5', '1.6.5', '1.6.2', '1.6.2', '1.6.2', 
               '1.6.2', '1.6.5', '1.6.5', '1.6.5', '1.6.5', '1.6.5', '1.6.5', '1.6.2', '1.6.2',
-              '1.6.2', '1.6.2', '1.6.5', '1.6.5'),
+              '1.6.2', '1.6.2', '1.6.5', '1.6.5', '1.6.2', '1.6.5', '1.6.5', '1.6.5', '1.6.5'),
   paramset = c(7000, 4900, 9400, 3000, 8100, 2800, 3300, 5800, 9900, 600, 3500, 
                4365, 3664, 4738, 7118, 4274, 574, 5873, 4290, 3357, 9571, 3354,
-               6118, 3610, 735, 9638, 4038, 2318, 7063, 4365, 8016),
+               6118, 3610, 735, 9638, 4038, 2318, 7063, 4365, 8016, 9566, 7419,
+               3205, 932, 7400),
   classID = c('exponential', 'bimodal', 'gaussian', 'uniform', 'heavyTail', 
               'uniform', 'uniform', 'uniform', 'uniform', 'uniform', 'uniform', 
               'gaussian', 'gaussian', 'gaussian', 'gaussian', 
@@ -421,7 +422,8 @@ setsToPlot <- tibble(
               'low-average', 'low-average', 'low-average',
               'right-skewed', 'right-skewed', 'right-skewed',
               'unimodal-symmetric', 'unimodal-symmetric',
-              'bimodal')
+              'bimodal', 'low-average', 'low-average',
+              'left-skewed', 'left-skewed', 'left-skewed')
 )
 
 if(!dir.exists(paste0(plotdir, 'panel_drafts/'))){
@@ -1529,5 +1531,60 @@ loess_fitted_allstats_all %>%
          delta21=`2`-`1`)
 
 
+# get all of the low-average B1 sets, plot 100 of them
+class = 'left-skewed unimodal'
+tempsets <- basic_class_assignment_all_forSankey_forsamples %>%
+  filter(class_assignment == class,
+         product == 'B1',
+         mutated_alleles == 1)
+
+nParamsets = nrow(tempsets)
+
+if (nParamsets > 0) {
+  
+  sNum = nParamsets
+  
+  if(sNum > 100) {sNum = 100}
+  
+  tempsets1 <- tempsets %>%
+    ungroup() %>%
+    slice_sample(n=sNum)
+  
+  for (sid in 1:sNum) {
+    
+    currSet <- tempsets1[sid,]
+    ver <- currSet$version
+    paramset1 <- currSet$paramset
+    ma <- currSet$mutated_alleles
+    class_assigned <- currSet$class_assignment
+    gene <- currSet$product
+    
+    species <- all_species_q300 %>% ungroup() %>%
+      dplyr::select(c('version', 'paramset', 'mutated_alleles', eval(gene))) %>%
+      filter(version == ver & paramset == paramset1 & mutated_alleles == ma)
+    # 
+    # species_sample <- species %>%
+    #   pivot_longer(cols = eval(as.symbol(currSet$product)), names_to = 'product', values_to = 'abundance')
+    # 
+    
+    statstemp <- loess_fitted_allstats_all %>%
+      filter(version == ver, paramset == paramset1, product == gene, mutated_alleles == ma)
+    
+    dist_plot<-ggplot(species, aes(eval(as.symbol(gene)))) +
+      geom_histogram() +
+      ggtitle(paste('AnalysisVersion', as.character(anver), ver, as.character(paramset1), as.character(ma), gene, '\nbc', as.character(round(statstemp$bimodality_coef,2)), 'bcres', as.character(round(statstemp$bimodality_coef_residual,2)),'skew', as.character(round(statstemp$skewness,2)), class_assigned, sep = '_')) +
+      theme_classic()
+    ggsave(dist_plot, file = paste0(plotdir, 'stats_class_assignment_check_v', as.character(anver), '/distributions_q300_class_',class_assigned,'B1only_sampledSetID_', as.character(sid), '.pdf'))
+    
+  }
+  
+  
+  if(is.null(dim(sampledSets1))) {
+    sampledSets1 <- tempsets1
+  } else {
+    sampledSets1 %<>% bind_rows(tempsets1)
+  }
+  
+}
 
 
