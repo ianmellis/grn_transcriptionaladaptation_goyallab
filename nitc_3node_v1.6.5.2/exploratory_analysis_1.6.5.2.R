@@ -549,15 +549,15 @@ unimodal_symmetric_robust_tree52<-classes_for_trees52 %>%
 
 unimodal_symmetric_robust_tree52_forpies <- unimodal_symmetric_robust_tree52 %>%
   group_by(nodeID, `1_B1`) %>%
-  summarise(nSets = length(nodeID))
+  summarise(nSets = length(nodeID)) %>%
+  group_by(nodeID) %>%
+  mutate(totalSets = sum(nSets),
+         fracSets = nSets/totalSets)
 
-
-
-unimodal_symmetric_robust_tree52_pies <- ggplot(unimodal_symmetric_robust_tree52_forpies, aes(x="", y=nSets, fill=`1_B1`)) +
+unimodal_symmetric_robust_tree52_pies <- ggplot(unimodal_symmetric_robust_tree52_forpies, aes(x="", y=fracSets, fill=`1_B1`)) +
   geom_bar(stat='identity', width=1, color='white') +
   coord_polar('y', start=0) +
   facet_grid(~nodeID) +
   theme_void() +
-  ggtitle('classes of all distributions in v1.6.5.2\neach gene in each genotype')
-ggsave(classes_pies, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/classes_pies.pdf'))
-
+  ggtitle('classes of (B1 in heterozygous genotype) distributions in v1.6.5.2\neach gene in each genotype\nUnimodal symmetric in wild-type only')
+ggsave(unimodal_symmetric_robust_tree52_pies, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/unimodal_symmetric_robust_tree52_pies.pdf'), width = 18, height = 4)
