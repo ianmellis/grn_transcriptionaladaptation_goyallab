@@ -516,3 +516,48 @@ temp.tree <- ctree(is_robust ~ basal_nitc_on_ratio + onbasalA1_off_ratio + A1_Ap
 pdf(paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/isRobust_unimodalsymmetric_tree.pdf'), width = 20, height = 10)
 plot(temp.tree)
 dev.off()
+
+# robustness tree node breakdown - for non-robust: what are the resulting classes for each distribution? for robust: what are the mean changes?
+# Node 3: basal_nitc_on_ratio <= 1.31595, A1_Aprime1_addon_ratio <= 0.15984
+# Node 7+8: basal_nitc_on_ratio <= 1.31595, A1_Aprime1_addon_ratio > 0.15984, A1_Aprime1_addon_ratio <= 2.07278, A1_Aprime_prodon_ratio <= 3.1672
+# Node 10: basal_nitc_on_ratio <= 1.31595, A1_Aprime1_addon_ratio > 0.15984, A1_Aprime1_addon_ratio <= 2.07278, A1_Aprime_prodon_ratio > 3.1672, A1_Aprime1_addon_ratio <= 0.41773
+# Node 11: basal_nitc_on_ratio <= 1.31595, A1_Aprime1_addon_ratio > 0.15984, A1_Aprime1_addon_ratio <= 2.07278, A1_Aprime_prodon_ratio > 3.1672, A1_Aprime1_addon_ratio > 0.41773
+# Node 13: basal_nitc_on_ratio <= 1.31595, A1_Aprime1_addon_ratio > 0.15984, A1_Aprime1_addon_ratio > 2.07278, A1_Aprime_prodon_ratio <= 0.37067
+# Node 15+16: basal_nitc_on_ratio <= 1.31595, A1_Aprime1_addon_ratio > 0.15984, A1_Aprime1_addon_ratio > 2.07278, A1_Aprime_prodon_ratio > 0.37067
+# Node 19: basal_nitc_on_ratio > 1.31595, onbasalA1_off_ratio <= 0.60005, A1_Aprime_prodon_ratio <= 0.39809
+# Node 20: basal_nitc_on_ratio > 1.31595, onbasalA1_off_ratio <= 0.60005, A1_Aprime_prodon_ratio > 0.39809
+# Node 22: basal_nitc_on_ratio > 1.31595, onbasalA1_off_ratio > 0.60005, basal_nitc_on_ratio <= 8.00859
+# Node 23: basal_nitc_on_ratio > 1.31595, onbasalA1_off_ratio > 0.60005, basal_nitc_on_ratio > 8.00859
+
+unimodal_symmetric_robust_tree52<-classes_for_trees52 %>%
+  filter(`0_B1` == 'unimodal symmetric') %>%
+  mutate(is_robust = ifelse(`0_B1` == `1_B1`, T, F)) %>%
+  dplyr::select(colnames(lhs_sets52), is_robust) %>% ungroup() %>%
+  mutate(nodeID = case_when(
+    basal_nitc_on_ratio <= 1.31595 & A1_Aprime1_addon_ratio <= 0.15984 ~ 'Node 03',
+    basal_nitc_on_ratio <= 1.31595 & A1_Aprime1_addon_ratio > 0.15984 & A1_Aprime1_addon_ratio <= 2.07278 & A1_Aprime_prodon_ratio <= 3.1672 ~ 'Node 07+08',
+    basal_nitc_on_ratio <= 1.31595 & A1_Aprime1_addon_ratio > 0.15984 & A1_Aprime1_addon_ratio <= 2.07278 & A1_Aprime_prodon_ratio > 3.1672 & A1_Aprime1_addon_ratio <= 0.41773 ~ 'Node 10',
+    basal_nitc_on_ratio <= 1.31595 & A1_Aprime1_addon_ratio > 0.15984 & A1_Aprime1_addon_ratio <= 2.07278 & A1_Aprime_prodon_ratio > 3.1672 & A1_Aprime1_addon_ratio > 0.41773 ~ 'Node 11',
+    basal_nitc_on_ratio <= 1.31595 & A1_Aprime1_addon_ratio > 0.15984 & A1_Aprime1_addon_ratio > 2.07278 & A1_Aprime_prodon_ratio <= 0.37067 ~ 'Node 13',
+    basal_nitc_on_ratio <= 1.31595 & A1_Aprime1_addon_ratio > 0.15984 & A1_Aprime1_addon_ratio > 2.07278 & A1_Aprime_prodon_ratio > 0.37067 ~ 'Node 15+16',
+    basal_nitc_on_ratio > 1.31595 & onbasalA1_off_ratio <= 0.60005 & A1_Aprime_prodon_ratio <= 0.39809 ~ 'Node 19',
+    basal_nitc_on_ratio > 1.31595 & onbasalA1_off_ratio <= 0.60005 & A1_Aprime_prodon_ratio > 0.39809 ~ 'Node 20',
+    basal_nitc_on_ratio > 1.31595 & onbasalA1_off_ratio > 0.60005 & basal_nitc_on_ratio <= 8.00859 ~ 'Node 22',
+    basal_nitc_on_ratio > 1.31595 & onbasalA1_off_ratio > 0.60005 & basal_nitc_on_ratio > 8.00859 ~ 'Node 23'
+  )) %>%  
+  inner_join(classes_for_trees52 %>% dplyr::select(version, paramset, `1_B1`))
+
+unimodal_symmetric_robust_tree52_forpies <- unimodal_symmetric_robust_tree52 %>%
+  group_by(nodeID, `1_B1`) %>%
+  summarise(nSets = length(nodeID))
+
+
+
+unimodal_symmetric_robust_tree52_pies <- ggplot(unimodal_symmetric_robust_tree52_forpies, aes(x="", y=nSets, fill=`1_B1`)) +
+  geom_bar(stat='identity', width=1, color='white') +
+  coord_polar('y', start=0) +
+  facet_grid(~nodeID) +
+  theme_void() +
+  ggtitle('classes of all distributions in v1.6.5.2\neach gene in each genotype')
+ggsave(classes_pies, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/classes_pies.pdf'))
+
