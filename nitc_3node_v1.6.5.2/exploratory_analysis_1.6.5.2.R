@@ -561,3 +561,10 @@ unimodal_symmetric_robust_tree52_pies <- ggplot(unimodal_symmetric_robust_tree52
   theme_void() +
   ggtitle('classes of (B1 in heterozygous genotype) distributions in v1.6.5.2\neach gene in each genotype\nUnimodal symmetric in wild-type only')
 ggsave(unimodal_symmetric_robust_tree52_pies, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/unimodal_symmetric_robust_tree52_pies.pdf'), width = 18, height = 4)
+
+unimodal_symmetric_robust_tree52 %>%
+  inner_join(compared_stats52 %>% filter(product == 'B1', stat == 'mean_product', compare == 'lfc10'), by = 'paramset') %>%
+  filter(`1_B1` == 'unimodal symmetric') %>%
+  group_by(nodeID) %>%
+  summarise(meanLFC = mean(diff),
+            semLFC = sd(diff)/sqrt(length(diff)))
