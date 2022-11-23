@@ -427,8 +427,7 @@ basic_class_assignment_all52 <- loess_fitted_allstats_all52 %>%
     mean_product < 10 ~ 'low-average',
     bimodality_coef_residual > bimfilt & bimodality_coef > 0.555 ~ 'bimodal',
     (bimodality_coef_residual <= bimfilt | bimodality_coef <= 0.555) & abs(skewness) < 1 ~ 'unimodal symmetric',
-    (bimodality_coef_residual <= bimfilt | bimodality_coef <= 0.555) & skewness >= 1 & skewness < 3 ~ 'exponential',
-    (bimodality_coef_residual <= bimfilt | bimodality_coef <= 0.555) & skewness >= 3 ~ 'subexponential',
+    (bimodality_coef_residual <= bimfilt | bimodality_coef <= 0.555) & skewness >= 1 ~ 'right-skewed unimodal',
     (bimodality_coef_residual <= bimfilt | bimodality_coef <= 0.555) & skewness <= -1 ~ 'left-skewed unimodal'
     
   )) 
