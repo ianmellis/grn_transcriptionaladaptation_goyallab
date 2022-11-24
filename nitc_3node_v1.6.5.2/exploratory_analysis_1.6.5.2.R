@@ -567,3 +567,9 @@ unimodal_symmetric_robust_tree52 %>%
   group_by(nodeID) %>%
   summarise(meanLFC = mean(diff),
             semLFC = sd(diff)/sqrt(length(diff)))
+
+
+## Other analyses to complete for full set of sims:
+# subsample from the most robust region, classify, and check expression/class robustness vs background
+
+
