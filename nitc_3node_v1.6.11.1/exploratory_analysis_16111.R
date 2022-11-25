@@ -16,22 +16,22 @@ source('~/code/grn_nitc/Functions/grn_analysis_utilities.R')
 
 
 # edit as needed
-datadir101 <- '/Volumes/IAMYG2/grn_nitc_data/v1.6.10.1/samples/'
-plotdir101 <- '/Volumes/IAMYG2/grn_nitc_data/v1.6.10.1/exploratory_analysis/'
-setwd(datadir101)
+datadir111 <- '/Volumes/IAMYG2/grn_nitc_data/v1.6.11.1/samples/'
+plotdir111 <- '/Volumes/IAMYG2/grn_nitc_data/v1.6.11.1/exploratory_analysis/'
+setwd(datadir111)
 
-if(!dir.exists(plotdir101)){
-  dir.create(plotdir101)
+if(!dir.exists(plotdir111)){
+  dir.create(plotdir111)
 }
-paramsets101 <- 1:9900
-lhs_sets101 <- as_tibble(read.csv('latinhyp_sampledSets.csv')) 
-lhs_sets101 %<>%
-  mutate(paramset = 1:nrow(lhs_sets101))
+paramsets111 <- 1:9900
+lhs_sets111 <- as_tibble(read.csv('latinhyp_sampledSets.csv')) 
+lhs_sets111 %<>%
+  mutate(paramset = 1:nrow(lhs_sets111))
 
 # calculate stats
-allstats101 <- list()
-allparams101 <- list()
-for (paramset in paramsets101){
+allstats111 <- list()
+allparams111 <- list()
+for (paramset in paramsets111){
   
   # cat(paste0('Working on ', as.character(paramset), '\n'))
   
@@ -57,7 +57,7 @@ for (paramset in paramsets101){
       facet_grid(mutated_alleles~product) +
       ggtitle(paste0('Parameter set ', as.character(paramset))) +
       theme_classic()
-    ggsave(dist_plot, file = paste0(plotdir101, 'distributions_q300_v1.6.10.1_paramset_', as.character(paramset), '.pdf'))
+    ggsave(dist_plot, file = paste0(plotdir111, 'distributions_q300_v1.6.11.1_paramset_', as.character(paramset), '.pdf'))
   }
   
   spstats <- species_sample %>%
@@ -114,25 +114,25 @@ for (paramset in paramsets101){
   
   spstats %<>% inner_join(entr_temp, by = c('mutated_alleles', 'product', 'paramset'))
   
-  if(is.null(dim(allstats101))) {
-    allstats101 <- spstats
+  if(is.null(dim(allstats111))) {
+    allstats111 <- spstats
   } else {
-    allstats101 %<>% bind_rows(spstats)
+    allstats111 %<>% bind_rows(spstats)
   }
   
-  if(is.null(dim(allparams101))) {
-    allparams101 <- params
+  if(is.null(dim(allparams111))) {
+    allparams111 <- params
   } else {
-    allparams101 %<>% bind_rows(params)
+    allparams111 %<>% bind_rows(params)
   }
   
 }
 
 
 # temp: collate all data
-setwd(datadir101)
-all_species_q300_101 <- list()
-for (paramset in paramsets101){
+setwd(datadir111)
+all_species_q300_111 <- list()
+for (paramset in paramsets111){
   
   if(paramset %% 100 == 0) {
     cat(paste0('Working on ', as.character(paramset), '\n'))
@@ -141,7 +141,7 @@ for (paramset in paramsets101){
   
   species_sample <- species %>%
     mutate(paramset = paramset,
-           version = '1.6.10.1') %>%
+           version = '1.6.11.1') %>%
     filter((time > 400 & time < 100001) | (time > 100400 & time < 200001) | (time > 200400 & time < 300001)) %>%
     mutate(mutated_alleles = case_when(
       time < 100001 ~ 0,
@@ -151,12 +151,12 @@ for (paramset in paramsets101){
     dplyr::select(A1, Aprime1, Anonsense1, B1, paramset, version, time, mutated_alleles)
   
   
-  if(is.null(dim(all_species_q300_101))) {
-    all_species_q300_101 <- species_sample
+  if(is.null(dim(all_species_q300_111))) {
+    all_species_q300_111 <- species_sample
   } else {
-    all_species_q300_101 %<>% bind_rows(species_sample)
+    all_species_q300_111 %<>% bind_rows(species_sample)
   }
   
 }
 
-write.csv(all_species_q300_101, file = paste0('/Volumes/IAMYG2/grn_nitc_data/v1.6.10.1/all_species_q300.csv'))
+write.csv(all_species_q300_111, file = paste0('/Volumes/IAMYG2/grn_nitc_data/v1.6.11.1/all_species_q300.csv'))
