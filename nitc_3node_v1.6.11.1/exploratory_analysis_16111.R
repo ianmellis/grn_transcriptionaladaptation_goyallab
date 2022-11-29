@@ -489,3 +489,25 @@ for (aci in 1:length(genos)) {
 }
 dev.off()
 
+comparisons = unique(compared_stats111$compare)
+for(comp in comparisons) {
+  pdf(paste0(plotdir111, 'stats_class_assignment_check_v', as.character(anver),'/correlations_',comp,'_perGene_perGenotype.pdf'), width = 12, height = 12)
+  par(mfrow = c(2,2))
+  for (proi in 1:length(prods)) {
+    
+    pro = prods[proi]
+    
+    tempforcorr <- compared_stats111 %>% 
+      filter(compare == comp) %>% 
+      dplyr::select(-c(`0`, `1`, `2`, 'mean_denom')) %>% 
+      pivot_wider(names_from = stat, values_from = diff) %>% 
+      filter(product == pro) %>%
+      ungroup() %>%
+      inner_join(lhs_sets_full111, by = c('version', 'paramset')) %>%
+      dplyr::select(-c('sd_product', 'fano_product', 'entropy95', 'entropy90', 'version', 'paramset', 'product', 'compare'))
+    
+    corrplot(cor(tempforcorr), title = paste0(pro, ' compared ', comp), mar = c(0,0,2,0))
+    
+  }
+  dev.off()
+}
