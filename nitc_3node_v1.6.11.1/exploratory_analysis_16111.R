@@ -164,7 +164,7 @@ write.csv(all_species_q300_111, file = paste0('/Volumes/IAMYG2/grn_nitc_data/v1.
 
 # summary stats draft1
 allstats_full111 <- allstats111 %>% mutate(version = '1.6.11.1')
-allparams_full111 <- allparams111 %>% mutate(paramset = 1:10000, version = '1.6.11.1')
+allparams_full111 <- allparams111 %>% mutate(paramset = 1:9900, version = '1.6.11.1')
 lhs_sets_full111 <- lhs_sets111 %>% mutate(version = '1.6.11.1')
 
 pseud = 0.01
@@ -279,8 +279,8 @@ for (stat in unistats111[unistats111 != 'mean_product']) {
       xlab('Log(Mean)') +
       ggtitle(paste0(stat, ' vs log(mean), with LOESS fit to mean\nGene product: ', gene))#, ', mutated alleles: ', as.character(ma)))
     
-    # ggsave(lplot1, file = paste0(plotdir, 'LOESS_', stat, 'vsMean_',gene,'_v1.6.2and5.pdf'), width = 5, height = 5)#'_mutAlleles',ma,'_v1.6.2only.pdf'), width = 5, height = 5)
-    # ggsave(lplot2, file = paste0(plotdir, 'LOESS_', stat, 'vsMean_',gene,'_v1.6.2and5.pdf'), width = 5, height = 5)#'_mutAlleles',ma,'_log_v1.6.2only.pdf'), width = 5, height = 5)
+    # ggsave(lplot1, file = paste0(plotdir, 'LOESS_', stat, 'vsMean_',gene,'_v1.6.6.1.pdf'), width = 5, height = 5)#'_mutAlleles',ma,'_v1.6.2only.pdf'), width = 5, height = 5)
+    # ggsave(lplot2, file = paste0(plotdir, 'LOESS_', stat, 'vsMean_',gene,'_v1.6.11.1.pdf'), width = 5, height = 5)#'_mutAlleles',ma,'_log_v1.6.2only.pdf'), width = 5, height = 5)
     
     l1dat$version <- as.character(l1dat$version)
     l1dat$product <- as.character(l1dat$product)
@@ -354,7 +354,7 @@ for (stat in unistats111[unistats111 != 'mean_product']) {
       geom_density2d(data = statdatA %>% filter(mutated_alleles == 2,mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual_swn')))), color = 'green') +
       theme_classic()
     
-    pdf(paste0(paste0(plotdir111, 'LOESSplots_', stat, 'vsLogMean_', gene,'_v1.6.2and5.pdf')), width = 10, height = 7)
+    pdf(paste0(paste0(plotdir111, 'LOESSplots_', stat, 'vsLogMean_', gene,'_v1.6.11.1.pdf')), width = 10, height = 7)
     grid.arrange(lplot_all_stat_con,lplot_all_statLOESS_con,lplot_all_statLOESSSWN_con, ncol=3,
                  top = textGrob(paste0(stat, ' vs. log(mean_product), ', gene, '\nStat, LOESS residual, Squeezed LOESS residual (radius=50)'),gp=gpar(fontsize=20,font=3)))
     dev.off()
@@ -465,4 +465,27 @@ pdf(paste0(plotdir111, 'stats_class_assignment_check_v', as.character(anver),'/i
 plot(temp.tree)
 dev.off()
 
+genos = 0:2
+prods = c('A1', 'Anonsense1', 'Aprime1', 'B1')
+
+pdf(paste0(plotdir111, 'stats_class_assignment_check_v', as.character(anver),'/correlations_perGene_perGenotype.pdf'), width = 24, height = 32)
+par(mfcol = c(4,3))
+for (aci in 1:length(genos)) {
+  for (proi in 1:length(prods)) {
+    
+    ac = genos[aci]
+    pro = prods[proi]
+    
+    tempforcorr <- allstats_full111 %>% 
+      filter(mutated_alleles == ac,
+             product == pro) %>%
+      ungroup() %>%
+      inner_join(lhs_sets_full111, by = c('version', 'paramset')) %>%
+      dplyr::select(-c('sd_product', 'fano_product', 'entropy95', 'entropy90', 'version', 'paramset', 'mutated_alleles', 'product'))
+      
+    corrplot(cor(tempforcorr), title = paste0(pro, ' in genotype ', as.character(ac)), mar = c(0,0,2,0))
+    
+  }
+}
+dev.off()
 

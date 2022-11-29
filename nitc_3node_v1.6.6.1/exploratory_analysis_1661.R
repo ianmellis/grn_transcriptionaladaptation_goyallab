@@ -16,22 +16,22 @@ source('~/code/grn_nitc/Functions/grn_analysis_utilities.R')
 
 
 # edit as needed
-datadir101 <- '/Volumes/IAMYG2/grn_nitc_data/v1.6.10.1/samples/'
-plotdir101 <- '/Volumes/IAMYG2/grn_nitc_data/v1.6.10.1/exploratory_analysis/'
-setwd(datadir101)
+datadir61 <- '/Volumes/IAMYG2/grn_nitc_data/v1.6.6.1/samples/'
+plotdir61 <- '/Volumes/IAMYG2/grn_nitc_data/v1.6.6.1/exploratory_analysis/'
+setwd(datadir61)
 
-if(!dir.exists(plotdir101)){
-  dir.create(plotdir101)
+if(!dir.exists(plotdir61)){
+  dir.create(plotdir61)
 }
-paramsets101 <- 1:9900
-lhs_sets101 <- as_tibble(read.csv('latinhyp_sampledSets.csv')) 
-lhs_sets101 %<>%
-  mutate(paramset = 1:nrow(lhs_sets101))
+paramsets61 <- 1:9900
+lhs_sets61 <- as_tibble(read.csv('latinhyp_sampledSets.csv')) 
+lhs_sets61 %<>%
+  mutate(paramset = 1:nrow(lhs_sets61))
 
 # calculate stats
-allstats101 <- list()
-allparams101 <- list()
-for (paramset in paramsets101){
+allstats61 <- list()
+allparams61 <- list()
+for (paramset in paramsets61){
   
   # cat(paste0('Working on ', as.character(paramset), '\n'))
   
@@ -57,7 +57,7 @@ for (paramset in paramsets101){
       facet_grid(mutated_alleles~product) +
       ggtitle(paste0('Parameter set ', as.character(paramset))) +
       theme_classic()
-    ggsave(dist_plot, file = paste0(plotdir101, 'distributions_q300_v1.6.10.1_paramset_', as.character(paramset), '.pdf'))
+    ggsave(dist_plot, file = paste0(plotdir61, 'distributions_q300_v1.6.6.1_paramset_', as.character(paramset), '.pdf'))
   }
   
   spstats <- species_sample %>%
@@ -114,25 +114,25 @@ for (paramset in paramsets101){
   
   spstats %<>% inner_join(entr_temp, by = c('mutated_alleles', 'product', 'paramset'))
   
-  if(is.null(dim(allstats101))) {
-    allstats101 <- spstats
+  if(is.null(dim(allstats61))) {
+    allstats61 <- spstats
   } else {
-    allstats101 %<>% bind_rows(spstats)
+    allstats61 %<>% bind_rows(spstats)
   }
   
-  if(is.null(dim(allparams101))) {
-    allparams101 <- params
+  if(is.null(dim(allparams61))) {
+    allparams61 <- params
   } else {
-    allparams101 %<>% bind_rows(params)
+    allparams61 %<>% bind_rows(params)
   }
   
 }
 
 
 # temp: collate all data
-setwd(datadir101)
-all_species_q300_101 <- list()
-for (paramset in paramsets101){
+setwd(datadir61)
+all_species_q300_61 <- list()
+for (paramset in paramsets61){
   
   if(paramset %% 100 == 0) {
     cat(paste0('Working on ', as.character(paramset), '\n'))
@@ -141,7 +141,7 @@ for (paramset in paramsets101){
   
   species_sample <- species %>%
     mutate(paramset = paramset,
-           version = '1.6.10.1') %>%
+           version = '1.6.6.1') %>%
     filter((time > 400 & time < 100001) | (time > 100400 & time < 200001) | (time > 200400 & time < 300001)) %>%
     mutate(mutated_alleles = case_when(
       time < 100001 ~ 0,
@@ -151,27 +151,27 @@ for (paramset in paramsets101){
     dplyr::select(A1, Aprime1, Anonsense1, B1, paramset, version, time, mutated_alleles)
   
   
-  if(is.null(dim(all_species_q300_101))) {
-    all_species_q300_101 <- species_sample
+  if(is.null(dim(all_species_q300_61))) {
+    all_species_q300_61 <- species_sample
   } else {
-    all_species_q300_101 %<>% bind_rows(species_sample)
+    all_species_q300_61 %<>% bind_rows(species_sample)
   }
   
 }
 
-write.csv(all_species_q300_101, file = paste0('/Volumes/IAMYG2/grn_nitc_data/v1.6.10.1/all_species_q300.csv'))
+write.csv(all_species_q300_61, file = paste0('/Volumes/IAMYG2/grn_nitc_data/v1.6.6.1/all_species_q300.csv'))
 
 
 # summary stats draft1
-allstats_full101 <- allstats101 %>% mutate(version = '1.6.10.1')
-allparams_full101 <- allparams101 %>% mutate(paramset = 1:9900, version = '1.6.10.1')
-lhs_sets_full101 <- lhs_sets101 %>% mutate(version = '1.6.10.1')
+allstats_full61 <- allstats61 %>% mutate(version = '1.6.6.1')
+allparams_full61 <- allparams61 %>% mutate(paramset = 1:9900, version = '1.6.6.1')
+lhs_sets_full61 <- lhs_sets61 %>% mutate(version = '1.6.6.1')
 
 pseud = 0.01
 
-allstats_full101 %<>% mutate(skewness = ifelse(is.na(skewness), 0, skewness))
+allstats_full61 %<>% mutate(skewness = ifelse(is.na(skewness), 0, skewness))
 
-compared_stats101 <- allstats_full101 %>% 
+compared_stats61 <- allstats_full61 %>% 
   group_by(version, paramset, product, mutated_alleles) %>% 
   pivot_longer(names_to = 'stat', values_to = 'value', cols = mean_product:entropy90) %>% 
   pivot_wider(names_from = mutated_alleles, values_from = value) %>% 
@@ -183,7 +183,7 @@ compared_stats101 <- allstats_full101 %>%
          delta20 = `2`-`0`) %>%
   dplyr::select(-c(`0`:`2`)) %>% 
   pivot_longer(names_to = 'compare', values_to = 'diff', cols = lfc10:delta20) %>%
-  inner_join(allstats_full101 %>% 
+  inner_join(allstats_full61 %>% 
                dplyr::select(mutated_alleles, product, paramset, version, mean_product) %>%
                pivot_wider(names_from = mutated_alleles, values_from = mean_product), by = c('product', 'paramset', 'version')) %>%
   mutate(mean_denom = case_when(
@@ -195,11 +195,11 @@ compared_stats101 <- allstats_full101 %>%
 
 # plot wt/mut summary stats against mean expression
 
-unistats101<-unique(compared_stats101$stat)
+unistats61<-unique(compared_stats61$stat)
 
-for (st in unistats101) {
+for (st in unistats61) {
   
-  pvs1 <- ggplot(allstats_full101 %>% inner_join(lhs_sets_full101, by = c('version', 'paramset')) %>% filter(product == 'B1', Hill_coefficient_n<5)) + 
+  pvs1 <- ggplot(allstats_full61 %>% inner_join(lhs_sets_full61, by = c('version', 'paramset')) %>% filter(product == 'B1', Hill_coefficient_n<5)) + 
     geom_point(aes(mean_product, eval(as.symbol(st)))) +
     geom_vline(aes(xintercept = 10), linetype = 2) +
     # geom_text(aes(mean_product, eval(as.symbol(st)), label = as.character(paramset))) +
@@ -207,7 +207,7 @@ for (st in unistats101) {
     theme_classic() +
     ggtitle(paste0(st, ' vs mean'))
   
-  pvs2 <- ggplot(allstats_full101 %>% inner_join(lhs_sets_full101, by = c('version', 'paramset')) %>% filter(product == 'B1', Hill_coefficient_n<5)) + 
+  pvs2 <- ggplot(allstats_full61 %>% inner_join(lhs_sets_full61, by = c('version', 'paramset')) %>% filter(product == 'B1', Hill_coefficient_n<5)) + 
     geom_point(aes(log(mean_product), eval(as.symbol(st)))) +
     geom_vline(aes(xintercept = log(10)), linetype = 2) +
     # geom_text(aes(log(mean_product), eval(as.symbol(st)), label = as.character(paramset))) +
@@ -215,8 +215,8 @@ for (st in unistats101) {
     theme_classic()  +
     ggtitle(paste0(st, ' vs mean'))
   
-  pvs3 <- ggplot(allstats_full101 %>% 
-                   inner_join(lhs_sets_full101, by = c('version', 'paramset')) %>% 
+  pvs3 <- ggplot(allstats_full61 %>% 
+                   inner_join(lhs_sets_full61, by = c('version', 'paramset')) %>% 
                    filter(product == 'B1', Hill_coefficient_n<5, mutated_alleles == 1) %>% 
                    mutate(is10 = mean_product > 10)) + 
     geom_point(aes(log(mean_product), eval(as.symbol(st)), color = is10), alpha = 0.3, stroke = 0) +
@@ -229,15 +229,15 @@ for (st in unistats101) {
     ylab(st) +
     ggtitle(paste0(st, ' vs mean'))
   
-  ggsave(pvs1, file = paste0(plotdir101, 'PerGenotype_', st, '_vs_mean.pdf'), width = 16, height = 8) 
-  ggsave(pvs2, file = paste0(plotdir101, 'PerGenotype_', st, '_vs_logmean.pdf'), width = 16, height = 8) 
-  ggsave(pvs3, file = paste0(plotdir101, 'WTMUT_', st, '_vs_logmean.pdf'), width = 4, height = 4) 
+  ggsave(pvs1, file = paste0(plotdir61, 'PerGenotype_', st, '_vs_mean.pdf'), width = 16, height = 8) 
+  ggsave(pvs2, file = paste0(plotdir61, 'PerGenotype_', st, '_vs_logmean.pdf'), width = 16, height = 8) 
+  ggsave(pvs3, file = paste0(plotdir61, 'WTMUT_', st, '_vs_logmean.pdf'), width = 4, height = 4) 
 }
 
 
 # LOESS
-loess_fitted_allstats_all101 <- allstats_full101
-for (stat in unistats101[unistats101 != 'mean_product']) {
+loess_fitted_allstats_all61 <- allstats_full61
+for (stat in unistats61[unistats61 != 'mean_product']) {
   
   cat(paste0('working on ', stat, '\n'))
   statdat <- list()
@@ -246,7 +246,7 @@ for (stat in unistats101[unistats101 != 'mean_product']) {
     
     # for (ma in 0:2) {
     
-    tempdat <- allstats_full101 %>% 
+    tempdat <- allstats_full61 %>% 
       filter(#mutated_alleles == ma,
         product == gene) %>%
       dplyr::select(mutated_alleles, product, version, paramset, mean_product, stat)
@@ -279,8 +279,8 @@ for (stat in unistats101[unistats101 != 'mean_product']) {
       xlab('Log(Mean)') +
       ggtitle(paste0(stat, ' vs log(mean), with LOESS fit to mean\nGene product: ', gene))#, ', mutated alleles: ', as.character(ma)))
     
-    # ggsave(lplot1, file = paste0(plotdir, 'LOESS_', stat, 'vsMean_',gene,'_v1.6.2and5.pdf'), width = 5, height = 5)#'_mutAlleles',ma,'_v1.6.2only.pdf'), width = 5, height = 5)
-    # ggsave(lplot2, file = paste0(plotdir, 'LOESS_', stat, 'vsMean_',gene,'_v1.6.2and5.pdf'), width = 5, height = 5)#'_mutAlleles',ma,'_log_v1.6.2only.pdf'), width = 5, height = 5)
+    # ggsave(lplot1, file = paste0(plotdir, 'LOESS_', stat, 'vsMean_',gene,'_v1.6.6.1.pdf'), width = 5, height = 5)#'_mutAlleles',ma,'_v1.6.2only.pdf'), width = 5, height = 5)
+    # ggsave(lplot2, file = paste0(plotdir, 'LOESS_', stat, 'vsMean_',gene,'_v1.6.6.1.pdf'), width = 5, height = 5)#'_mutAlleles',ma,'_log_v1.6.2only.pdf'), width = 5, height = 5)
     
     l1dat$version <- as.character(l1dat$version)
     l1dat$product <- as.character(l1dat$product)
@@ -302,26 +302,26 @@ for (stat in unistats101[unistats101 != 'mean_product']) {
   
   # Need to split analysis over all genes #
   
-
-  loess_fitted_allstats_all101 %<>% left_join(as_tibble(statdat) %>% dplyr::select(-mean_product), by = c('version', 'paramset', 'mutated_alleles', 'product'))
+  
+  loess_fitted_allstats_all61 %<>% left_join(as_tibble(statdat) %>% dplyr::select(-mean_product), by = c('version', 'paramset', 'mutated_alleles', 'product'))
   # 
   # cat('sliding window normalizing...\n') # do this per-gene over all genotypes, rather than all genes over all genotypes...
   # statdat1 <- sliding_window_normalize(as_tibble(statdat) %>% filter(mean_product>10), 'mean_product', paste0(stat,'_residual'), 50)
   # 
   
-  loess_fitted_allstats_all101 %<>% left_join(statdat1 %>% dplyr::select(-c('mean_product', paste0(stat,'_residual'), paste0(stat,'_fitted'))), by = c('version', 'paramset', 'mutated_alleles', 'product'))
- 
+  loess_fitted_allstats_all61 %<>% left_join(statdat1 %>% dplyr::select(-c('mean_product', paste0(stat,'_residual'), paste0(stat,'_fitted'))), by = c('version', 'paramset', 'mutated_alleles', 'product'))
+  
   
   cat(paste0('Done with ', stat, '\n'))
   
 }
 
-write.csv(loess_fitted_allstats_all101, file = paste0(plotdir101, 'loess_fitted_allstats_all_snwRadius100.csv'), quote = F, row.names = F)
+write.csv(loess_fitted_allstats_all61, file = paste0(plotdir61, 'loess_fitted_allstats_all_snwRadius100.csv'), quote = F, row.names = F)
 
 # load as needed
-# loess_fitted_allstats_all101 <- as_tibble(read.csv(paste0(plotdir101, 'loess_fitted_allstats_all_snwRadius100.csv'), header=T, stringsAsFactors = F))
+# loess_fitted_allstats_all61 <- as_tibble(read.csv(paste0(plotdir61, 'loess_fitted_allstats_all_snwRadius100.csv'), header=T, stringsAsFactors = F))
 
-for (stat in unistats101[unistats101 != 'mean_product']) {
+for (stat in unistats61[unistats61 != 'mean_product']) {
   
   cat(paste0('working on ', stat, '\n'))
   # statdat <- list()
@@ -329,7 +329,7 @@ for (stat in unistats101[unistats101 != 'mean_product']) {
   for (gene in c('A1', 'Anonsense1', 'Aprime1', 'B1')) {
     
     
-    statdatA = loess_fitted_allstats_all101 %>%
+    statdatA = loess_fitted_allstats_all61 %>%
       dplyr::select(mutated_alleles, product, version, paramset, mean_product, stat, as.symbol(paste0(stat, '_residual')), as.symbol(paste0(stat, '_residual_swn'))) %>%
       filter(product == gene, mean_product>10) 
     
@@ -354,7 +354,7 @@ for (stat in unistats101[unistats101 != 'mean_product']) {
       geom_density2d(data = statdatA %>% filter(mutated_alleles == 2,mean_product>10), aes(log(mean_product),eval(as.symbol(paste0(stat,'_residual_swn')))), color = 'green') +
       theme_classic()
     
-    pdf(paste0(paste0(plotdir101, 'LOESSplots_', stat, 'vsLogMean_', gene,'_v1.6.2and5.pdf')), width = 10, height = 7)
+    pdf(paste0(paste0(plotdir61, 'LOESSplots_', stat, 'vsLogMean_', gene,'_v1.6.6.1.pdf')), width = 10, height = 7)
     grid.arrange(lplot_all_stat_con,lplot_all_statLOESS_con,lplot_all_statLOESSSWN_con, ncol=3,
                  top = textGrob(paste0(stat, ' vs. log(mean_product), ', gene, '\nStat, LOESS residual, Squeezed LOESS residual (radius=50)'),gp=gpar(fontsize=20,font=3)))
     dev.off()
@@ -371,7 +371,7 @@ bimfilt <- 0.1
 
 entfilt <- 0.15
 
-basic_class_assignment_all101 <- loess_fitted_allstats_all101 %>%
+basic_class_assignment_all61 <- loess_fitted_allstats_all61 %>%
   mutate(class_assignment = case_when(
     mean_product < 10 ~ 'low-average',
     bimodality_coef_residual > bimfilt & bimodality_coef > 0.555 ~ 'bimodal',
@@ -381,7 +381,7 @@ basic_class_assignment_all101 <- loess_fitted_allstats_all101 %>%
     
   )) 
 
-basic_class_assignment_all_forSankey101 <- basic_class_assignment_all101 %>%
+basic_class_assignment_all_forSankey61 <- basic_class_assignment_all61 %>%
   dplyr::select(version, paramset, product, mutated_alleles, class_assignment) %>%
   group_by(version, paramset, product) %>%
   pivot_wider(names_from = mutated_alleles, values_from = class_assignment) %>%
@@ -393,75 +393,75 @@ basic_class_assignment_all_forSankey101 <- basic_class_assignment_all101 %>%
 
 # sample paramsets from the sankey flow to visually inspect accuracy of assignments/changes
 set.seed(73245)
-basic_class_assignment_all_forSankey_forsamples101 <- basic_class_assignment_all101 %>%
+basic_class_assignment_all_forSankey_forsamples61 <- basic_class_assignment_all61 %>%
   dplyr::select(version, paramset, product, mutated_alleles, class_assignment)  
 
-classes101 = unique(basic_class_assignment_all101$class_assignment)
+classes61 = unique(basic_class_assignment_all61$class_assignment)
 
-if(!dir.exists(paste0(plotdir101, 'stats_class_assignment_check_v', as.character(anver)))) {
-  dir.create(paste0(plotdir101, 'stats_class_assignment_check_v', as.character(anver)))
+if(!dir.exists(paste0(plotdir61, 'stats_class_assignment_check_v', as.character(anver)))) {
+  dir.create(paste0(plotdir61, 'stats_class_assignment_check_v', as.character(anver)))
 }
 
-classes_sankey <- ggplot(basic_class_assignment_all_forSankey101, aes(x = mutated_alleles, y=Freq,
-                                                                     stratum = class_assignment, alluvium = alluvID, fill = class_assignment, label = class_assignment)) +
+classes_sankey <- ggplot(basic_class_assignment_all_forSankey61, aes(x = mutated_alleles, y=Freq,
+                                                                      stratum = class_assignment, alluvium = alluvID, fill = class_assignment, label = class_assignment)) +
   facet_grid(product~.) +
   geom_flow() +
   geom_stratum(alpha = 0.5) +
   geom_text(stat = 'stratum', size = 3) + 
   theme(legend.position = 'none')
-ggsave(classes_sankey, file = paste0(plotdir101, 'stats_class_assignment_check_v', as.character(anver),'/classes_sankey.pdf'))
+ggsave(classes_sankey, file = paste0(plotdir61, 'stats_class_assignment_check_v', as.character(anver),'/classes_sankey.pdf'))
 
-basic_class_assignment_all_forpie101 <- basic_class_assignment_all101 %>%
+basic_class_assignment_all_forpie61 <- basic_class_assignment_all61 %>%
   group_by(mutated_alleles, product, class_assignment) %>%
   summarise(nSets = length(product))
 
-classes_pies <- ggplot(basic_class_assignment_all_forpie101, aes(x="", y=nSets, fill=class_assignment)) +
+classes_pies <- ggplot(basic_class_assignment_all_forpie61, aes(x="", y=nSets, fill=class_assignment)) +
   geom_bar(stat='identity', width=1, color='white') +
   coord_polar('y', start=0) +
   facet_grid(product~mutated_alleles) +
   theme_void() +
-  ggtitle('classes of all distributions in v1.6.10.1\neach gene in each genotype')
-ggsave(classes_pies, file = paste0(plotdir101, 'stats_class_assignment_check_v', as.character(anver),'/classes_pies.pdf'))
+  ggtitle('classes of all distributions in v1.6.6.1\neach gene in each genotype')
+ggsave(classes_pies, file = paste0(plotdir61, 'stats_class_assignment_check_v', as.character(anver),'/classes_pies.pdf'))
 
 # get data into format: each row is a paramset, with cols: sampled LHS (numeric) and classes (factor) of each gene in each genotype
 
-basic_class_assignment_all101_wide <- basic_class_assignment_all101 %>% 
+basic_class_assignment_all61_wide <- basic_class_assignment_all61 %>% 
   dplyr::select(version, paramset, mutated_alleles, product, class_assignment) %>%
   pivot_wider(names_from = c('mutated_alleles', 'product'), values_from = 'class_assignment')
 
-classes_for_trees101 <- inner_join(basic_class_assignment_all101_wide, lhs_sets101, by = 'paramset')
+classes_for_trees61 <- inner_join(basic_class_assignment_all61_wide, lhs_sets61, by = 'paramset')
 
-temp_class_for_tree101 <- classes_for_trees101 %>%
-  dplyr::select(colnames(lhs_sets101), `1_B1`) %>% ungroup() %>%
+temp_class_for_tree61 <- classes_for_trees61 %>%
+  dplyr::select(colnames(lhs_sets61), `1_B1`) %>% ungroup() %>%
   dplyr::select(-paramset) %>%
   mutate(is_bimodal = ifelse(`1_B1` == 'bimodal', T, F)) %>%
   dplyr::select(-`1_B1`)
 
-temp_class_for_tree101$is_bimodal <- as.factor(temp_class_for_tree101$is_bimodal)
+temp_class_for_tree61$is_bimodal <- as.factor(temp_class_for_tree61$is_bimodal)
 
 temp.tree <- ctree(is_bimodal ~ basal_nitc_on_ratio + onbasalA1_off_ratio + A1_Aprime1_addon_ratio + 
                      A1_Aprime_prodon_ratio + r_prod_on + r_addon_byA1_B1 + r_onbasal_A1, 
-                   data = temp_class_for_tree101,
+                   data = temp_class_for_tree61,
                    control = ctree_control(alpha = 0.01))
 
 
 # decision tree for B1 unimodal symm to unimodal symm vs unimodal symm to other
 
 
-temp_class_for_tree101 <- classes_for_trees101 %>%
+temp_class_for_tree61 <- classes_for_trees61 %>%
   filter(`0_B1` == 'unimodal symmetric') %>%
   mutate(is_robust = ifelse(`0_B1` == `1_B1`, T, F)) %>%
-  dplyr::select(colnames(lhs_sets101), is_robust) %>% ungroup() %>%
+  dplyr::select(colnames(lhs_sets61), is_robust) %>% ungroup() %>%
   dplyr::select(-paramset) 
 
-temp_class_for_tree101$is_robust <- as.factor(temp_class_for_tree101$is_robust)
+temp_class_for_tree61$is_robust <- as.factor(temp_class_for_tree61$is_robust)
 
 temp.tree <- ctree(is_robust ~ basal_nitc_on_ratio + onbasalA1_off_ratio + A1_Aprime1_addon_ratio + 
                      A1_Aprime_prodon_ratio + r_prod_on + r_addon_byA1_B1 + r_onbasal_A1, 
-                   data = temp_class_for_tree101,
+                   data = temp_class_for_tree61,
                    control = ctree_control(alpha = 0.01))
 
-pdf(paste0(plotdir101, 'stats_class_assignment_check_v', as.character(anver),'/isRobust_unimodalsymmetric_tree.pdf'), width = 20, height = 10)
+pdf(paste0(plotdir61, 'stats_class_assignment_check_v', as.character(anver),'/isRobust_unimodalsymmetric_tree.pdf'), width = 20, height = 10)
 plot(temp.tree)
 dev.off()
 
