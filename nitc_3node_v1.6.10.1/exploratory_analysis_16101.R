@@ -465,4 +465,52 @@ pdf(paste0(plotdir101, 'stats_class_assignment_check_v', as.character(anver),'/i
 plot(temp.tree)
 dev.off()
 
+#correlations
+
+genos = 0:2
+prods = c('A1', 'Anonsense1', 'Aprime1', 'B1')
+
+pdf(paste0(plotdir101, 'stats_class_assignment_check_v', as.character(anver),'/correlations_perGene_perGenotype.pdf'), width = 24, height = 32)
+par(mfcol = c(4,3))
+for (aci in 1:length(genos)) {
+  for (proi in 1:length(prods)) {
+    
+    ac = genos[aci]
+    pro = prods[proi]
+    
+    tempforcorr <- allstats_full101 %>% 
+      filter(mutated_alleles == ac,
+             product == pro) %>%
+      ungroup() %>%
+      inner_join(lhs_sets_full101, by = c('version', 'paramset')) %>%
+      dplyr::select(-c('sd_product', 'fano_product', 'entropy95', 'entropy90', 'version', 'paramset', 'mutated_alleles', 'product'))
+    
+    corrplot(cor(tempforcorr), title = paste0(pro, ' in genotype ', as.character(ac)), mar = c(0,0,2,0))
+    
+  }
+}
+dev.off()
+
+comparisons = unique(compared_stats101$compare)
+for(comp in comparisons) {
+  pdf(paste0(plotdir101, 'stats_class_assignment_check_v', as.character(anver),'/correlations_',comp,'_perGene_perGenotype.pdf'), width = 12, height = 12)
+  par(mfrow = c(2,2))
+  for (proi in 1:length(prods)) {
+    
+    pro = prods[proi]
+    
+    tempforcorr <- compared_stats101 %>% 
+      filter(compare == comp) %>% 
+      dplyr::select(-c(`0`, `1`, `2`, 'mean_denom')) %>% 
+      pivot_wider(names_from = stat, values_from = diff) %>% 
+      filter(product == pro) %>%
+      ungroup() %>%
+      inner_join(lhs_sets_full101, by = c('version', 'paramset')) %>%
+      dplyr::select(-c('sd_product', 'fano_product', 'entropy95', 'entropy90', 'version', 'paramset', 'product', 'compare'))
+    
+    corrplot(cor(tempforcorr), title = paste0(pro, ' compared ', comp), mar = c(0,0,2,0))
+    
+  }
+  dev.off()
+}
 
