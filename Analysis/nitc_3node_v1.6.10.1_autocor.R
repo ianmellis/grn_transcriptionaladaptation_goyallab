@@ -10,8 +10,8 @@ source('~/code/grn_nitc/Functions/grn_analysis_utilities.R')
 
 
 # edit as needed
-datadir <- '/Volumes/IAMYG1/grn_nitc_data/v1.6.10.1/fullTraces/'
-plotdir <- '/Volumes/IAMYG1/grn_nitc_data/v1.6.10.1/exploratory_analysis/autocor/'
+datadir <- '/Volumes/IAMYG2/grn_nitc_data/v1.6.10.1/fullTraces/'
+plotdir <- '/Volumes/IAMYG2/grn_nitc_data/v1.6.10.1/exploratory_analysis/autocor/'
 setwd(datadir)
 
 if(!dir.exists(plotdir)){
@@ -23,7 +23,7 @@ for (paramset in paramsets){
   
   cat(paste0('Working on ', as.character(paramset), '\n'))
   
-  params<-as_tibble(read.csv(paste0('initialsim_rates',as.character(paramset),'.csv'), header = T)) #%>%
+  # params<-as_tibble(read.csv(paste0('initialsim_rates',as.character(paramset),'.csv'), header = T)) #%>%
   # mutate(paramset = paramset,
   #        ssA_wt = 2*r_onbasal_A1*r_prodon_A1/(r_deg_A1*(r_onbasal_A1+r_off_A1)),
   #        HBA_wt = r_bind_byA1_B1*(ssA_wt^n_A1)/(k_A1^n_A1 + ssA_wt^n_A1),
