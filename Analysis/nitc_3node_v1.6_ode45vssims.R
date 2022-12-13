@@ -53,7 +53,7 @@ for (paramset in paramsets){
     ggtitle(paste0('Parameter set ', as.character(paramset))) +
     theme_classic()
   
-  ggsave(dist_plot, file = paste0(plotdir, 'distributions_q300_paramset_', as.character(paramset), '.pdf'))
+  # ggsave(dist_plot, file = paste0(plotdir, 'distributions_q300_paramset_', as.character(paramset), '.pdf'))
   
   spstats <- species_sample %>%
     group_by(mutated_alleles, product, paramset) %>%
@@ -93,7 +93,28 @@ ssA_plot <- ggplot(inner_join(allstats %>%
   ggtitle('Steady-state approximation of A1 vs simulation\nWT/WT genotype, 100 parameter sets') +
   xlab('Simulated pseduo-single-cell mean A1') +
   ylab('ODE45 steady-state A1')
-
+ssAnons_ww_plot <- ggplot(inner_join(allstats %>% 
+                                       filter(mutated_alleles == 0) %>% 
+                                       dplyr::select(paramset, product, mean_product) %>% 
+                                       group_by(paramset) %>% 
+                                       pivot_wider(names_from = product, values_from = mean_product), steadystate_ode45_wtwt, by = 'paramset'), aes(Anonsense1, ss_Anons1)) +
+  geom_point() +
+  geom_abline(slope = 1, intercept = 0, color = 'blue', linetype = 2) +
+  theme_bw() +
+  ggtitle('Steady-state approximation of Anonsense1 vs simulation\nWT/WT genotype, 100 parameter sets') +
+  xlab('Simulated pseduo-single-cell mean Anonsense1') +
+  ylab('ODE45 steady-state Anonsense1')
+ssAprim_ww_plot <- ggplot(inner_join(allstats %>% 
+                                       filter(mutated_alleles == 0) %>% 
+                                       dplyr::select(paramset, product, mean_product) %>% 
+                                       group_by(paramset) %>% 
+                                       pivot_wider(names_from = product, values_from = mean_product), steadystate_ode45_wtwt, by = 'paramset'), aes(Aprime1, ss_Aprim1)) +
+  geom_point() +
+  geom_abline(slope = 1, intercept = 0, color = 'blue', linetype = 2) +
+  theme_bw() +
+  ggtitle('Steady-state approximation of Aprime1 vs simulation\nWT/WT genotype, 100 parameter sets') +
+  xlab('Simulated pseduo-single-cell mean Aprime1') +
+  ylab('ODE45 steady-state Aprime1')
 ssB_plot <- ggplot(inner_join(allstats %>% 
                                 filter(mutated_alleles == 0) %>% 
                                 dplyr::select(paramset, product, mean_product) %>% 
@@ -106,8 +127,8 @@ ssB_plot <- ggplot(inner_join(allstats %>%
   xlab('Simulated pseduo-single-cell mean B1') +
   ylab('ODE45 steady-state B1')
 
-pdf(paste0(plotdir, 'steadystate_wtwt_AB.pdf'), width = 10, height = 5)
-ss_wt<-grid.arrange(ssA_plot, ssB_plot, ncol=2)
+pdf(paste0(plotdir, 'steadystate_wtwt.pdf'), width = 10, height = 10)
+ss_wt<-grid.arrange(ssA_plot, ssAnons_ww_plot, ssAprim_ww_plot, ssB_plot, ncol=2)
 dev.off()
 
 ssB_plot_n <- ggplot(inner_join(allstats %>% 
@@ -171,7 +192,7 @@ ssB_wm_plot <- ggplot(inner_join(allstats %>%
   xlab('Simulated pseduo-single-cell mean B1') +
   ylab('ODE45 steady-state B1')
 
-pdf(paste0(plotdir, 'steadystate_wtmut_AB.pdf'), width = 10, height = 10)
+pdf(paste0(plotdir, 'steadystate_wtmut.pdf'), width = 10, height = 10)
 ss_wt<-grid.arrange(ssA_wm_plot, ssAnons_wm_plot, ssAprim_wm_plot, ssB_wm_plot, ncol=2)
 dev.off()
 
@@ -223,7 +244,7 @@ ssB_mm_plot <- ggplot(inner_join(allstats %>%
   xlab('Simulated pseduo-single-cell mean B1') +
   ylab('ODE45 steady-state B1')
 
-pdf(paste0(plotdir, 'steadystate_mutmut_AB.pdf'), width = 10, height = 10)
+pdf(paste0(plotdir, 'steadystate_mutmut.pdf'), width = 10, height = 10)
 ss_wt<-grid.arrange(ssA_mm_plot, ssAprim_mm_plot, ssAnons_mm_plot, ssB_mm_plot, ncol=2)
 dev.off()
 

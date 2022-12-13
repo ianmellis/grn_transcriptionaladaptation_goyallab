@@ -475,7 +475,7 @@ classes_sankey52_B1forfig <- ggplot(basic_class_assignment_all_forSankey52 %>%
   ggtitle('Class assignments before and after mutation\nGene B1, Positive regulation, log-sampled parameters') +
   xlab('Mutated alleles') +
   ylab('Number of parameter sets')
-ggsave(classes_sankey, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/classes_sankey_B1formainfig.pdf'))
+ggsave(classes_sankey52_B1forfig, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/classes_sankey_B1formainfig.pdf'))
 
 
 basic_class_assignment_all_forpie52 <- basic_class_assignment_all52 %>%
