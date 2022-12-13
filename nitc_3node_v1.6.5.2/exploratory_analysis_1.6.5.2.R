@@ -618,6 +618,39 @@ for (aci in 1:length(genos)) {
 }
 dev.off()
 
+
+for (aci in 1:length(genos)) {
+  pdf(paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_scatter_perGene_mutatedalleles', as.character(aci),'.pdf'), width = 24, height = 32)
+  par(mfcol = c(length(genos),length(prods)))
+  
+  for (proi in 1:length(prods)) {
+    
+    ac = genos[aci]
+    pro = prods[proi]
+    
+    tempforcorr <- allstats_full52 %>% 
+      filter(mutated_alleles == ac,
+             product == pro) %>%
+      ungroup() %>%
+      inner_join(lhs_sets_full52, by = c('version', 'paramset')) %>%
+      dplyr::select(-c('sd_product', 'fano_product', 'entropy95', 'entropy90')) %>%
+      pivot_longer(names_to = 'statistic', values_to = 'stat_value', cols = mean_product:entropy) %>%
+      pivot_longer(names_to = 'parameter', values_to = 'param_value', cols = basal_nitc_on_ratio:r_onbasal_A1)
+    
+    ggplot(tempforcorr %>% filter(paramset %% 10 == 0), aes(log10(param_value), stat_value)) +
+      geom_point(alpha = 0.1, stroke = 0) +
+      geom_density2d() +
+      facet_grid(statistic ~ parameter, scales = 'free') + 
+      theme_classic() +
+      xlab('log10(parameter value)') +
+      ylab('statistic value')
+    
+    corrplot(cor(tempforcorr), title = paste0(pro, ' in genotype ', as.character(ac)), mar = c(0,0,2,0))
+    
+  }
+}
+dev.off()
+
 comparisons = unique(compared_stats52$compare)
 for(comp in comparisons) {
   pdf(paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/correlations_',comp,'_perGene_perGenotype.pdf'), width = 12, height = 12)
