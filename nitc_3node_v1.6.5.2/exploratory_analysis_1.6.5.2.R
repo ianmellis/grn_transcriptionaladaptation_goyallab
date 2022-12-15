@@ -773,6 +773,13 @@ cor(tempforcorr1 %>%
       dplyr::select(stat_value, param_value) %>% 
       mutate(log_param_val = log10(param_value)))
 
+tempforcortest1 <- tempforcorr1 %>%
+  pivot_wider(names_from = 'statistic', values_from = 'stat_value') %>%
+  pivot_wider(names_from = 'parameter', values_from = 'param_value')
+
+cor.test(tempforcortest1$bimodality_coef, log10(tempforcortest1$A1_Aprime1_addon_ratio))
+
+
 comparisons = unique(compared_stats52$compare)
 for(comp in comparisons) {
   pdf(paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/correlations_',comp,'_perGene_perGenotype.pdf'), width = 12, height = 12)
