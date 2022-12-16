@@ -805,15 +805,6 @@ for (aci in 1:length(genos)) {
       pivot_longer(names_to = 'statistic', values_to = 'stat_value', cols = cv_product_residual_swn:entropy_residual_swn) %>%
       pivot_longer(names_to = 'parameter', values_to = 'param_value', cols = basal_nitc_on_ratio:r_onbasal_A1) 
     
-    sc1_swn <- ggplot(tempforcorr_swn, aes(log10(param_value), stat_value)) +
-      geom_point(alpha = 0.1, stroke = 0) +
-      facet_grid(statistic ~ parameter, scales = 'free') + 
-      theme_classic() +
-      xlab('log10(parameter value)') +
-      ylab('statistic value') +
-      ggtitle(paste0('Statistic vs LOESS residual of parameter value\nGene: ', pro, ', Genotype: ', as.character(ac), ' mutated alleles'))
-    
-    
     tempforcorr1_swn <- loess_fitted_allstats_all52 %>% 
       filter(mutated_alleles == ac,
              product == pro,
@@ -827,9 +818,16 @@ for (aci in 1:length(genos)) {
       dplyr::select(-c('sd_product_residual_swn', 'fano_product_residual_swn', 'entropy95_residual_swn', 'entropy90_residual_swn')) %>%
       pivot_longer(names_to = 'statistic', values_to = 'stat_value', cols = cv_product_residual_swn:entropy_residual_swn) %>%
       pivot_longer(names_to = 'parameter', values_to = 'param_value', cols = basal_nitc_on_ratio:r_onbasal_A1) 
-    ggsave(sc1_swn, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_swn_scatter_gene', pro, '_mutatedalleles', as.character(ac),'_B1hetfocus.pdf'), width = 12, height = 4)
-    
-    if(nrow(tempforcorr1)>0){
+   
+    if(nrow(tempforcorr1_swn)>0){
+      sc1_swn <- ggplot(tempforcorr_swn, aes(log10(param_value), stat_value)) +
+        geom_point(alpha = 0.1, stroke = 0) +
+        facet_grid(statistic ~ parameter, scales = 'free') + 
+        theme_classic() +
+        xlab('log10(parameter value)') +
+        ylab('statistic value') +
+        ggtitle(paste0('Statistic vs normalized LOESS residual of parameter value\nGene: ', pro, ', Genotype: ', as.character(ac), ' mutated alleles'))
+      
       sc1d_swn <- ggplot(tempforcorr_swn, aes(log10(param_value), stat_value)) +
         geom_point(alpha = 0.1, stroke = 0) +
         geom_density2d() +
@@ -837,8 +835,9 @@ for (aci in 1:length(genos)) {
         theme_classic() +
         xlab('log10(parameter value)') +
         ylab('statistic value') +
-        ggtitle(paste0('Statistic vs LOESS residual of parameter value\nGene: ', pro, ', Genotype: ', as.character(ac), ' mutated alleles'))
-      ggsave(sc1d, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_swn_scatterDensity_gene', pro, '_mutatedalleles', as.character(ac),'_B1hetfocus.pdf'), width = 12, height = 4)
+        ggtitle(paste0('Statistic vs normalized LOESS residual of parameter value\nGene: ', pro, ', Genotype: ', as.character(ac), ' mutated alleles'))
+      ggsave(sc1_swn, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_swn_scatter_gene', pro, '_mutatedalleles', as.character(ac),'.pdf'), width = 24, height = 15)
+      ggsave(sc1d_swn, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_swn_scatterDensity_gene', pro, '_mutatedalleles', as.character(ac),'.pdf'), width = 24, height = 15)
       
       sc2_swn <- ggplot(tempforcorr1_swn, aes(log10(param_value), stat_value)) +
         geom_point(alpha = 0.1, stroke = 0) +
@@ -846,7 +845,7 @@ for (aci in 1:length(genos)) {
         theme_classic() +
         xlab('log10(parameter value)') +
         ylab('statistic value') +
-        ggtitle(paste0('Statistic vs LOESS residual of parameter value\nGene: ', pro, ', Genotype: ', as.character(ac), ' mutated alleles\nMinimum mean expression = 10'))
+        ggtitle(paste0('Statistic vs normalized LOESS residual of parameter value\nGene: ', pro, ', Genotype: ', as.character(ac), ' mutated alleles\nMinimum mean expression = 10'))
       sc2d_swn <- ggplot(tempforcorr1_swn, aes(log10(param_value), stat_value)) +
         geom_point(alpha = 0.1, stroke = 0) +
         geom_density2d() +
@@ -854,10 +853,10 @@ for (aci in 1:length(genos)) {
         theme_classic() +
         xlab('log10(parameter value)') +
         ylab('statistic value') +
-        ggtitle(paste0('Statistic vs LOESS residual of parameter value\nGene: ', pro, ', Genotype: ', as.character(ac), ' mutated alleles\nMinimum mean expression = 10'))
+        ggtitle(paste0('Statistic vs normalized LOESS residual of parameter value\nGene: ', pro, ', Genotype: ', as.character(ac), ' mutated alleles\nMinimum mean expression = 10'))
       
-      ggsave(sc2_swn, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_swn_scatter_minMean10_gene', pro, '_mutatedalleles', as.character(ac),'_B1hetfocus.pdf'), width = 12, height = 4)
-      ggsave(sc2d_swn, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_swn_scatterDensity_minMean10_gene', pro, '_mutatedalleles', as.character(ac),'_B1hetfocus.pdf'), width = 12, height = 4)
+      ggsave(sc2_swn, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_swn_scatter_minMean10_gene', pro, '_mutatedalleles', as.character(ac),'.pdf'), width = 24, height = 15)
+      ggsave(sc2d_swn, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_swn_scatterDensity_minMean10_gene', pro, '_mutatedalleles', as.character(ac),'.pdf'), width = 24, height = 15)
     }
     
   }
