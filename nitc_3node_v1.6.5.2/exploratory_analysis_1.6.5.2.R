@@ -946,9 +946,9 @@ tempforcortest1 <- tempforcorr1 %>%
   pivot_wider(names_from = 'statistic', values_from = 'stat_value') %>%
   pivot_wider(names_from = 'parameter', values_from = 'param_value')
 
-cor.test(tempforcortest1$bimodality_coef, log10(tempforcortest1$A1_Aprime1_addon_ratio))
-cor.test(tempforcortest1$bimodality_coef, abs(log10(tempforcortest1$A1_Aprime_prodon_ratio)))
-cor.test(tempforcortest1$bimodality_coef, log10(tempforcortest1$basal_nitc_on_ratio))
+cor.test(tempforcortest1$bimodality_coef_residual_swn, log10(tempforcortest1$A1_Aprime1_addon_ratio))
+cor.test(tempforcortest1$bimodality_coef_residual_swn, abs(log10(tempforcortest1$A1_Aprime_prodon_ratio)))
+cor.test(tempforcortest1$bimodality_coef_residual_swn, log10(tempforcortest1$basal_nitc_on_ratio))
 
 
 
