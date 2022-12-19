@@ -2,6 +2,9 @@
 
 library(e1071)
 
+# default color palette for classifier
+# dist_pal_default matches colors from the colorblind-friendly Rcolorbrewer palette Set2 to classes in analysis version 5 classes
+
 # calculate_bimodality calculates Sarle's bimodality coefficient for a finite sample (https://en.wikipedia.org/wiki/Multimodal_distribution#Bimodality_coefficient).
 # Note that a unimodal distribution will tend toward 0, a uniform distribution will give a value of ~0.555, and a Bernoulli distribution will give a value of 1.
 # Accepts:

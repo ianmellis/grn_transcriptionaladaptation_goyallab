@@ -459,6 +459,8 @@ classes_sankey <- ggplot(basic_class_assignment_all_forSankey52, aes(x = mutated
   geom_flow() +
   geom_stratum(alpha = 0.5) +
   geom_text(stat = 'stratum', size = 3) + 
+  scale_fill_brewer(palette = 'Set2') +
+  theme_classic() +
   theme(legend.position = 'none')
 ggsave(classes_sankey, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/classes_sankey.pdf'))
 
@@ -470,6 +472,7 @@ classes_sankey52_B1forfig <- ggplot(basic_class_assignment_all_forSankey52 %>%
   geom_flow() +
   geom_stratum(alpha = 0.5) +
   geom_text(stat = 'stratum', size = 3) + 
+  scale_fill_brewer(palette = 'Set2') +
   theme_classic() +
   theme(legend.position = 'none') +
   ggtitle('Class assignments before and after mutation\nGene B1, Positive regulation, log-sampled parameters') +
