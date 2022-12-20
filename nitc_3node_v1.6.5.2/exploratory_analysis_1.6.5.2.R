@@ -12,6 +12,7 @@ library(tibble)
 library(svglite)
 library(entropy)
 library(ggalluvial)
+library(partykit)
 source('~/code/grn_nitc/Functions/grn_analysis_utilities.R')
 
 
@@ -52,12 +53,12 @@ for (paramset in paramsets52){
   
   if(paramset %% 100 == 0) {
     cat(paste0('Working on ', as.character(paramset), '\n'))
-    dist_plot<-ggplot(species_sample, aes(abundance)) +
-      geom_histogram() +
-      facet_grid(mutated_alleles~product) +
-      ggtitle(paste0('Parameter set ', as.character(paramset))) +
-      theme_classic()
-    ggsave(dist_plot, file = paste0(plotdir52, 'distributions_q300_v1.6.5.2_paramset_', as.character(paramset), '.pdf'))
+    # dist_plot<-ggplot(species_sample, aes(abundance)) +
+    #   geom_histogram() +
+    #   facet_grid(mutated_alleles~product) +
+    #   ggtitle(paste0('Parameter set ', as.character(paramset))) +
+    #   theme_classic()
+    # ggsave(dist_plot, file = paste0(plotdir52, 'distributions_q300_v1.6.5.2_paramset_', as.character(paramset), '.pdf'))
   }
   
   spstats <- species_sample %>%
@@ -127,7 +128,7 @@ for (paramset in paramsets52){
   }
   
 }
-
+write.csv(allstats52 %>% mutate(version = '1.6.5.2'), file = paste0(plotdir52, 'summary_stats.csv'), row.names = F, quotes = F)
 
 # temp: collate all data
 setwd(datadir52)
@@ -461,7 +462,10 @@ classes_sankey <- ggplot(basic_class_assignment_all_forSankey52, aes(x = mutated
   geom_text(stat = 'stratum', size = 3) + 
   scale_fill_brewer(palette = 'Set2') +
   theme_classic() +
-  theme(legend.position = 'none')
+  theme(legend.position = 'none') +
+  ggtitle('Class assignments before and after mutations\nPositive regulation, log-sampled parameters') +
+  xlab('Mutated alleles') +
+  ylab('Number of parameter sets')
 ggsave(classes_sankey, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/classes_sankey.pdf'))
 
 classes_sankey52_B1forfig <- ggplot(basic_class_assignment_all_forSankey52 %>%
@@ -579,6 +583,7 @@ unimodal_symmetric_robust_tree52_forpies <- unimodal_symmetric_robust_tree52 %>%
 unimodal_symmetric_robust_tree52_pies <- ggplot(unimodal_symmetric_robust_tree52_forpies, aes(x="", y=fracSets, fill=`1_B1`)) +
   geom_bar(stat='identity', width=1, color='white') +
   coord_polar('y', start=0) +
+  scale_fill_brewer(palette = 'Set2') +
   facet_grid(~nodeID) +
   theme_void() +
   ggtitle('classes of (B1 in heterozygous genotype) distributions in v1.6.5.2\neach gene in each genotype\nUnimodal symmetric in wild-type only')
