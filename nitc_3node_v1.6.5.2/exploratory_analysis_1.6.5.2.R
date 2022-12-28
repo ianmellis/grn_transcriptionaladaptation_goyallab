@@ -128,7 +128,7 @@ for (paramset in paramsets52){
   }
   
 }
-write.csv(allstats52 %>% mutate(version = '1.6.5.2'), file = paste0(plotdir52, 'summary_stats.csv'), row.names = F, quotes = F)
+write.csv(allstats52 %>% mutate(version = '1.6.5.2'), file = paste0(plotdir52, 'summary_stats.csv'), row.names = F)
 
 # temp: collate all data
 setwd(datadir52)
@@ -170,6 +170,8 @@ lhs_sets_full52 <- lhs_sets52 %>% mutate(version = '1.6.5.2')
 pseud = 0.01
 
 allstats_full52 %<>% mutate(skewness = ifelse(is.na(skewness), 0, skewness))
+
+write.csv(allstats_full52, file = paste0(plotdir52, 'summary_stats.csv'), row.names = F)
 
 compared_stats52 <- allstats_full52 %>% 
   group_by(version, paramset, product, mutated_alleles) %>% 
@@ -521,6 +523,73 @@ temp.tree <- ctree(is_bimodal ~ basal_nitc_on_ratio + onbasalA1_off_ratio + A1_A
 pdf(paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/isBimodalHet_tree.pdf'), width = 40, height = 10)
 plot(temp.tree)
 dev.off()
+
+# decision tree for B1 unimodal symmetric in het
+
+temp_class_for_tree52 <- classes_for_trees52 %>%
+  dplyr::select(colnames(lhs_sets52), `1_B1`) %>% ungroup() %>%
+  dplyr::select(-paramset) %>%
+  mutate(is_unimodal = ifelse(`1_B1` == 'unimodal symmetric', T, F)) %>%
+  dplyr::select(-`1_B1`)
+
+temp_class_for_tree52$is_unimodal <- as.factor(temp_class_for_tree52$is_unimodal)
+
+temp.tree <- ctree(is_unimodal ~ basal_nitc_on_ratio + onbasalA1_off_ratio + A1_Aprime1_addon_ratio + 
+                     A1_Aprime_prodon_ratio + r_prod_on + r_addon_byA1_B1 + r_onbasal_A1, 
+                   data = temp_class_for_tree52,
+                   control = ctree_control(alpha = 0.01,
+                                           minbucket = 100))
+
+pdf(paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/isUnimodalSymmetricHet_tree.pdf'), width = 40, height = 10)
+plot(temp.tree)
+dev.off()
+
+# decision trees log10 parameter values
+
+classes_for_trees52_log <- inner_join(basic_class_assignment_all52_wide, 
+                                  lhs_sets52 %>%
+                                    mutate_at(vars(-('paramset')), log10), by = 'paramset')
+
+temp_class_for_tree52_log <- classes_for_trees52_log %>%
+  dplyr::select(colnames(lhs_sets52), `1_B1`) %>% ungroup() %>%
+  dplyr::select(-paramset) %>%
+  mutate(is_bimodal = ifelse(`1_B1` == 'bimodal', T, F)) %>%
+  dplyr::select(-`1_B1`)
+
+temp_class_for_tree52_log$is_bimodal <- as.factor(temp_class_for_tree52_log$is_bimodal)
+
+temp.tree <- ctree(is_bimodal ~ basal_nitc_on_ratio + onbasalA1_off_ratio + A1_Aprime1_addon_ratio + 
+                     A1_Aprime_prodon_ratio + r_prod_on + r_addon_byA1_B1 + r_onbasal_A1, 
+                   data = temp_class_for_tree52_log,
+                   control = ctree_control(alpha = 0.01))
+
+pdf(paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/isBimodalHet_tree_log.pdf'), width = 40, height = 10)
+plot(temp.tree)
+dev.off()
+
+is_bimodal_tree_splits <- partykit:::.list.rules.party(temp.tree, i = nodeids(temp.tree))
+
+# decision tree for B1 unimodal symmetric in het
+
+temp_class_for_tree52_log <- classes_for_trees52_log %>%
+  dplyr::select(colnames(lhs_sets52), `1_B1`) %>% ungroup() %>%
+  dplyr::select(-paramset) %>%
+  mutate(is_unimodal = ifelse(`1_B1` == 'unimodal symmetric', T, F)) %>%
+  dplyr::select(-`1_B1`)
+
+temp_class_for_tree52_log$is_unimodal <- as.factor(temp_class_for_tree52_log$is_unimodal)
+
+temp.tree <- ctree(is_unimodal ~ basal_nitc_on_ratio + onbasalA1_off_ratio + A1_Aprime1_addon_ratio + 
+                     A1_Aprime_prodon_ratio + r_prod_on + r_addon_byA1_B1 + r_onbasal_A1, 
+                   data = temp_class_for_tree52_log,
+                   control = ctree_control(alpha = 0.01,
+                                           minbucket = 100))
+
+pdf(paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/isUnimodalSymmetricHet_tree_log.pdf'), width = 40, height = 10)
+plot(temp.tree)
+dev.off()
+
+
 
 
 # decision tree for B1 unimodal symm to unimodal symm vs unimodal symm to other
