@@ -569,6 +569,9 @@ dev.off()
 
 is_bimodal_tree_splits <- partykit:::.list.rules.party(temp.tree, i = nodeids(temp.tree))
 
+# for each branch of interest, use the following to extract the target parameter sets
+temp_class_for_tree52_log %>% filter(eval(parse(text=is_bimodal_tree_splits[71])))
+
 # decision tree for B1 unimodal symmetric in het
 
 temp_class_for_tree52_log <- classes_for_trees52_log %>%

@@ -408,8 +408,30 @@ classes_sankey <- ggplot(basic_class_assignment_all_forSankey61, aes(x = mutated
   geom_flow() +
   geom_stratum(alpha = 0.5) +
   geom_text(stat = 'stratum', size = 3) + 
-  theme(legend.position = 'none')
+  scale_fill_brewer(palette = 'Set2') +
+  theme_classic() +
+  theme(legend.position = 'none') +
+  ggtitle('Class assignments before and after mutations\nPositive regulation, log-sampled parameters\nWith basal paralog expression') +
+  xlab('Mutated alleles') +
+  ylab('Number of parameter sets')
 ggsave(classes_sankey, file = paste0(plotdir61, 'stats_class_assignment_check_v', as.character(anver),'/classes_sankey.pdf'))
+
+classes_sankey61_B1forfig <- ggplot(basic_class_assignment_all_forSankey61 %>%
+                                      filter(product == 'B1',
+                                             mutated_alleles %in% c(0,1)), aes(x = mutated_alleles, y=Freq,
+                                                                               stratum = class_assignment, alluvium = alluvID, fill = class_assignment, label = class_assignment)) +
+  facet_grid(product~.) +
+  geom_flow() +
+  geom_stratum(alpha = 0.5) +
+  geom_text(stat = 'stratum', size = 3) + 
+  scale_fill_brewer(palette = 'Set2') +
+  theme_classic() +
+  theme(legend.position = 'none') +
+  ggtitle('Class assignments before and after mutation\nGene B1, Positive regulation, log-sampled parameters\nWith basal paralog expression') +
+  xlab('Mutated alleles') +
+  ylab('Number of parameter sets')
+ggsave(classes_sankey61_B1forfig, file = paste0(plotdir61, 'stats_class_assignment_check_v', as.character(anver),'/classes_sankey_B1formainfig.pdf'))
+
 
 basic_class_assignment_all_forpie61 <- basic_class_assignment_all61 %>%
   group_by(mutated_alleles, product, class_assignment) %>%

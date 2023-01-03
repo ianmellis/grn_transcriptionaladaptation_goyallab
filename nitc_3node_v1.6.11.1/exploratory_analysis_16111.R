@@ -127,6 +127,7 @@ for (paramset in paramsets111){
   }
   
 }
+write.csv(allstats111 %>% mutate(version = '1.6.11.1'), file = paste0(plotdir111, 'summary_stats.csv'), row.names = F)
 
 
 # temp: collate all data
@@ -408,8 +409,30 @@ classes_sankey <- ggplot(basic_class_assignment_all_forSankey111, aes(x = mutate
   geom_flow() +
   geom_stratum(alpha = 0.5) +
   geom_text(stat = 'stratum', size = 3) + 
-  theme(legend.position = 'none')
+  scale_fill_brewer(palette = 'Set2') +
+  theme_classic() +
+  theme(legend.position = 'none') +
+  ggtitle('Class assignments before and after mutations\nNegative regulation, log-sampled parameters') +
+  xlab('Mutated alleles') +
+  ylab('Number of parameter sets')
 ggsave(classes_sankey, file = paste0(plotdir111, 'stats_class_assignment_check_v', as.character(anver),'/classes_sankey.pdf'))
+
+classes_sankey111_B1forfig <- ggplot(basic_class_assignment_all_forSankey111 %>%
+                                       filter(product == 'B1',
+                                              mutated_alleles %in% c(0,1)), aes(x = mutated_alleles, y=Freq,
+                                                                                stratum = class_assignment, alluvium = alluvID, fill = class_assignment, label = class_assignment)) +
+  facet_grid(product~.) +
+  geom_flow() +
+  geom_stratum(alpha = 0.5) +
+  geom_text(stat = 'stratum', size = 3) + 
+  scale_fill_brewer(palette = 'Set2') +
+  theme_classic() +
+  theme(legend.position = 'none') +
+  ggtitle('Class assignments before and after mutation\nGene B1, Negative regulation, log-sampled parameters\nWith basal paralog expression') +
+  xlab('Mutated alleles') +
+  ylab('Number of parameter sets')
+ggsave(classes_sankey111_B1forfig, file = paste0(plotdir111, 'stats_class_assignment_check_v', as.character(anver),'/classes_sankey_B1formainfig.pdf'))
+
 
 basic_class_assignment_all_forpie111 <- basic_class_assignment_all111 %>%
   group_by(mutated_alleles, product, class_assignment) %>%
