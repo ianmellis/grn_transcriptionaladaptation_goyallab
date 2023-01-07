@@ -425,7 +425,7 @@ classes_sankey111_B1forfig <- ggplot(basic_class_assignment_all_forSankey111 %>%
   geom_flow() +
   geom_stratum(alpha = 0.5) +
   geom_text(stat = 'stratum', size = 3) + 
-  scale_fill_brewer(palette = 'Set2') +
+  scale_fill_manual(values = RColorBrewer::brewer.pal(name='Set2', n = 5)[c(1,3,4,5)]) +
   theme_classic() +
   theme(legend.position = 'none') +
   ggtitle('Class assignments before and after mutation\nGene B1, Negative regulation, log-sampled parameters\nWith basal paralog expression') +
@@ -534,3 +534,182 @@ for(comp in comparisons) {
   }
   dev.off()
 }
+
+
+for (aci in 1:length(genos)) {
+  
+  for (proi in 1:length(prods)) {
+    
+    ac = genos[aci]
+    pro = prods[proi]
+    
+    cat(paste0('Working on scatters for ', pro, ' in genotype ', ac, '\n'))
+    
+    tempforcorr <- allstats_full111 %>% 
+      filter(mutated_alleles == ac,
+             product == pro) %>%
+      ungroup() %>%
+      inner_join(lhs_sets_full111, by = c('version', 'paramset')) %>%
+      mutate(log10_mean_product1 = log10(mean_product+1)) %>%
+      relocate(log10_mean_product1, .after = mean_product) %>%
+      dplyr::select(-c('sd_product', 'fano_product', 'entropy95', 'entropy90', 'mean_product')) %>%
+      pivot_longer(names_to = 'statistic', values_to = 'stat_value', cols = log10_mean_product1:entropy) %>%
+      pivot_longer(names_to = 'parameter', values_to = 'param_value', cols = basal_nitc_on_ratio:r_onbasal_A1)
+    
+    # sc1 <- ggplot(tempforcorr, aes(log10(param_value), stat_value)) + # lhs_sets file is already log-transformed
+    sc1 <- ggplot(tempforcorr, aes(param_value, stat_value)) +
+      geom_point(alpha = 0.1, stroke = 0) +
+      facet_grid(statistic ~ parameter, scales = 'free') + 
+      theme_classic() +
+      xlab('log10(parameter value)') +
+      ylab('statistic value') +
+      ggtitle(paste0('Statistic vs parameter value\nGene: ', pro, ', Genotype: ', as.character(ac), ' mutated alleles'))
+    
+    
+    tempforcorr1 <- allstats_full111 %>% 
+      filter(mutated_alleles == ac,
+             product == pro,
+             mean_product > 10) %>%
+      ungroup() %>%
+      inner_join(lhs_sets_full111, by = c('version', 'paramset')) %>%
+      mutate(log10_mean_product1 = log10(mean_product+1)) %>%
+      relocate(log10_mean_product1, .after = mean_product) %>%
+      dplyr::select(-c('sd_product', 'fano_product', 'entropy95', 'entropy90', 'mean_product')) %>%
+      pivot_longer(names_to = 'statistic', values_to = 'stat_value', cols = log10_mean_product1:entropy) %>%
+      pivot_longer(names_to = 'parameter', values_to = 'param_value', cols = basal_nitc_on_ratio:r_onbasal_A1)
+    ggsave(sc1, file = paste0(plotdir111, 'stats_class_assignment_check_v', as.character(anver),'/stats_scatter_gene', pro, '_mutatedalleles', as.character(ac),'.pdf'), width = 24, height = 18)
+    
+    if(nrow(tempforcorr1)>0){
+      sc1d <- ggplot(tempforcorr, aes(param_value, stat_value)) +
+        geom_point(alpha = 0.1, stroke = 0) +
+        geom_density2d() +
+        facet_grid(statistic ~ parameter, scales = 'free') + 
+        theme_classic() +
+        xlab('log10(parameter value)') +
+        ylab('statistic value') +
+        ggtitle(paste0('Statistic vs parameter value\nGene: ', pro, ', Genotype: ', as.character(ac), ' mutated alleles'))
+      ggsave(sc1d, file = paste0(plotdir111, 'stats_class_assignment_check_v', as.character(anver),'/stats_scatterDensity_gene', pro, '_mutatedalleles', as.character(ac),'.pdf'), width = 24, height = 18)
+      
+      sc2 <- ggplot(tempforcorr1, aes(param_value, stat_value)) +
+        geom_point(alpha = 0.1, stroke = 0) +
+        facet_grid(statistic ~ parameter, scales = 'free') + 
+        theme_classic() +
+        xlab('log10(parameter value)') +
+        ylab('statistic value') +
+        ggtitle(paste0('Statistic vs parameter value\nGene: ', pro, ', Genotype: ', as.character(ac), ' mutated alleles\nMinimum mean expression = 10'))
+      sc2d <- ggplot(tempforcorr1, aes(param_value, stat_value)) +
+        geom_point(alpha = 0.1, stroke = 0) +
+        geom_density2d() +
+        facet_grid(statistic ~ parameter, scales = 'free') + 
+        theme_classic() +
+        xlab('log10(parameter value)') +
+        ylab('statistic value') +
+        ggtitle(paste0('Statistic vs parameter value\nGene: ', pro, ', Genotype: ', as.character(ac), ' mutated alleles\nMinimum mean expression = 10'))
+      
+      ggsave(sc2, file = paste0(plotdir111, 'stats_class_assignment_check_v', as.character(anver),'/stats_scatter_minMean10_gene', pro, '_mutatedalleles', as.character(ac),'.pdf'), width = 24, height = 18)
+      ggsave(sc2d, file = paste0(plotdir111, 'stats_class_assignment_check_v', as.character(anver),'/stats_scatterDensity_minMean10_gene', pro, '_mutatedalleles', as.character(ac),'.pdf'), width = 24, height = 18)
+    }
+  }
+}
+
+# focus on bimodality coefficient vs paralog-relevant parameters
+ac = 1
+pro = 'B1'
+
+cat(paste0('Working on scatters for ', pro, ' in genotype ', ac, '\n'))
+
+tempforcorr <- allstats_full111 %>% 
+  filter(mutated_alleles == ac,
+         product == pro) %>%
+  ungroup() %>%
+  inner_join(lhs_sets_full111, by = c('version', 'paramset')) %>%
+  mutate(log10_mean_product1 = log10(mean_product+1)) %>%
+  relocate(log10_mean_product1, .after = mean_product) %>%
+  dplyr::select(-c('sd_product', 'fano_product', 'entropy95', 'entropy90', 'mean_product')) %>%
+  pivot_longer(names_to = 'statistic', values_to = 'stat_value', cols = log10_mean_product1:entropy) %>%
+  pivot_longer(names_to = 'parameter', values_to = 'param_value', cols = basal_nitc_on_ratio:r_onbasal_A1) %>%
+  filter(statistic == 'bimodality_coef',
+         parameter %in% c('A1_Aprime1_addon_ratio', 'A1_Aprime_prodon_ratio', 'basal_nitc_on_ratio', 'r_onbasal_Aprime_ratio'))
+
+sc1 <- ggplot(tempforcorr, aes(param_value, stat_value)) +
+  geom_point(alpha = 0.1, stroke = 0) +
+  facet_grid(statistic ~ parameter, scales = 'free') + 
+  theme_classic() +
+  xlab('log10(parameter value)') +
+  ylab('statistic value') +
+  ggtitle(paste0('Statistic vs parameter value\nGene: ', pro, ', Genotype: ', as.character(ac), ' mutated alleles'))
+
+
+tempforcorr1 <- allstats_full111 %>% 
+  filter(mutated_alleles == ac,
+         product == pro,
+         mean_product > 10) %>%
+  ungroup() %>%
+  inner_join(lhs_sets_full111, by = c('version', 'paramset')) %>%
+  mutate(log10_mean_product1 = log10(mean_product+1)) %>%
+  relocate(log10_mean_product1, .after = mean_product) %>%
+  dplyr::select(-c('sd_product', 'fano_product', 'entropy95', 'entropy90', 'mean_product')) %>%
+  pivot_longer(names_to = 'statistic', values_to = 'stat_value', cols = log10_mean_product1:entropy) %>%
+  pivot_longer(names_to = 'parameter', values_to = 'param_value', cols = basal_nitc_on_ratio:r_onbasal_A1) %>%
+  filter(statistic == 'bimodality_coef',
+         parameter %in% c('A1_Aprime1_addon_ratio', 'A1_Aprime_prodon_ratio', 'basal_nitc_on_ratio', 'r_onbasal_Aprime_ratio'))
+ggsave(sc1, file = paste0(plotdir111, 'stats_class_assignment_check_v', as.character(anver),'/stats_scatter_gene', pro, '_mutatedalleles', as.character(ac),'_B1hetfocus.pdf'), width = 16, height = 4)
+
+if(nrow(tempforcorr1)>0){
+  sc1d <- ggplot(tempforcorr, aes(param_value, stat_value)) +
+    geom_point(alpha = 0.1, stroke = 0) +
+    geom_density2d() +
+    facet_grid(statistic ~ parameter, scales = 'free') + 
+    theme_classic() +
+    xlab('log10(parameter value)') +
+    ylab('statistic value') +
+    ggtitle(paste0('Statistic vs parameter value\nGene: ', pro, ', Genotype: ', as.character(ac), ' mutated alleles'))
+  ggsave(sc1d, file = paste0(plotdir111, 'stats_class_assignment_check_v', as.character(anver),'/stats_scatterDensity_gene', pro, '_mutatedalleles', as.character(ac),'_B1hetfocus.pdf'), width = 16, height = 4)
+  
+  sc2 <- ggplot(tempforcorr1, aes(param_value, stat_value)) +
+    geom_point(alpha = 0.1, stroke = 0) +
+    facet_grid(statistic ~ parameter, scales = 'free') + 
+    theme_classic() +
+    xlab('log10(parameter value)') +
+    ylab('statistic value') +
+    ggtitle(paste0('Statistic vs parameter value\nGene: ', pro, ', Genotype: ', as.character(ac), ' mutated alleles\nMinimum mean expression = 10'))
+  sc2d <- ggplot(tempforcorr1, aes(param_value, stat_value)) +
+    geom_point(alpha = 0.1, stroke = 0) +
+    geom_density2d() +
+    facet_grid(statistic ~ parameter, scales = 'free') + 
+    theme_classic() +
+    xlab('log10(parameter value)') +
+    ylab('statistic value') +
+    ggtitle(paste0('Statistic vs parameter value\nGene: ', pro, ', Genotype: ', as.character(ac), ' mutated alleles\nMinimum mean expression = 10'))
+  
+  ggsave(sc2, file = paste0(plotdir111, 'stats_class_assignment_check_v', as.character(anver),'/stats_scatter_minMean10_gene', pro, '_mutatedalleles', as.character(ac),'_B1hetfocus.pdf'), width = 16, height = 4)
+  ggsave(sc2d, file = paste0(plotdir111, 'stats_class_assignment_check_v', as.character(anver),'/stats_scatterDensity_minMean10_gene', pro, '_mutatedalleles', as.character(ac),'_B1hetfocus.pdf'), width = 16, height = 4)
+}
+
+# cor(tempforcorr1 %>% 
+#       dplyr::filter(statistic == 'bimodality_coef', parameter == 'basal_nitc_on_ratio') %>% 
+#       dplyr::select(stat_value, param_value) %>% 
+#       mutate(log_param_val = log10(param_value)))
+
+tempforcortest1 <- tempforcorr1 %>%
+  pivot_wider(names_from = 'statistic', values_from = 'stat_value') %>%
+  pivot_wider(names_from = 'parameter', values_from = 'param_value')
+
+c_addon <- cor.test(tempforcortest1$bimodality_coef, tempforcortest1$A1_Aprime1_addon_ratio)
+c_absaddon <- cor.test(tempforcortest1$bimodality_coef, abs(tempforcortest1$A1_Aprime1_addon_ratio))
+c_prodon <- cor.test(tempforcortest1$bimodality_coef, tempforcortest1$A1_Aprime_prodon_ratio)
+c_absprodon <- cor.test(tempforcortest1$bimodality_coef, abs(tempforcortest1$A1_Aprime_prodon_ratio))
+c_nitc <- cor.test(tempforcortest1$bimodality_coef, tempforcortest1$basal_nitc_on_ratio)
+c_absnitc <- cor.test(tempforcortest1$bimodality_coef, abs(tempforcortest1$basal_nitc_on_ratio))
+c_primon <- cor.test(tempforcortest1$bimodality_coef, tempforcortest1$r_onbasal_Aprime_ratio)
+c_absprimon <- cor.test(tempforcortest1$bimodality_coef, abs(tempforcortest1$r_onbasal_Aprime_ratio))
+
+cortab <- tibble(
+  statistic = c('A1_Aprime1_addon_ratio', 'abs(A1_Aprime1_addon_ratio)', 'A1_Aprime_prodon_ratio', 'abs(A1_Aprime_prodon_ratio)', 
+                'basal_nitc_on_ratio', 'abs(basal_nitc_on_ratio)', 'r_onbasal_Aprime_ratio', 'abs(r_onbasal_Aprime_ratio)'),
+  cor = c(c_addon$estimate, c_absaddon$estimate, c_prodon$estimate, c_absprodon$estimate, c_nitc$estimate, c_absnitc$estimate, c_primon$estimate, c_absprimon$estimate),
+  p.val = c(c_addon$p.value, c_absaddon$p.value, c_prodon$p.value, c_absprodon$p.value, c_nitc$p.value, c_absnitc$p.value, c_primon$p.value, c_absprimon$p.value)
+)
+write.table(cortab, file = paste0(plotdir111, 'stats_class_assignment_check_v', as.character(anver),'/stats_scatterDensity_minMean10_gene', pro, '_mutatedalleles', as.character(ac),'_pearsonCor.txt'), quote = F, row.names = F)
+
+

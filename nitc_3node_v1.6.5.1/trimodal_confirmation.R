@@ -130,3 +130,53 @@ for (paramset in paramsets51){
   }
   
 }
+
+write.csv(tibble(paramset = 1:100), paste0(plotdir51, 'trimodal_sets_manual.csv'), quote = F, row.names = F)
+
+# sample 100 random parameter sets from 1.6.5.2
+set.seed(362)
+sampsets <- sample(1:10000, 100)
+setwd(datadir52)
+for (paramset in sampsets){
+  
+  # cat(paste0('Working on ', as.character(paramset), '\n'))
+  
+  params<-as_tibble(read.csv(paste0('initialsim_rates',as.character(paramset),'.csv'), header = T))
+  
+  species<-as_tibble(read.csv(paste0('initialsim_species',as.character(paramset),'_q300.csv'), header = T))
+  
+  species_sample <- species %>%
+    mutate(paramset = paramset) %>%
+    filter((time > 400 & time < 100001) | (time > 100400 & time < 200001) | (time > 200400 & time < 300001)) %>%
+    mutate(mutated_alleles = case_when(
+      time < 100001 ~ 0,
+      time > 100000 & time < 200001 ~ 1,
+      time > 200000 ~ 2
+    )) %>%
+    dplyr::select(A1, Aprime1, Anonsense1, B1, paramset, time, mutated_alleles) %>%
+    pivot_longer(cols = A1:B1, names_to = 'product', values_to = 'abundance')
+  
+  if(paramset %% 1 == 0) {
+    cat(paste0('Working on ', as.character(paramset), '\n'))
+    dist_plot<-ggplot(species_sample, aes(abundance)) +
+      geom_histogram() +
+      facet_grid(mutated_alleles~product) +
+      ggtitle(paste0('Parameter set ', as.character(paramset))) +
+      theme_classic()
+    ggsave(dist_plot, file = paste0(plotdir51, 'distributions_q300_v1.6.5.2_paramset_', as.character(paramset), '.pdf'))
+  }
+  
+}
+
+write.csv(tibble(paramset = sampsets[order(sampsets)]), paste0(plotdir51, 'random_sets_1.6.5.2_manual.csv'), quote = F, row.names = F)
+
+manTrimodalCheck <- bind_rows(
+  as_tibble(read.csv(paste0(plotdir51, 'trimodal_sets_manual.csv'))) %>% mutate(version = 'resampled_1.6.5.1'),
+  as_tibble(read.csv(paste0(plotdir51, 'random_sets_1.6.5.2_manual.csv'))) %>% mutate(version = 'original_1.6.5.2')
+)
+
+trimCheckStackedBar <- ggplot(manTrimodalCheck, aes(version, fill = isTrimodal)) + 
+  geom_bar() +
+  scale_fill_brewer(palette = 'Dark2') +
+  theme_classic()
+ggsave(trimCheckStackedBar, file = paste0(plotdir51, 'trimodal_manualcheck_stackedbar.pdf'))
