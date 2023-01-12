@@ -54,7 +54,7 @@ void updatePropensities(double *species,double *rates,double *propensities)
 {
   long A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2;
   double r_prodbasal_A1, r_prodbasal_Anonsense1, r_prodbasal_Aprime1, r_prodbasal_B1, r_prodon_A1, r_prodon_Anonsense1, r_prodon_Aprime1, r_prodon_B1, d_Aprime1_B1, r_deg_A1, r_deg_Anonsense1, r_deg_Aprime1, r_deg_B1, r_onbasal_A1, r_onbasal_Anonsense1, r_onbasal_Aprime1, r_onbasal_B1, r_nitc_byAnonsense1_A1, r_nitc_byAnonsense1_Anonsense1, r_nitc_byAnonsense1_Aprime1, r_addon_byA1_B1, r_addon_byAprime1_B1, r_off_A1, r_off_Anonsense1, r_off_Aprime1, r_offorig_B1, r_offpara_B1, k_A1, k_Anonsense1, k_Aprime1, k_B1, n_A1, n_Anonsense1, n_Aprime1, n_B1;
-  
+
   A1 = (long)species[0];
   Anonsense1 = (long)species[1];
   Aprime1 = (long)species[2];
@@ -179,6 +179,10 @@ void updatePropensities(double *species,double *rates,double *propensities)
   propensities[26] = Burst1_onorig_targ_allele2*r_offorig_B1;
   //update propensity for Burst1_onpara_targ = Burst1_off_targ for allele2
   propensities[27] = Burst1_onpara_targ_allele2*r_offpara_B1;
+
+  // for (int i = 0; i<28; i++)
+  //     printf(" prop %i %f \n", i, propensities[i]);
+  // need to return both species and propensities
 }
 
 //void gillespie(long m, double *times_out,double *species_out,double currT,double *species,double *rates,double *propensities,double *rand1,double *rand2)
@@ -292,6 +296,10 @@ void gillespie(long m, double *times_out,double *species_out,double currT,double
     currT += deltaT;
     //p = rand2[i]*alpha;
     p = UNI*alpha;
+    printf("alpha %f \n", alpha);
+printf("deltaT %f \n", deltaT);
+printf("p %f \n", p);
+printf("total cumulativeprops %f ", cumpropensities[27]);
 
 //if(savecount < 1000){
     while (currT > savecount*deltaTsave) {

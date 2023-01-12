@@ -162,10 +162,8 @@ void gillespie(long m, double *times_out,double *species_out,double currT,double
     currT += deltaT;
     //p = rand2[i]*alpha;
     p = UNI*alpha;
-
     printf("deltaT %f \n", deltaT);
     printf("total cumulativeprops %f ", cumpropensities[27]);
-
 //if(savecount < 1000){
     while (currT > savecount*deltaTsave) {
         if (savecount < m){
