@@ -50,6 +50,27 @@ void zigset(unsigned long jsrseed);
 //INCLUDE NUMRXNS HERE
 #define NUMRXNS 28
 
+void updateSpecies(double *species, long A1, long Anonsense1, long Aprime1, long B1, long Burst1_onorig_targ_allele1, long Burst1_onpara_targ_allele1, long Burst1_off_targ_allele1, long Burst1_onorig_targ_allele2, long Burst1_onpara_targ_allele2, long Burst1_off_targ_allele2, long Burst1_on_para_allele1, long Burst1_on_para_allele2, long Burst1_on_orig_allele1, long Burst1_on_orig_allele2, long Burst1_is_mutated_allele1, long Burst1_is_mutated_allele2)
+{
+    species[0] = A1;
+    species[1] = Anonsense1;
+    species[2] = Aprime1;
+    species[3] = B1;
+
+    species[4] = Burst1_onorig_targ_allele1;
+    species[5] = Burst1_onpara_targ_allele1;
+    species[6] = Burst1_off_targ_allele1;
+    species[7] = Burst1_onorig_targ_allele2;
+    species[8] = Burst1_onpara_targ_allele2;
+    species[9] = Burst1_off_targ_allele2;
+    species[10] = Burst1_on_para_allele1;
+    species[11] = Burst1_on_para_allele2;
+    species[12] = Burst1_on_orig_allele1;
+    species[13] = Burst1_on_orig_allele2;
+    species[14] = Burst1_is_mutated_allele1;
+    species[15] = Burst1_is_mutated_allele2;
+}
+
 void updatePropensities(double *species,double *rates,double *propensities)
 {
   long A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2;
@@ -180,6 +201,8 @@ void updatePropensities(double *species,double *rates,double *propensities)
   //update propensity for Burst1_onpara_targ = Burst1_off_targ for allele2
   propensities[27] = Burst1_onpara_targ_allele2*r_offpara_B1;
 
+  updateSpecies(species, A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2);
+
   // for (int i = 0; i<28; i++)
   //     printf(" prop %i %f \n", i, propensities[i]);
   // need to return both species and propensities
@@ -301,23 +324,7 @@ void gillespie(long m, double *times_out,double *species_out,double currT,double
     printf("p %f \n", p);
     printf("total cumulativeprops %f ", cumpropensities[27]);
 
-species[savecount*NSPECIES+0] = A1;
-species[savecount*NSPECIES+1] = Anonsense1;
-species[savecount*NSPECIES+2] = Aprime1;
-species[savecount*NSPECIES+3] = B1;
 
-species[savecount*NSPECIES+4] = Burst1_onorig_targ_allele1;
-species[savecount*NSPECIES+5] = Burst1_onpara_targ_allele1;
-species[savecount*NSPECIES+6] = Burst1_off_targ_allele1;
-species[savecount*NSPECIES+7] = Burst1_onorig_targ_allele2;
-species[savecount*NSPECIES+8] = Burst1_onpara_targ_allele2;
-species[savecount*NSPECIES+9] = Burst1_off_targ_allele2;
-species[savecount*NSPECIES+10] = Burst1_on_para_allele1;
-species[savecount*NSPECIES+11] = Burst1_on_para_allele2;
-species[savecount*NSPECIES+12] = Burst1_on_orig_allele1;
-species[savecount*NSPECIES+13] = Burst1_on_orig_allele2;
-species[savecount*NSPECIES+14] = Burst1_is_mutated_allele1;
-species[savecount*NSPECIES+15] = Burst1_is_mutated_allele2;
 
 //if(savecount < 1000){
     while (currT > savecount*deltaTsave) {
