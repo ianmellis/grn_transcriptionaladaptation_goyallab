@@ -297,9 +297,27 @@ void gillespie(long m, double *times_out,double *species_out,double currT,double
     //p = rand2[i]*alpha;
     p = UNI*alpha;
     printf("alpha %f \n", alpha);
-printf("deltaT %f \n", deltaT);
-printf("p %f \n", p);
-printf("total cumulativeprops %f ", cumpropensities[27]);
+    printf("deltaT %f \n", deltaT);
+    printf("p %f \n", p);
+    printf("total cumulativeprops %f ", cumpropensities[27]);
+
+species[savecount*NSPECIES+0] = A1;
+species[savecount*NSPECIES+1] = Anonsense1;
+species[savecount*NSPECIES+2] = Aprime1;
+species[savecount*NSPECIES+3] = B1;
+
+species[savecount*NSPECIES+4] = Burst1_onorig_targ_allele1;
+species[savecount*NSPECIES+5] = Burst1_onpara_targ_allele1;
+species[savecount*NSPECIES+6] = Burst1_off_targ_allele1;
+species[savecount*NSPECIES+7] = Burst1_onorig_targ_allele2;
+species[savecount*NSPECIES+8] = Burst1_onpara_targ_allele2;
+species[savecount*NSPECIES+9] = Burst1_off_targ_allele2;
+species[savecount*NSPECIES+10] = Burst1_on_para_allele1;
+species[savecount*NSPECIES+11] = Burst1_on_para_allele2;
+species[savecount*NSPECIES+12] = Burst1_on_orig_allele1;
+species[savecount*NSPECIES+13] = Burst1_on_orig_allele2;
+species[savecount*NSPECIES+14] = Burst1_is_mutated_allele1;
+species[savecount*NSPECIES+15] = Burst1_is_mutated_allele2;
 
 //if(savecount < 1000){
     while (currT > savecount*deltaTsave) {
@@ -329,6 +347,7 @@ species_out[savecount*NSPECIES+15] = Burst1_is_mutated_allele2;
 		else{savecount++;
 		}
     }
+
 
 //INSERT IF STATEMENT HERE
 if (p<cumpropensities[0]) {
