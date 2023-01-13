@@ -69,9 +69,12 @@ void updateSpecies(double *species, long A1, long Anonsense1, long Aprime1, long
     species[13] = Burst1_on_orig_allele2;
     species[14] = Burst1_is_mutated_allele1;
     species[15] = Burst1_is_mutated_allele2;
+
+     for (int i = 0; i<16; i++)
+      printf(" species %i %f \n", i, species[i]);
 }
 
-void updatePropensities(double *species,double *rates,double *propensities)
+void updatePropensities(double *species, double *rates,double *propensities)
 {
   long A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2;
   double r_prodbasal_A1, r_prodbasal_Anonsense1, r_prodbasal_Aprime1, r_prodbasal_B1, r_prodon_A1, r_prodon_Anonsense1, r_prodon_Aprime1, r_prodon_B1, d_Aprime1_B1, r_deg_A1, r_deg_Anonsense1, r_deg_Aprime1, r_deg_B1, r_onbasal_A1, r_onbasal_Anonsense1, r_onbasal_Aprime1, r_onbasal_B1, r_nitc_byAnonsense1_A1, r_nitc_byAnonsense1_Anonsense1, r_nitc_byAnonsense1_Aprime1, r_addon_byA1_B1, r_addon_byAprime1_B1, r_off_A1, r_off_Anonsense1, r_off_Aprime1, r_offorig_B1, r_offpara_B1, k_A1, k_Anonsense1, k_Aprime1, k_B1, n_A1, n_Anonsense1, n_Aprime1, n_B1;
@@ -201,7 +204,7 @@ void updatePropensities(double *species,double *rates,double *propensities)
   //update propensity for Burst1_onpara_targ = Burst1_off_targ for allele2
   propensities[27] = Burst1_onpara_targ_allele2*r_offpara_B1;
 
-  updateSpecies(species, A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2);
+  // updateSpecies(species, A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2);
 
   // for (int i = 0; i<28; i++)
   //     printf(" prop %i %f \n", i, propensities[i]);
@@ -322,9 +325,11 @@ void gillespie(long m, double *times_out,double *species_out,double currT,double
     printf("alpha %f \n", alpha);
     printf("deltaT %f \n", deltaT);
     printf("p %f \n", p);
-    printf("total cumulativeprops %f ", cumpropensities[27]);
+    printf("total cumulativeprops %f \n", cumpropensities[27]);
 
-
+    if(totaliterations == 5) {
+      break;
+    }
 
 //if(savecount < 1000){
     while (currT > savecount*deltaTsave) {
@@ -363,7 +368,8 @@ if (p<cumpropensities[0]) {
     A1=A1 + 1;
   }
  
-  updatePropensities(species,rates,propensities);
+  updateSpecies(species, A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2);
+  updatePropensities(species, rates, propensities);
 
 } else if (p<cumpropensities[1]) {
   // rxn: = A1_nonsense 
@@ -371,7 +377,8 @@ if (p<cumpropensities[0]) {
     Anonsense1=Anonsense1 + 1;
   }
   
-  updatePropensities(species,rates,propensities);
+  updateSpecies(species, A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2);
+  updatePropensities(species, rates, propensities);
 
 } else if (p<cumpropensities[2]) {
     // rxn: = A1 from allele2
@@ -379,7 +386,8 @@ if (p<cumpropensities[0]) {
     A1=A1 + 1;
   }
   
-  updatePropensities(species,rates,propensities);
+  updateSpecies(species, A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2);
+  updatePropensities(species, rates, propensities);
 
 } else if (p<cumpropensities[3]) {
   // rxn: = A1_nonsense from allele2
@@ -387,55 +395,64 @@ if (p<cumpropensities[0]) {
     Anonsense1=Anonsense1 + 1;
   }
 
-  updatePropensities(species,rates,propensities);
+  updateSpecies(species, A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2);
+  updatePropensities(species, rates, propensities);
 
 } else if (p<cumpropensities[4]) {
   // rxn: = Aprime1 from allele1
   Aprime1=Aprime1 + 1;
 
-  updatePropensities(species,rates,propensities);
+  updateSpecies(species, A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2);
+  updatePropensities(species, rates, propensities);
 
 } else if (p<cumpropensities[5]) {
   // rxn: = Aprime1 from allele2
   Aprime1=Aprime1 + 1;
 
-  updatePropensities(species,rates,propensities);
+  updateSpecies(species, A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2);
+  updatePropensities(species, rates, propensities);
 
 } else if (p<cumpropensities[6]) {
   // rxn: = B1 from allele1
   B1=B1 + 1;
 
-  updatePropensities(species,rates,propensities);
+  updateSpecies(species, A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2);
+  updatePropensities(species, rates, propensities);
 
 } else if (p<cumpropensities[7]) {
   // rxn: = B1 from allele2
   B1=B1 + 1;
 
-  updatePropensities(species,rates,propensities);
+  updateSpecies(species, A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2);
+  updatePropensities(species, rates, propensities);
 
 } else if (p<cumpropensities[8]) {
   // rxn: A1 = 
   A1=A1 + -1;
 
-  updatePropensities(species,rates,propensities);
+  updateSpecies(species, A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2);
+  updatePropensities(species, rates, propensities);
 
 } else if (p<cumpropensities[9]) {
   // rxn: Aprime1 = 
   Anonsense1=Anonsense1 + -1;
 
-  updatePropensities(species,rates,propensities);
+  updateSpecies(species, A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2);
+  updatePropensities(species, rates, propensities);
 
 } else if (p<cumpropensities[10]) {
   // rxn: Aprime1 = 
   Aprime1=Aprime1 + -1;
 
-  updatePropensities(species,rates,propensities);
+  updateSpecies(species, A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2);
+  updatePropensities(species, rates, propensities);
 
 } else if (p<cumpropensities[11]) {
   // rxn: B1 = 
   B1=B1 + -1;
 
-  updatePropensities(species,rates,propensities);
+  updateSpecies(species, A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2);
+  updatePropensities(species, rates, propensities);
 
 } else if (p<cumpropensities[12]) {
   // rxn: Burst1_off_orig_allele1 = Burst1_on_orig_allele1
@@ -447,7 +464,8 @@ if (p<cumpropensities[0]) {
     Burst1_on_orig_allele1 = 1;
   }
 
-  updatePropensities(species,rates,propensities);
+  updateSpecies(species, A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2);
+  updatePropensities(species, rates, propensities);
 
 } else if (p<cumpropensities[13]) {
   // rxn: Burst1_off_orig_allele2 = Burst1_on_orig_allele2
@@ -459,7 +477,8 @@ if (p<cumpropensities[0]) {
     Burst1_on_orig_allele2 = 1;
   }
 
-  updatePropensities(species,rates,propensities);
+  updateSpecies(species, A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2);
+  updatePropensities(species, rates, propensities);
 
 } else if (p<cumpropensities[14]) {
   // rxn: Burst1_off_para_allele1 = Burst1_on_para_allele1
@@ -471,7 +490,8 @@ if (p<cumpropensities[0]) {
     Burst1_on_para_allele1 = 1;
   }
 
-  updatePropensities(species,rates,propensities);
+  updateSpecies(species, A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2);
+  updatePropensities(species, rates, propensities);
 
 } else if (p<cumpropensities[15]) {
   // rxn: Burst1_off_para_allele2 = Burst1_on_para_allele2
@@ -483,7 +503,8 @@ if (p<cumpropensities[0]) {
     Burst1_on_para_allele2 = 1;
   }
 
-  updatePropensities(species,rates,propensities);
+  updateSpecies(species, A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2);
+  updatePropensities(species, rates, propensities);
 
 } else if (p<cumpropensities[16]) {
   // rxn: Burst1_off_targ_allele1 = Burst1_onorig_targ_allele1
@@ -492,7 +513,8 @@ if (p<cumpropensities[0]) {
   Burst1_onorig_targ_allele1 = 1;
   Burst1_onpara_targ_allele1 = 0;
 
-  updatePropensities(species,rates,propensities);
+  updateSpecies(species, A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2);
+  updatePropensities(species, rates, propensities);
 
 } else if (p<cumpropensities[17]) {
   // rxn: Burst1_off_targ_allele1 = Burst1_onpara_targ_allele1
@@ -501,7 +523,8 @@ if (p<cumpropensities[0]) {
   Burst1_onorig_targ_allele1 = 0;
   Burst1_onpara_targ_allele1 = 1;
 
-  updatePropensities(species,rates,propensities);
+  updateSpecies(species, A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2);
+  updatePropensities(species, rates, propensities);
 
 } else if (p<cumpropensities[18]) {
   // rxn: Burst1_off_targ_allele2   = Burst1_onorig_targ_allele2
@@ -510,7 +533,8 @@ if (p<cumpropensities[0]) {
   Burst1_onorig_targ_allele2 = 1;
   Burst1_onpara_targ_allele2 = 0;
 
-  updatePropensities(species,rates,propensities);
+  updateSpecies(species, A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2);
+  updatePropensities(species, rates, propensities);
 
   } else if (p<cumpropensities[19]) {
   // rxn: Burst1_off_targ_allele2   = Burst1_onpara_targ_allele2
@@ -519,7 +543,8 @@ if (p<cumpropensities[0]) {
   Burst1_onorig_targ_allele2 = 0;
   Burst1_onpara_targ_allele2 = 1;
 
-  updatePropensities(species,rates,propensities);
+  updateSpecies(species, A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2);
+  updatePropensities(species, rates, propensities);
 
 } else if (p<cumpropensities[20]) {
   // rxn: Burst1_on_orig_allele1  = Burst1_off_orig_allele1
@@ -531,7 +556,8 @@ if (p<cumpropensities[0]) {
     Burst1_on_orig_allele1 = 0;
   }
 
-  updatePropensities(species,rates,propensities);
+  updateSpecies(species, A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2);
+  updatePropensities(species, rates, propensities);
 
 } else if (p<cumpropensities[21]) {
   // rxn: Burst1_on_orig_allele2  = Burst1_off_orig_allele2
@@ -543,7 +569,8 @@ if (p<cumpropensities[0]) {
     Burst1_on_orig_allele2 = 0;
   }
 
-  updatePropensities(species,rates,propensities);
+  updateSpecies(species, A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2);
+  updatePropensities(species, rates, propensities);
 
 } else if (p<cumpropensities[22]) {
   // rxn: Burst1_on_para_allele1 = Burst1_off_para_allele1
@@ -555,7 +582,8 @@ if (p<cumpropensities[0]) {
     Burst1_on_para_allele1 = 0;
   }
 
-  updatePropensities(species,rates,propensities);
+  updateSpecies(species, A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2);
+  updatePropensities(species, rates, propensities);
 
 } else if (p<cumpropensities[23]) {
   // rxn: Burst1_on_targ_allele2 = Burst1_off_targ_allele2
@@ -567,7 +595,8 @@ if (p<cumpropensities[0]) {
     Burst1_on_para_allele2 = 0;
   }
   
-  updatePropensities(species,rates,propensities);
+  updateSpecies(species, A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2);
+  updatePropensities(species, rates, propensities);
 
 } else if (p<cumpropensities[24]) {
   // rxn: Burst1_onorig_targ_allele1   = Burst1_off_targ_allele1
@@ -576,7 +605,8 @@ if (p<cumpropensities[0]) {
   Burst1_onorig_targ_allele1 = 0;
   Burst1_onpara_targ_allele1 = 0;
 
-  updatePropensities(species,rates,propensities);
+  updateSpecies(species, A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2);
+  updatePropensities(species, rates, propensities);
 
 } else if (p<cumpropensities[25]) {
   // rxn: Burst1_onpara_targ_allele1   = Burst1_off_targ_allele1
@@ -585,7 +615,8 @@ if (p<cumpropensities[0]) {
   Burst1_onorig_targ_allele1 = 0;
   Burst1_onpara_targ_allele1 = 0;
 
-  updatePropensities(species,rates,propensities);
+  updateSpecies(species, A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2);
+  updatePropensities(species, rates, propensities);
 
 } else if (p<cumpropensities[26]) {
   // rxn: Burst1_onorig_targ_allele2   = Burst1_off_targ_allele2
@@ -594,7 +625,8 @@ if (p<cumpropensities[0]) {
   Burst1_onorig_targ_allele2 = 0;
   Burst1_onpara_targ_allele2 = 0;
 
-  updatePropensities(species,rates,propensities);
+  updateSpecies(species, A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2);
+  updatePropensities(species, rates, propensities);
 
   } else if (p<cumpropensities[27]) {
   // rxn: Burst1_onpara_targ_allele2   = Burst1_off_targ_allele2
@@ -603,7 +635,8 @@ if (p<cumpropensities[0]) {
   Burst1_onorig_targ_allele2 = 0;
   Burst1_onpara_targ_allele2 = 0;
 
-  updatePropensities(species,rates,propensities);
+  updateSpecies(species, A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2);
+  updatePropensities(species, rates, propensities);
 }
 }
   printf("Total iterations = %d\n",totaliterations);
