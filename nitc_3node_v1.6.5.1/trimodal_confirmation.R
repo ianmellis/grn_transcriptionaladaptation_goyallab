@@ -188,7 +188,7 @@ trimCheckStackedBar <- ggplot(manTrimodalCheck, aes(version, fill = isTrimodal))
   theme_classic()
 ggsave(trimCheckStackedBar, file = paste0(plotdir51, 'trimodal_manualcheck_stackedbar.pdf'))
 
-## plot parameter sets on full sample space (3 parameters at a time)
+## plot parameter sets on full sample space (2 parameters at a time)
 
 all_sampled_lhs_5152 <- bind_rows(
   lhs_sets51 %>%
@@ -199,11 +199,83 @@ all_sampled_lhs_5152 <- bind_rows(
 colors5152 <- c('blue','black')
 names(colors5152) <- c('v1.6.5.1', 'v1.6.5.2')
 
-basalnitc_addonratio_prodonratio_paramscatter <- plot3d(log10(all_sampled_lhs_5152$basal_nitc_on_ratio),
-                                                        log10(all_sampled_lhs_5152$A1_Aprime1_addon_ratio),
-                                                        log10(all_sampled_lhs_5152$A1_Aprime_prodon_ratio),
-                                                        xlab = 'log10(basal_nitc_on_ratio)',
-                                                        ylab = 'log10(A1_Aprime1_addon_ratio)',
-                                                        zlab = 'log10(A1_Aprime_prodon_ratio)',
-                                                        type = 'p',
-                                                        col = colors5152[all_sampled_lhs_5152$version])
+refset <- lhs_sets51[1,]
+
+refset_radii <- c(0.1, 0.01, 0.1, 0.1, 1, 0.1, 0.1, 0.1)
+names(refset_radii) <- colnames(lhs_sets51)[1:8]
+
+basalnitc_addonratio_paramscatter <- ggplot(all_sampled_lhs_5152, aes(log10(basal_nitc_on_ratio), log10(A1_Aprime1_addon_ratio), color = version)) +
+  geom_point() +
+  annotate('rect', 
+           xmin = log10(refset$basal_nitc_on_ratio - refset_radii['basal_nitc_on_ratio']), 
+           xmax = log10(refset$basal_nitc_on_ratio + refset_radii['basal_nitc_on_ratio']), 
+           ymin = log10(refset$A1_Aprime1_addon_ratio - refset_radii['A1_Aprime1_addon_ratio']),
+           ymax = log10(refset$A1_Aprime1_addon_ratio + refset_radii['A1_Aprime1_addon_ratio']),
+           alpha = 0.1,
+           fill = 'blue') +
+  theme_classic() +
+  scale_color_manual(values = c('v1.6.5.2' = 'black', 'v1.6.5.1' = 'blue')) +
+  ggtitle('Trimodal confirmation parameter sets\n100 sets in subspace (blue)\n100 sets in full original space (black)') +
+  theme(legend.position = 'none')
+
+prodon_onoff_paramscatter <- ggplot(all_sampled_lhs_5152, aes(log10(A1_Aprime_prodon_ratio), log10(onbasalA1_off_ratio), color = version)) +
+  geom_point() +
+  annotate('rect', 
+           xmin = log10(refset$A1_Aprime_prodon_ratio - refset_radii['A1_Aprime_prodon_ratio']), 
+           xmax = log10(refset$A1_Aprime_prodon_ratio + refset_radii['A1_Aprime_prodon_ratio']), 
+           ymin = log10(refset$onbasalA1_off_ratio - refset_radii['onbasalA1_off_ratio']),
+           ymax = log10(refset$onbasalA1_off_ratio + refset_radii['onbasalA1_off_ratio']),
+           alpha = 0.1,
+           fill = 'blue') +
+  theme_classic() +
+  scale_color_manual(values = c('v1.6.5.2' = 'black', 'v1.6.5.1' = 'blue')) +
+  ggtitle('Trimodal confirmation parameter sets\n100 sets in subspace (blue)\n100 sets in full original space (black)') +
+  theme(legend.position = 'none')
+
+allprodon_A1add_paramscatter <- ggplot(all_sampled_lhs_5152, aes(log10(r_prod_on), log10(r_addon_byA1_B1), color = version)) +
+  geom_point() +
+  annotate('rect',
+           xmin = log10(refset$r_prod_on - refset_radii['r_prod_on']), 
+           xmax = log10(refset$r_prod_on + refset_radii['r_prod_on']), 
+           ymin = log10(refset$r_addon_byA1_B1 - refset_radii['r_addon_byA1_B1']),
+           ymax = log10(refset$r_addon_byA1_B1 + refset_radii['r_addon_byA1_B1']),
+           alpha = 0.1,
+           fill = 'blue') +
+  theme_classic() +
+  scale_color_manual(values = c('v1.6.5.2' = 'black', 'v1.6.5.1' = 'blue')) +
+  ggtitle('Trimodal confirmation parameter sets\n100 sets in subspace (blue)\n100 sets in full original space (black)') +
+  theme(legend.position = 'none')
+
+onbasal_hill_paramscatter <- ggplot(all_sampled_lhs_5152, aes(log10(r_onbasal_A1), log10(Hill_coefficient_n), color = version)) +
+  geom_point() +
+  annotate('rect',
+           xmin = log10(refset$r_onbasal_A1 - refset_radii['r_onbasal_A1']), 
+           xmax = log10(refset$r_onbasal_A1 + refset_radii['r_onbasal_A1']), 
+           ymin = log10(refset$Hill_coefficient_n - refset_radii['Hill_coefficient_n']),
+           ymax = log10(refset$Hill_coefficient_n + refset_radii['Hill_coefficient_n']),
+           alpha = 0.1,
+           fill = 'blue') +
+  theme_classic() +
+  scale_color_manual(values = c('v1.6.5.2' = 'black', 'v1.6.5.1' = 'blue')) +
+  ggtitle('Trimodal confirmation parameter sets\n100 sets in subspace (blue)\n100 sets in full original space (black)') +
+  theme(legend.position = 'none')
+
+ggsave(basalnitc_addonratio_paramscatter, file = paste0(plotdir51, 'subspace_basalnitc_addonratio_paramscatter.pdf'), width = 4, height = 4)
+ggsave(prodon_onoff_paramscatter,  file = paste0(plotdir51, 'subspace_prodon_onoff_paramscatter.pdf'), width = 4, height = 4)
+ggsave(allprodon_A1add_paramscatter,  file = paste0(plotdir51, 'subspace_allprodon_A1add_paramscatter.pdf'), width = 4, height = 4)
+ggsave(onbasal_hill_paramscatter,  file = paste0(plotdir51, 'subspace_onbasal_hill_paramscatter.pdf'), width = 4, height = 4)
+
+# 3d doesn't work flexibly enough   
+# basalnitc_addonratio_prodonratio_paramscatter <- plot3d(log10(all_sampled_lhs_5152$basal_nitc_on_ratio),
+#                                                         log10(all_sampled_lhs_5152$A1_Aprime1_addon_ratio),
+#                                                         log10(all_sampled_lhs_5152$A1_Aprime_prodon_ratio),
+#                                                         xlab = 'log10(basal_nitc_on_ratio)',
+#                                                         ylab = 'log10(A1_Aprime1_addon_ratio)',
+#                                                         zlab = 'log10(A1_Aprime_prodon_ratio)',
+#                                                         type = 'p',
+#                                                         col = colors5152[all_sampled_lhs_5152$version])
+# 
+# c3d1 <- cube3d(color = 'blue', alpha = 0.2) %>%
+#   translate3d(log10(lhs_sets51$basal_nitc_on_ratio[1]),log10(lhs_sets51$A1_Aprime1_addon_ratio[1]),log10(lhs_sets51$A1_Aprime_prodon_ratio[1])) %>%
+#   scale3d(refset_radii['basal_nitc_on_ratio'], refset_radii['A1_Aprime1_addon_ratio'], refset_radii['A1_Aprime_prodon_ratio'])
+# shade3d(c3d1)
