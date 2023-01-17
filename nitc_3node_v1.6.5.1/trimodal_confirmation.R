@@ -12,6 +12,7 @@ library(tibble)
 library(svglite)
 library(entropy)
 library(ggalluvial)
+library(rgl)
 source('~/code/grn_nitc/Functions/grn_analysis_utilities.R')
 
 
@@ -137,6 +138,12 @@ write.csv(tibble(paramset = 1:100), paste0(plotdir51, 'trimodal_sets_manual.csv'
 set.seed(362)
 sampsets <- sample(1:10000, 100)
 setwd(datadir52)
+lhs_sets52 <- as_tibble(read.csv('latinhyp_sampledSets.csv')) 
+lhs_sets52 %<>%
+  mutate(paramset = 1:nrow(lhs_sets52))
+lhs_sets52_samp <- lhs_sets52 %>%
+  filter(paramset %in% sampsets)
+
 for (paramset in sampsets){
   
   # cat(paste0('Working on ', as.character(paramset), '\n'))
@@ -180,3 +187,23 @@ trimCheckStackedBar <- ggplot(manTrimodalCheck, aes(version, fill = isTrimodal))
   scale_fill_brewer(palette = 'Dark2') +
   theme_classic()
 ggsave(trimCheckStackedBar, file = paste0(plotdir51, 'trimodal_manualcheck_stackedbar.pdf'))
+
+## plot parameter sets on full sample space (3 parameters at a time)
+
+all_sampled_lhs_5152 <- bind_rows(
+  lhs_sets51 %>%
+    mutate(version = 'v1.6.5.1'),
+  lhs_sets52_samp %>%
+    mutate(version = 'v1.6.5.2')
+)
+colors5152 <- c('blue','black')
+names(colors5152) <- c('v1.6.5.1', 'v1.6.5.2')
+
+basalnitc_addonratio_prodonratio_paramscatter <- plot3d(log10(all_sampled_lhs_5152$basal_nitc_on_ratio),
+                                                        log10(all_sampled_lhs_5152$A1_Aprime1_addon_ratio),
+                                                        log10(all_sampled_lhs_5152$A1_Aprime_prodon_ratio),
+                                                        xlab = 'log10(basal_nitc_on_ratio)',
+                                                        ylab = 'log10(A1_Aprime1_addon_ratio)',
+                                                        zlab = 'log10(A1_Aprime_prodon_ratio)',
+                                                        type = 'p',
+                                                        col = colors5152[all_sampled_lhs_5152$version])
