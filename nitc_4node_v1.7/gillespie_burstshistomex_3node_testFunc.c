@@ -70,8 +70,8 @@ void updateSpecies(double *species, long A1, long Anonsense1, long Aprime1, long
     species[14] = Burst1_is_mutated_allele1;
     species[15] = Burst1_is_mutated_allele2;
 
-     for (int i = 0; i<16; i++)
-      printf(" species %i %f \n", i, species[i]);
+     // for (int i = 0; i<16; i++)
+     //  printf(" species %i %f \n", i, species[i]);
 }
 
 void updatePropensities(double *species, double *rates,double *propensities)
@@ -204,6 +204,24 @@ void updatePropensities(double *species, double *rates,double *propensities)
   //update propensity for Burst1_onpara_targ = Burst1_off_targ for allele2
   propensities[27] = Burst1_onpara_targ_allele2*r_offpara_B1;
 
+  species[0] = A1;
+  species[1] = Anonsense1;
+  species[2] = Aprime1;
+  species[3] = B1;
+
+  species[4] = Burst1_onorig_targ_allele1;
+  species[5] = Burst1_onpara_targ_allele1;
+  species[6] = Burst1_off_targ_allele1;
+  species[7] = Burst1_onorig_targ_allele2;
+  species[8] = Burst1_onpara_targ_allele2;
+  species[9] = Burst1_off_targ_allele2;
+  species[10] = Burst1_on_para_allele1;
+  species[11] = Burst1_on_para_allele2;
+  species[12] = Burst1_on_orig_allele1;
+  species[13] = Burst1_on_orig_allele2;
+  species[14] = Burst1_is_mutated_allele1;
+  species[15] = Burst1_is_mutated_allele2;
+
   // updateSpecies(species, A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2);
 
   // for (int i = 0; i<28; i++)
@@ -322,14 +340,14 @@ void gillespie(long m, double *times_out,double *species_out,double currT,double
     currT += deltaT;
     //p = rand2[i]*alpha;
     p = UNI*alpha;
-    printf("alpha %f \n", alpha);
-    printf("deltaT %f \n", deltaT);
-    printf("p %f \n", p);
-    printf("total cumulativeprops %f \n", cumpropensities[27]);
+    // printf("alpha %f \n", alpha);
+    // printf("deltaT %f \n", deltaT);
+    // printf("p %f \n", p);
+    // printf("total cumulativeprops %f \n", cumpropensities[27]);
 
-    if(totaliterations == 5) {
-      break;
-    }
+    // if(totaliterations == 5) {
+    //   break;
+    // }
 
 //if(savecount < 1000){
     while (currT > savecount*deltaTsave) {
