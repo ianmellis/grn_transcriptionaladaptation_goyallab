@@ -234,6 +234,10 @@ for (st in unistats52) {
   ggsave(pvs1, file = paste0(plotdir52, 'PerGenotype_', st, '_vs_mean.pdf'), width = 16, height = 8) 
   ggsave(pvs2, file = paste0(plotdir52, 'PerGenotype_', st, '_vs_logmean.pdf'), width = 16, height = 8) 
   ggsave(pvs3, file = paste0(plotdir52, 'WTMUT_', st, '_vs_logmean.pdf'), width = 4, height = 4) 
+  
+  ggsave(pvs1, file = paste0(plotdir52, 'PerGenotype_', st, '_vs_mean.svg'), width = 16, height = 8) 
+  ggsave(pvs2, file = paste0(plotdir52, 'PerGenotype_', st, '_vs_logmean.svg'), width = 16, height = 8) 
+  ggsave(pvs3, file = paste0(plotdir52, 'WTMUT_', st, '_vs_logmean.svg'), width = 4, height = 4) 
 }
 
 
@@ -413,6 +417,11 @@ for (stat in unistats52[unistats52 != 'mean_product']) {
                  top = textGrob(paste0(stat, ' vs. log(mean_product), ', gene, '\nStat, LOESS residual, Squeezed LOESS residual (radius=50)'),gp=gpar(fontsize=20,font=3)))
     dev.off()
     
+    svglite(paste0(paste0(plotdir52, 'LOESSplots_', stat, 'vsLogMean_', gene,'_v1.6.2and5.svg')), width = 10, height = 7)
+    grid.arrange(lplot_all_stat_con,lplot_all_statLOESS_con,lplot_all_statLOESSSWN_con, ncol=3,
+                 top = textGrob(paste0(stat, ' vs. log(mean_product), ', gene, '\nStat, LOESS residual, Squeezed LOESS residual (radius=50)'),gp=gpar(fontsize=20,font=3)))
+    dev.off()
+    
   }
 }
 
@@ -469,6 +478,7 @@ classes_sankey <- ggplot(basic_class_assignment_all_forSankey52, aes(x = mutated
   xlab('Mutated alleles') +
   ylab('Number of parameter sets')
 ggsave(classes_sankey, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/classes_sankey.pdf'))
+ggsave(classes_sankey, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/classes_sankey.svg'))
 
 classes_sankey52_B1forfig <- ggplot(basic_class_assignment_all_forSankey52 %>%
                                       filter(product == 'B1',
@@ -485,6 +495,7 @@ classes_sankey52_B1forfig <- ggplot(basic_class_assignment_all_forSankey52 %>%
   xlab('Mutated alleles') +
   ylab('Number of parameter sets')
 ggsave(classes_sankey52_B1forfig, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/classes_sankey_B1formainfig.pdf'))
+ggsave(classes_sankey52_B1forfig, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/classes_sankey_B1formainfig.svg'))
 
 
 basic_class_assignment_all_forpie52 <- basic_class_assignment_all52 %>%
@@ -498,6 +509,7 @@ classes_pies <- ggplot(basic_class_assignment_all_forpie52, aes(x="", y=nSets, f
   theme_void() +
   ggtitle('classes of all distributions in v1.6.5.2\neach gene in each genotype')
 ggsave(classes_pies, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/classes_pies.pdf'))
+ggsave(classes_pies, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/classes_pies.svg'))
 
 # get data into format: each row is a paramset, with cols: sampled LHS (numeric) and classes (factor) of each gene in each genotype
 
@@ -524,6 +536,10 @@ pdf(paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/is
 plot(temp.tree)
 dev.off()
 
+svglite(paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/isBimodalHet_tree.svg'), width = 40, height = 10)
+plot(temp.tree)
+dev.off()
+
 # decision tree for B1 unimodal symmetric in het
 
 temp_class_for_tree52 <- classes_for_trees52 %>%
@@ -541,6 +557,10 @@ temp.tree <- ctree(is_unimodal ~ basal_nitc_on_ratio + onbasalA1_off_ratio + A1_
                                            minbucket = 100))
 
 pdf(paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/isUnimodalSymmetricHet_tree.pdf'), width = 40, height = 10)
+plot(temp.tree)
+dev.off()
+
+svglite(paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/isUnimodalSymmetricHet_tree.svg'), width = 40, height = 10)
 plot(temp.tree)
 dev.off()
 
@@ -567,6 +587,11 @@ pdf(paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/is
 plot(temp.tree)
 dev.off()
 
+svglite(paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/isBimodalHet_tree_log.svg'), width = 40, height = 10)
+plot(temp.tree)
+dev.off()
+
+
 is_bimodal_tree_splits <- partykit:::.list.rules.party(temp.tree, i = nodeids(temp.tree))
 
 # for each branch of interest, use the following to extract the target parameter sets
@@ -592,7 +617,9 @@ pdf(paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/is
 plot(temp.tree)
 dev.off()
 
-
+svglite(paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/isUnimodalSymmetricHet_tree_log.svg'), width = 40, height = 10)
+plot(temp.tree)
+dev.off()
 
 
 # decision tree for B1 unimodal symm to unimodal symm vs unimodal symm to other
@@ -615,6 +642,9 @@ pdf(paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/is
 plot(temp.tree)
 dev.off()
 
+svglite(paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/isRobust_unimodalsymmetric_tree.svg'), width = 20, height = 10)
+plot(temp.tree)
+dev.off()
 # robustness tree node breakdown - for non-robust: what are the resulting classes for each distribution? for robust: what are the mean changes?
 # Node 3: basal_nitc_on_ratio <= 1.31595, A1_Aprime1_addon_ratio <= 0.15984
 # Node 7+8: basal_nitc_on_ratio <= 1.31595, A1_Aprime1_addon_ratio > 0.15984, A1_Aprime1_addon_ratio <= 2.07278, A1_Aprime_prodon_ratio <= 3.1672
@@ -660,6 +690,7 @@ unimodal_symmetric_robust_tree52_pies <- ggplot(unimodal_symmetric_robust_tree52
   theme_void() +
   ggtitle('classes of (B1 in heterozygous genotype) distributions in v1.6.5.2\neach gene in each genotype\nUnimodal symmetric in wild-type only')
 ggsave(unimodal_symmetric_robust_tree52_pies, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/unimodal_symmetric_robust_tree52_pies.pdf'), width = 18, height = 4)
+ggsave(unimodal_symmetric_robust_tree52_pies, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/unimodal_symmetric_robust_tree52_pies.svg'), width = 18, height = 4)
 
 unimodal_symmetric_robust_tree52 %>%
   inner_join(compared_stats52 %>% filter(product == 'B1', stat == 'mean_product', compare == 'lfc10'), by = 'paramset') %>%
@@ -678,6 +709,27 @@ genos = 0:2
 prods = c('A1', 'Anonsense1', 'Aprime1', 'B1')
 
 pdf(paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/correlations_perGene_perGenotype.pdf'), width = 24, height = 32)
+par(mfcol = c(4,3))
+for (aci in 1:length(genos)) {
+  for (proi in 1:length(prods)) {
+    
+    ac = genos[aci]
+    pro = prods[proi]
+    
+    tempforcorr <- allstats_full52 %>% 
+      filter(mutated_alleles == ac,
+             product == pro) %>%
+      ungroup() %>%
+      inner_join(lhs_sets_full52, by = c('version', 'paramset')) %>%
+      dplyr::select(-c('sd_product', 'fano_product', 'entropy95', 'entropy90', 'version', 'paramset', 'mutated_alleles', 'product'))
+    
+    corrplot(cor(tempforcorr), title = paste0(pro, ' in genotype ', as.character(ac)), mar = c(0,0,2,0))
+    
+  }
+}
+dev.off()
+
+svglite(paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/correlations_perGene_perGenotype.svg'), width = 24, height = 32)
 par(mfcol = c(4,3))
 for (aci in 1:length(genos)) {
   for (proi in 1:length(prods)) {
@@ -740,6 +792,7 @@ for (aci in 1:length(genos)) {
       pivot_longer(names_to = 'statistic', values_to = 'stat_value', cols = log10_mean_product1:entropy) %>%
       pivot_longer(names_to = 'parameter', values_to = 'param_value', cols = basal_nitc_on_ratio:r_onbasal_A1)
     ggsave(sc1, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_scatter_gene', pro, '_mutatedalleles', as.character(ac),'.pdf'), width = 24, height = 18)
+    ggsave(sc1, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_scatter_gene', pro, '_mutatedalleles', as.character(ac),'.svg'), width = 24, height = 18)
     
     if(nrow(tempforcorr1)>0){
       sc1d <- ggplot(tempforcorr, aes(log10(param_value), stat_value)) +
@@ -751,6 +804,7 @@ for (aci in 1:length(genos)) {
         ylab('statistic value') +
         ggtitle(paste0('Statistic vs parameter value\nGene: ', pro, ', Genotype: ', as.character(ac), ' mutated alleles'))
       ggsave(sc1d, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_scatterDensity_gene', pro, '_mutatedalleles', as.character(ac),'.pdf'), width = 24, height = 18)
+      ggsave(sc1d, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_scatterDensity_gene', pro, '_mutatedalleles', as.character(ac),'.svg'), width = 24, height = 18)
       
       sc2 <- ggplot(tempforcorr1, aes(log10(param_value), stat_value)) +
         geom_point(alpha = 0.1, stroke = 0) +
@@ -770,6 +824,9 @@ for (aci in 1:length(genos)) {
       
       ggsave(sc2, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_scatter_minMean10_gene', pro, '_mutatedalleles', as.character(ac),'.pdf'), width = 24, height = 18)
       ggsave(sc2d, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_scatterDensity_minMean10_gene', pro, '_mutatedalleles', as.character(ac),'.pdf'), width = 24, height = 18)
+      ggsave(sc2, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_scatter_minMean10_gene', pro, '_mutatedalleles', as.character(ac),'.svg'), width = 24, height = 18)
+      ggsave(sc2d, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_scatterDensity_minMean10_gene', pro, '_mutatedalleles', as.character(ac),'.svg'), width = 24, height = 18)
+      
     }
   }
 }
@@ -816,6 +873,7 @@ tempforcorr1 <- allstats_full52 %>%
   filter(statistic == 'bimodality_coef',
          parameter %in% c('A1_Aprime1_addon_ratio', 'A1_Aprime_prodon_ratio', 'basal_nitc_on_ratio'))
 ggsave(sc1, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_scatter_gene', pro, '_mutatedalleles', as.character(ac),'_B1hetfocus.pdf'), width = 12, height = 4)
+ggsave(sc1, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_scatter_gene', pro, '_mutatedalleles', as.character(ac),'_B1hetfocus.svg'), width = 12, height = 4)
 
 if(nrow(tempforcorr1)>0){
   sc1d <- ggplot(tempforcorr, aes(log10(param_value), stat_value)) +
@@ -827,6 +885,7 @@ if(nrow(tempforcorr1)>0){
     ylab('statistic value') +
     ggtitle(paste0('Statistic vs parameter value\nGene: ', pro, ', Genotype: ', as.character(ac), ' mutated alleles'))
   ggsave(sc1d, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_scatterDensity_gene', pro, '_mutatedalleles', as.character(ac),'_B1hetfocus.pdf'), width = 12, height = 4)
+  ggsave(sc1d, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_scatterDensity_gene', pro, '_mutatedalleles', as.character(ac),'_B1hetfocus.svg'), width = 12, height = 4)
   
   sc2 <- ggplot(tempforcorr1, aes(log10(param_value), stat_value)) +
     geom_point(alpha = 0.1, stroke = 0) +
@@ -846,6 +905,9 @@ if(nrow(tempforcorr1)>0){
   
   ggsave(sc2, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_scatter_minMean10_gene', pro, '_mutatedalleles', as.character(ac),'_B1hetfocus.pdf'), width = 12, height = 4)
   ggsave(sc2d, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_scatterDensity_minMean10_gene', pro, '_mutatedalleles', as.character(ac),'_B1hetfocus.pdf'), width = 12, height = 4)
+  ggsave(sc2, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_scatter_minMean10_gene', pro, '_mutatedalleles', as.character(ac),'_B1hetfocus.svg'), width = 12, height = 4)
+  ggsave(sc2d, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_scatterDensity_minMean10_gene', pro, '_mutatedalleles', as.character(ac),'_B1hetfocus.svg'), width = 12, height = 4)
+  
 }
 
 cor(tempforcorr1 %>% 
@@ -918,6 +980,8 @@ for (aci in 1:length(genos)) {
         ggtitle(paste0('Statistic vs normalized LOESS residual of parameter value\nGene: ', pro, ', Genotype: ', as.character(ac), ' mutated alleles'))
       ggsave(sc1_swn, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_swn_scatter_gene', pro, '_mutatedalleles', as.character(ac),'.pdf'), width = 24, height = 15)
       ggsave(sc1d_swn, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_swn_scatterDensity_gene', pro, '_mutatedalleles', as.character(ac),'.pdf'), width = 24, height = 15)
+      ggsave(sc1_swn, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_swn_scatter_gene', pro, '_mutatedalleles', as.character(ac),'.svg'), width = 24, height = 15)
+      ggsave(sc1d_swn, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_swn_scatterDensity_gene', pro, '_mutatedalleles', as.character(ac),'.svg'), width = 24, height = 15)
       
       sc2_swn <- ggplot(tempforcorr1_swn, aes(log10(param_value), stat_value)) +
         geom_point(alpha = 0.1, stroke = 0) +
@@ -937,6 +1001,9 @@ for (aci in 1:length(genos)) {
       
       ggsave(sc2_swn, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_swn_scatter_minMean10_gene', pro, '_mutatedalleles', as.character(ac),'.pdf'), width = 24, height = 15)
       ggsave(sc2d_swn, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_swn_scatterDensity_minMean10_gene', pro, '_mutatedalleles', as.character(ac),'.pdf'), width = 24, height = 15)
+      ggsave(sc2_swn, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_swn_scatter_minMean10_gene', pro, '_mutatedalleles', as.character(ac),'.svg'), width = 24, height = 15)
+      ggsave(sc2d_swn, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_swn_scatterDensity_minMean10_gene', pro, '_mutatedalleles', as.character(ac),'.svg'), width = 24, height = 15)
+      
     }
     
   }
@@ -985,6 +1052,7 @@ tempforcorr1_swn <- loess_fitted_allstats_all52 %>%
   filter(statistic == 'bimodality_coef',
          parameter %in% c('A1_Aprime1_addon_ratio', 'A1_Aprime_prodon_ratio', 'basal_nitc_on_ratio'))
 ggsave(sc1_swn, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_swn_scatter_gene', pro, '_mutatedalleles', as.character(ac),'_B1hetfocus.pdf'), width = 12, height = 4)
+ggsave(sc1_swn, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_swn_scatter_gene', pro, '_mutatedalleles', as.character(ac),'_B1hetfocus.svg'), width = 12, height = 4)
 
 if(nrow(tempforcorr1)>0){
   sc1d_swn <- ggplot(tempforcorr_swn, aes(log10(param_value), stat_value)) +
@@ -996,6 +1064,7 @@ if(nrow(tempforcorr1)>0){
     ylab('statistic value') +
     ggtitle(paste0('Statistic vs LOESS residual of parameter value\nGene: ', pro, ', Genotype: ', as.character(ac), ' mutated alleles'))
   ggsave(sc1d, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_swn_scatterDensity_gene', pro, '_mutatedalleles', as.character(ac),'_B1hetfocus.pdf'), width = 12, height = 4)
+  ggsave(sc1d, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_swn_scatterDensity_gene', pro, '_mutatedalleles', as.character(ac),'_B1hetfocus.svg'), width = 12, height = 4)
   
   sc2_swn <- ggplot(tempforcorr1_swn, aes(log10(param_value), stat_value)) +
     geom_point(alpha = 0.1, stroke = 0) +
@@ -1015,6 +1084,9 @@ if(nrow(tempforcorr1)>0){
   
   ggsave(sc2_swn, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_swn_scatter_minMean10_gene', pro, '_mutatedalleles', as.character(ac),'_B1hetfocus.pdf'), width = 12, height = 4)
   ggsave(sc2d_swn, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_swn_scatterDensity_minMean10_gene', pro, '_mutatedalleles', as.character(ac),'_B1hetfocus.pdf'), width = 12, height = 4)
+  ggsave(sc2_swn, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_swn_scatter_minMean10_gene', pro, '_mutatedalleles', as.character(ac),'_B1hetfocus.svg'), width = 12, height = 4)
+  ggsave(sc2d_swn, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_swn_scatterDensity_minMean10_gene', pro, '_mutatedalleles', as.character(ac),'_B1hetfocus.svg'), width = 12, height = 4)
+  
 }
 
 cor(tempforcorr1 %>% 
@@ -1035,6 +1107,28 @@ cor.test(tempforcortest1$bimodality_coef_residual_swn, log10(tempforcortest1$bas
 comparisons = unique(compared_stats52$compare)
 for(comp in comparisons) {
   pdf(paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/correlations_',comp,'_perGene_perGenotype.pdf'), width = 12, height = 12)
+  par(mfrow = c(2,2))
+  for (proi in 1:length(prods)) {
+    
+    pro = prods[proi]
+    
+    tempforcorr <- compared_stats52 %>% 
+      filter(compare == comp) %>% 
+      dplyr::select(-c(`0`, `1`, `2`, 'mean_denom')) %>% 
+      pivot_wider(names_from = stat, values_from = diff) %>% 
+      filter(product == pro) %>%
+      ungroup() %>%
+      inner_join(lhs_sets_full52, by = c('version', 'paramset')) %>%
+      dplyr::select(-c('sd_product', 'fano_product', 'entropy95', 'entropy90', 'version', 'paramset', 'product', 'compare'))
+    
+    corrplot(cor(tempforcorr), title = paste0(pro, ' compared ', comp), mar = c(0,0,2,0))
+    
+  }
+  dev.off()
+}
+
+for(comp in comparisons) {
+  svglite(paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/correlations_',comp,'_perGene_perGenotype.svg'), width = 12, height = 12)
   par(mfrow = c(2,2))
   for (proi in 1:length(prods)) {
     
