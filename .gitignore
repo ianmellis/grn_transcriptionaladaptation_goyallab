@@ -1,0 +1,4 @@
+# ignore big rnaseq data
+rnaseq/annotations/*.gtf
+*allTargets.txt
+*.DS_Store
