@@ -925,6 +925,26 @@ cor.test(tempforcortest1$bimodality_coef, log10(tempforcortest1$A1_Aprime1_addon
 cor.test(tempforcortest1$bimodality_coef, abs(log10(tempforcortest1$A1_Aprime_prodon_ratio)))
 cor.test(tempforcortest1$bimodality_coef, log10(tempforcortest1$basal_nitc_on_ratio))
 
+tempforcortest1 <- tempforcorr1 %>%
+  pivot_wider(names_from = 'statistic', values_from = 'stat_value') %>%
+  pivot_wider(names_from = 'parameter', values_from = 'param_value')
+
+c_addon <- cor.test(tempforcortest1$bimodality_coef, log10(tempforcortest1$A1_Aprime1_addon_ratio))
+c_absaddon <- cor.test(tempforcortest1$bimodality_coef, abs(log10(tempforcortest1$A1_Aprime1_addon_ratio)))
+c_prodon <- cor.test(tempforcortest1$bimodality_coef, log10(tempforcortest1$A1_Aprime_prodon_ratio))
+c_absprodon <- cor.test(tempforcortest1$bimodality_coef, abs(log10(tempforcortest1$A1_Aprime_prodon_ratio)))
+c_nitc <- cor.test(tempforcortest1$bimodality_coef, log10(tempforcortest1$basal_nitc_on_ratio))
+c_absnitc <- cor.test(tempforcortest1$bimodality_coef, abs(log10(tempforcortest1$basal_nitc_on_ratio)))
+# c_primon <- cor.test(tempforcortest1$bimodality_coef, log10(tempforcortest1$r_onbasal_Aprime_ratio))
+# c_absprimon <- cor.test(tempforcortest1$bimodality_coef, abs(log10(tempforcortest1$r_onbasal_Aprime_ratio)))
+
+cortab <- tibble(
+  statistic = c('A1_Aprime1_addon_ratio', 'abs(A1_Aprime1_addon_ratio)', 'A1_Aprime_prodon_ratio', 'abs(A1_Aprime_prodon_ratio)', 
+                'basal_nitc_on_ratio', 'abs(basal_nitc_on_ratio)'),#, 'r_onbasal_Aprime_ratio', 'abs(r_onbasal_Aprime_ratio)'),
+  cor = c(c_addon$estimate, c_absaddon$estimate, c_prodon$estimate, c_absprodon$estimate, c_nitc$estimate, c_absnitc$estimate),#, c_primon$estimate, c_absprimon$estimate),
+  p.val = c(c_addon$p.value, c_absaddon$p.value, c_prodon$p.value, c_absprodon$p.value, c_nitc$p.value, c_absnitc$p.value)#, c_primon$p.value, c_absprimon$p.value)
+)
+write.table(cortab, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_scatterDensity_minMean10_gene', pro, '_mutatedalleles', as.character(ac),'_pearsonCor.txt'), quote = F, row.names = F)
 
 # run parameter-stat correlations on LOESS residuals
 
