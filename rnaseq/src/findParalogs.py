@@ -33,7 +33,7 @@ def get_paralog_info(gene_name, species) -> list:
         converted_paralogs = gp.convert(organism=g_species,
                                         query=paralogs,
                                         target_namespace='ENSG')
-        cleaned_paralogs = list(converted_paralogs['name'])
+        cleaned_paralogs = [x for x in list(converted_paralogs['name']) if x!='None']
         return cleaned_paralogs, similarities
     else:
         return paralogs, similarities
@@ -43,9 +43,7 @@ def main():
     dataset_metadata = pd.read_csv('./annotations/dataset_metadata.csv')
 
     for index, row in dataset_metadata.iterrows():
-        # if not isinstance(row['GEO_ID'], str):
-        #    break
-        if index in [0,1]:
+        if index in [0]:
             continue
         species = row['species']
         ko_genes = row['ko_genes'].split(',')
