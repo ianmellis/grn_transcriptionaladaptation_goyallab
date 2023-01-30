@@ -944,7 +944,7 @@ cortab <- tibble(
   cor = c(c_addon$estimate, c_absaddon$estimate, c_prodon$estimate, c_absprodon$estimate, c_nitc$estimate, c_absnitc$estimate),#, c_primon$estimate, c_absprimon$estimate),
   p.val = c(c_addon$p.value, c_absaddon$p.value, c_prodon$p.value, c_absprodon$p.value, c_nitc$p.value, c_absnitc$p.value)#, c_primon$p.value, c_absprimon$p.value)
 )
-write.table(cortab, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_scatterDensity_minMean10_gene', pro, '_mutatedalleles', as.character(ac),'_pearsonCor.txt'), quote = F, row.names = F)
+write.csv(cortab, file = paste0(plotdir52, 'stats_class_assignment_check_v', as.character(anver),'/stats_scatterDensity_minMean10_gene', pro, '_mutatedalleles', as.character(ac),'_pearsonCor.csv'), quote = F, row.names = F)
 
 # run parameter-stat correlations on LOESS residuals
 
