@@ -1,17 +1,16 @@
 import itertools
 import pandas as pd
 import numpy as np
-import os
 import seaborn as sns
 import matplotlib.pyplot as plt
 
 
-def filter_data(df, pos_only=False):
+def filter_data(df, pos_only=False, sig_only=False):
     if 'Base_Mean' in df: # filter differently if DESeq Dataset
         # filter by base mean
         df = df[df['Base_Mean'] > 2.5]
-        # filter by p-value
-        df = df[df['padj'] <= 0.05]
+        # add in support for p-value coloring
+        df['significant'] = df['padj'].apply(lambda x: 1 if x<=0.05 else 0)
 
     else: # standard rnaseq dataset
         # average points
@@ -26,14 +25,21 @@ def filter_data(df, pos_only=False):
         summarized = df.groupby('KO_Gene').mean()
         relevant_samples = summarized[summarized['FC2'] > 0.1]
         df = df[df['KO_Gene'].isin(list(relevant_samples.index))]
-    
+
+    if sig_only:
+        # filter out any average non-significant expression
+        summarized = df.groupby('KO_Gene').sum()
+        relevant_samples = summarized[summarized['significant'] > 0]
+        df = df[df['KO_Gene'].isin(list(relevant_samples.index))]
+
     return df
 
 def plot_data(df, condition):
+    #TODO: plot fraction of paralogs upreg: like other paper
     if condition != 'na':
         df = df[df['Sample'].str.contains(condition)]
     
-    df = filter_data(df)
+    df = filter_data(df, pos_only=False, sig_only=True)
 
     df = df.sort_values(by="KO_Gene")
     #fig, ax1 = plt.subplots()
@@ -41,7 +47,7 @@ def plot_data(df, condition):
                       font='sans-serif', font_scale=1, color_codes=True, rc=None)
 
     
-    ax1 = sns.stripplot(x='KO_Gene', y='FC2', data=df, color='black') # hue='Perc_ID', hue_norm=(0,100)
+    ax1 = sns.stripplot(x='KO_Gene', y='FC2', data=df, palette='gist_gray_r', hue='significant')
     sns.barplot(x="KO_Gene", y="FC2", errorbar=None,color='gray', data=df, ax=ax1, alpha=.3)
     plt.show()
 
@@ -58,8 +64,9 @@ def plot_data(df, condition):
     #plt.show()
 
 
-def process_deseq_data(deseq_file, paralog_data, ko_genes, ctrl_samples):
+def process_deseq_data(deseq_file, paralog_data, ko_genes):
     fc_data = []
+
     for gene in ko_genes:
 
         paralogs = list(paralog_data[paralog_data['Gene'] == gene]['Paralog'])
@@ -68,25 +75,33 @@ def process_deseq_data(deseq_file, paralog_data, ko_genes, ctrl_samples):
         gene_data = deseq_file[deseq_file['sampleKO']==gene]
         gene_data = gene_data.set_index('id')
 
+        # confirm KO
+        ko_data = gene_data.filter(regex='(^|[_])'+gene+'([_]|$)', axis=0)
+        
+        if len(ko_data) > 1:
+            ko_data = ko_data.replace("NA", np.nan)
+            ko_data = ko_data.dropna()
+        if len(ko_data) != 1:
+            ko_fc = np.nan
+            print('Warning: ' + gene + ' KO gene not found')
+        else:
+            ko_fc = float(ko_data['log2FoldChange'][0])
+
+
         for x, paralog in enumerate(paralogs):
             try:
-                par_data = gene_data.filter(regex='(^|[_-])'+paralog+'([_-]|$)', axis=0)
+                par_data = gene_data.filter(regex='(^|[_])'+paralog+'([_]|$)', axis=0)
+                if len(par_data) > 1:
+                    par_data = par_data.replace("NA", np.nan)
+                    par_data = par_data.dropna()
                 assert len(par_data) == 1
             except:
-                print('Warning: ' + paralog + ' not found')
+                print('Warning: ' + paralog + ' paralog not found')
                 continue
 
             par_fc2 = float(par_data['log2FoldChange'][0])
             par_basemean = float(par_data['baseMean'][0])
             par_padj = float(par_data['padj'][0])
-
-            # confirm KO
-            ko_data = gene_data.filter(regex='(^|[_-])'+gene+'([_-]|$)', axis=0)
-            if len(ko_data) == 1:
-                ko_fc = ko_data['log2FoldChange'][0]
-            else:
-                ko_fc=np.nan
-
 
             fc_data.append([gene, paralog, perc_ids[x], par_fc2, par_basemean, par_padj, ko_fc])
 
@@ -108,13 +123,13 @@ def process_counts_data(norm_counts, counts, paralog_data, ko_genes, controls):
     norm_counts += 1
 
     
-    #TODO average the expression when there are multiple genes found
+    #TODO sum the expression when there are multiple genes found
     fc_data = []
     for gene in ko_genes:
         ko_ctrl_expr = pd.Series(norm_counts.loc[gene, 'control'])[0]
 
         relevant_samples = norm_counts.filter(
-            regex='(^|[_-])'+gene+'([_-]|$)', axis=1)
+            regex='(^|[_])'+gene+'([_]|$)', axis=1)
         paralogs = list(paralog_data[paralog_data['Gene'] == gene]['Paralog'])
         perc_ids = list(paralog_data[paralog_data['Gene'] == gene]['Perc_ID'])
 
@@ -167,7 +182,7 @@ def main():
             seq_directory = norm_dataset_directory + 'DESeq/' + row['GEO_ID'] + '/' + 'differentialExpression_DESeq_allTargets.txt'
             seq_file = pd.read_csv(seq_directory, sep='\t')
 
-            df = process_deseq_data(seq_file, paralog_data, ko_genes, ctrl_samples)
+            df = process_deseq_data(seq_file, paralog_data, ko_genes)
 
         else:
             expression_data = pd.read_csv(norm_dataset_directory+row['GEO_ID']+'.csv')
