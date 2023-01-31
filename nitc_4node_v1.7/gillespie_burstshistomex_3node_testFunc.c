@@ -154,7 +154,7 @@ void updatePropensities(double *species, double *rates,double *propensities)
   //update propensity for = Aprime1 from allele1
   propensities[4] = r_prodon_Aprime1 *Burst1_on_para_allele1 + r_prodbasal_Aprime1 * (1-Burst1_on_para_allele1);
   //update propensity for = Aprime1 from allele2
-  propensities[5] = r_prodon_Aprime1 *Burst1_on_para_allele2 + r_prodbasal_Aprime1 * (1-Burst1_on_para_allele1);
+  propensities[5] = r_prodon_Aprime1 *Burst1_on_para_allele2 + r_prodbasal_Aprime1 * (1-Burst1_on_para_allele2);
   //update propensity for = B1 from allele1
   propensities[6] = r_prodon_B1 *Burst1_onorig_targ_allele1+ d_Aprime1_B1*r_prodon_B1*Burst1_onpara_targ_allele1+ r_prodbasal_B1 *Burst1_off_targ_allele1;
   //update propensity for = B1 from allele2

@@ -48,7 +48,7 @@ void zigset(unsigned long jsrseed);
 #define NSPECIES 21
 
 //INCLUDE NUMRXNS HERE
-#define NUMRXNS 28
+#define NUMRXNS 39
 
 void updateSpecies(double *species, long A1, long Anonsense1, long Aprime1, long Aprime2, long B1, long Burst1_onorig_targ_allele1, long Burst1_onpara1_targ_allele1,  long Burst1_onpara2_targ_allele1,long Burst1_off_targ_allele1, long Burst1_onorig_targ_allele2, long Burst1_onpara1_targ_allele2, long Burst1_onpara2_targ_allele2, long Burst1_off_targ_allele2, long Burst1_on_para1_allele1, long Burst1_on_para1_allele2, long Burst1_on_para2_allele1, long Burst1_on_para2_allele2, long Burst1_on_orig_allele1, long Burst1_on_orig_allele2, long Burst1_is_mutated_allele1, long Burst1_is_mutated_allele2)
 {
@@ -173,76 +173,103 @@ void updatePropensities(double *species, double *rates,double *propensities)
   //update propensity for = A1_nonsense from allele2
   propensities[3] = Burst1_is_mutated_allele2*(r_prodon_Anonsense1 * Burst1_on_orig_allele2 + r_prodbasal_Anonsense1 * (1-Burst1_on_orig_allele2));
   //update propensity for = Aprime1 from allele1
-  propensities[4] = r_prodon_Aprime1 *Burst1_on_para_allele1 + r_prodbasal_Aprime1 * (1-Burst1_on_para_allele1);
+  propensities[4] = r_prodon_Aprime1 *Burst1_on_para1_allele1 + r_prodbasal_Aprime1 * (1-Burst1_on_para1_allele1);
   //update propensity for = Aprime1 from allele2
-  propensities[5] = r_prodon_Aprime1 *Burst1_on_para_allele2 + r_prodbasal_Aprime1 * (1-Burst1_on_para_allele1);
+  propensities[5] = r_prodon_Aprime1 *Burst1_on_para1_allele2 + r_prodbasal_Aprime1 * (1-Burst1_on_para1_allele2);
+  //update propensity for = Aprime2 from allele1
+  propensities[6] = r_prodon_Aprime2 *Burst1_on_para2_allele1 + r_prodbasal_Aprime2 * (1-Burst1_on_para2_allele1);
+  //update propensity for = Aprime2 from allele2
+  propensities[7] = r_prodon_Aprime2 *Burst1_on_para2_allele2 + r_prodbasal_Aprime2 * (1-Burst1_on_para2_allele2);
   //update propensity for = B1 from allele1
-  propensities[6] = r_prodon_B1 *Burst1_onorig_targ_allele1+ d_Aprime1_B1*r_prodon_B1*Burst1_onpara_targ_allele1+ r_prodbasal_B1 *Burst1_off_targ_allele1;
+  propensities[8] = r_prodon_B1 *Burst1_onorig_targ_allele1 + d_Aprime1_B1*r_prodon_B1*Burst1_onpara1_targ_allele1 + d_Aprime2_B1*r_prodon_B1*Burst1_onpara2_targ_allele1 + r_prodbasal_B1 *Burst1_off_targ_allele1;
   //update propensity for = B1 from allele2
-  propensities[7] = r_prodon_B1 *Burst1_onorig_targ_allele2+ d_Aprime1_B1*r_prodon_B1*Burst1_onpara_targ_allele2+ r_prodbasal_B1 *Burst1_off_targ_allele2;
+  propensities[9] = r_prodon_B1 *Burst1_onorig_targ_allele2 + d_Aprime1_B1*r_prodon_B1*Burst1_onpara1_targ_allele2+ d_Aprime2_B1*r_prodon_B1*Burst1_onpara2_targ_allele2 + r_prodbasal_B1 *Burst1_off_targ_allele2;
 
   //update propensity for A1 = 
-  propensities[8] = r_deg_A1 *A1;
+  propensities[10] = r_deg_A1 *A1;
   //update propensity for A1_nonsense = 
-  propensities[9] = r_deg_Anonsense1 *Anonsense1;
+  propensities[11] = r_deg_Anonsense1 *Anonsense1;
   //update propensity for Aprime1 = 
-  propensities[10] = r_deg_Aprime1 *Aprime1;
+  propensities[12] = r_deg_Aprime1 *Aprime1;
+  //update propensity for Aprime2 = 
+  propensities[13] = r_deg_Aprime2 *Aprime2;
   //update propensity for B1 = 
-  propensities[11] = r_deg_B1 *B1;
+  propensities[14] = r_deg_B1 *B1;
 
   //update propensity for Burst1_off_orig = Burst1_on_orig for allele1
-  propensities[12] = (1-Burst1_on_orig_allele1)*((1-Burst1_is_mutated_allele1)*(r_onbasal_A1 + r_nitc_byAnonsense1_A1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 )))) + Burst1_is_mutated_allele1*(r_onbasal_Anonsense1 + r_nitc_byAnonsense1_Anonsense1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 )))));
+  propensities[15] = (1-Burst1_on_orig_allele1)*((1-Burst1_is_mutated_allele1)*(r_onbasal_A1 + r_nitc_byAnonsense1_A1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 )))) + Burst1_is_mutated_allele1*(r_onbasal_Anonsense1 + r_nitc_byAnonsense1_Anonsense1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 )))));
   //update propensity for Burst1_off_orig = Burst1_on_orig for allele2
-  propensities[13] = (1-Burst1_on_orig_allele2)*((1-Burst1_is_mutated_allele2)*(r_onbasal_A1 + r_nitc_byAnonsense1_A1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 )))) + Burst1_is_mutated_allele2*(r_onbasal_Anonsense1 + r_nitc_byAnonsense1_Anonsense1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 )))));
-  //update propensity for Burst1_off_para = Burst1_on_para for allele1
-  propensities[14] = (1-Burst1_on_para_allele1)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
-  //update propensity for Burst1_off_para = Burst1_on_para for allele2
-  propensities[15] = (1-Burst1_on_para_allele2)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
+  propensities[16] = (1-Burst1_on_orig_allele2)*((1-Burst1_is_mutated_allele2)*(r_onbasal_A1 + r_nitc_byAnonsense1_A1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 )))) + Burst1_is_mutated_allele2*(r_onbasal_Anonsense1 + r_nitc_byAnonsense1_Anonsense1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 )))));
+  //update propensity for Burst1_off_para1 = Burst1_on_para1 for allele1
+  propensities[17] = (1-Burst1_on_para1_allele1)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
+  //update propensity for Burst1_off_para1 = Burst1_on_para1 for allele2
+  propensities[18] = (1-Burst1_on_para1_allele2)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
+  //update propensity for Burst1_off_para2 = Burst1_on_para2 for allele1
+  propensities[19] = (1-Burst1_on_para2_allele1)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
+  //update propensity for Burst1_off_para2 = Burst1_on_para2 for allele2
+  propensities[20] = (1-Burst1_on_para2_allele2)*(r_onbasal_Aprime1 + r_nitc_byAnonsense1_Aprime1*(pow(Anonsense1,n_Anonsense1 )/(pow(k_Anonsense1 ,n_Anonsense1 )+pow(Anonsense1,n_Anonsense1 ))));
   //update propensity for Burst1_off_targ = Burst1_onorig_targ for allele1
-  propensities[16] = (Burst1_off_targ_allele1)*(r_onbasal_B1 + r_addon_byA1_B1*(pow(A1,n_A1 )/(pow(k_A1 ,n_A1 )+pow(A1,n_A1 ))));
-  //update propensity for Burst1_off_targ = Burst1_onpara_targ for allele1
-  propensities[17] = (Burst1_off_targ_allele1)*(r_onbasal_B1 + r_addon_byAprime1_B1*(pow(Aprime1,n_Aprime1 )/(pow(k_Aprime1 ,n_Aprime1 )+pow(Aprime1,n_Aprime1 ))));
+  propensities[21] = (Burst1_off_targ_allele1)*(r_onbasal_B1 + r_addon_byA1_B1*(pow(A1,n_A1 )/(pow(k_A1 ,n_A1 )+pow(A1,n_A1 ))));
+  //update propensity for Burst1_off_targ = Burst1_onpara1_targ for allele1
+  propensities[22] = (Burst1_off_targ_allele1)*(r_onbasal_B1 + r_addon_byAprime1_B1*(pow(Aprime1,n_Aprime1 )/(pow(k_Aprime1 ,n_Aprime1 )+pow(Aprime1,n_Aprime1 ))));
+  //update propensity for Burst1_off_targ = Burst1_onpara2_targ for allele1
+  propensities[23] = (Burst1_off_targ_allele1)*(r_onbasal_B1 + r_addon_byAprime2_B1*(pow(Aprime2,n_Aprime2 )/(pow(k_Aprime2 ,n_Aprime2 )+pow(Aprime2,n_Aprime2 ))));
   //update propensity for Burst1_off_targ = Burst1_onorig_targ for allele2
-  propensities[18] = (Burst1_off_targ_allele2)*(r_onbasal_B1 + r_addon_byA1_B1*(pow(A1,n_A1 )/(pow(k_A1 ,n_A1 )+pow(A1,n_A1 ))));
-  //update propensity for Burst1_off_targ = Burst1_onpara_targ for allele2
-  propensities[19] = (Burst1_off_targ_allele2)*(r_onbasal_B1 + r_addon_byAprime1_B1*(pow(Aprime1,n_Aprime1 )/(pow(k_Aprime1 ,n_Aprime1 )+pow(Aprime1,n_Aprime1 ))));
+  propensities[24] = (Burst1_off_targ_allele2)*(r_onbasal_B1 + r_addon_byA1_B1*(pow(A1,n_A1 )/(pow(k_A1 ,n_A1 )+pow(A1,n_A1 ))));
+  //update propensity for Burst1_off_targ = Burst1_onpara1_targ for allele2
+  propensities[25] = (Burst1_off_targ_allele2)*(r_onbasal_B1 + r_addon_byAprime1_B1*(pow(Aprime1,n_Aprime1 )/(pow(k_Aprime1 ,n_Aprime1 )+pow(Aprime1,n_Aprime1 ))));
+  //update propensity for Burst1_off_targ = Burst1_onpara2_targ for allele2
+  propensities[26] = (Burst1_off_targ_allele2)*(r_onbasal_B1 + r_addon_byAprime2_B1*(pow(Aprime2,n_Aprime2 )/(pow(k_Aprime2 ,n_Aprime2 )+pow(Aprime2,n_Aprime2 ))));
 
 
   //update propensity for Burst1_on_orig = Burst1_off_orig for allele1
-  propensities[20] = Burst1_on_orig_allele1*(Burst1_is_mutated_allele1*r_off_Anonsense1 + (1-Burst1_is_mutated_allele1)*r_off_A1);
+  propensities[27] = Burst1_on_orig_allele1*(Burst1_is_mutated_allele1*r_off_Anonsense1 + (1-Burst1_is_mutated_allele1)*r_off_A1);
   //update propensity for Burst1_on_orig = Burst1_off_orig for allele2
-  propensities[21] = Burst1_on_orig_allele2*(Burst1_is_mutated_allele2*r_off_Anonsense1 + (1-Burst1_is_mutated_allele2)*r_off_A1);
-  //update propensity for Burst1_on_para = Burst1_off_para for allele1
-  propensities[22] = Burst1_on_para_allele1*r_off_Aprime1;
-  //update propensity for Burst1_on_para = Burst1_off_para for allele2
-  propensities[23] = Burst1_on_para_allele2*r_off_Aprime1;
+  propensities[28] = Burst1_on_orig_allele2*(Burst1_is_mutated_allele2*r_off_Anonsense1 + (1-Burst1_is_mutated_allele2)*r_off_A1);
+  //update propensity for Burst1_on_para1 = Burst1_off_para1 for allele1
+  propensities[29] = Burst1_on_para1_allele1*r_off_Aprime1;
+  //update propensity for Burst1_on_para1 = Burst1_off_para1 for allele2
+  propensities[30] = Burst1_on_para1_allele2*r_off_Aprime1;
+  //update propensity for Burst1_on_para2 = Burst1_off_para2 for allele1
+  propensities[31] = Burst1_on_para2_allele1*r_off_Aprime2;
+  //update propensity for Burst1_on_para2 = Burst1_off_para2 for allele2
+  propensities[32] = Burst1_on_para2_allele2*r_off_Aprime2;
   //update propensity for Burst1_onorig_targ = Burst1_off_targ for allele1
-  propensities[24] = Burst1_onorig_targ_allele1*r_offorig_B1;
-  //update propensity for Burst1_onpara_targ = Burst1_off_targ for allele1
-  propensities[25] = Burst1_onpara_targ_allele1*r_offpara_B1;
+  propensities[33] = Burst1_onorig_targ_allele1*r_offorig_B1;
+  //update propensity for Burst1_onpara1_targ = Burst1_off_targ for allele1
+  propensities[34] = Burst1_onpara1_targ_allele1*r_offpara1_B1;
+  //update propensity for Burst1_onpara2_targ = Burst1_off_targ for allele1
+  propensities[35] = Burst1_onpara2_targ_allele1*r_offpara2_B1;
   //update propensity for Burst1_onorig_targ = Burst1_off_targ for allele2
-  propensities[26] = Burst1_onorig_targ_allele2*r_offorig_B1;
-  //update propensity for Burst1_onpara_targ = Burst1_off_targ for allele2
-  propensities[27] = Burst1_onpara_targ_allele2*r_offpara_B1;
+  propensities[36] = Burst1_onorig_targ_allele2*r_offorig_B1;
+  //update propensity for Burst1_onpara1_targ = Burst1_off_targ for allele2
+  propensities[37] = Burst1_onpara1_targ_allele2*r_offpara1_B1;
+  //update propensity for Burst1_onpara2_targ = Burst1_off_targ for allele2
+  propensities[38] = Burst1_onpara2_targ_allele2*r_offpara2_B1;
+
 
   species[0] = A1;
   species[1] = Anonsense1;
   species[2] = Aprime1;
-  species[3] = B1;
+  species[3] = Aprime2;
+  species[4] = B1;
 
-  species[4] = Burst1_onorig_targ_allele1;
-  species[5] = Burst1_onpara_targ_allele1;
-  species[6] = Burst1_off_targ_allele1;
-  species[7] = Burst1_onorig_targ_allele2;
-  species[8] = Burst1_onpara_targ_allele2;
-  species[9] = Burst1_off_targ_allele2;
-  species[10] = Burst1_on_para_allele1;
-  species[11] = Burst1_on_para_allele2;
-  species[12] = Burst1_on_orig_allele1;
-  species[13] = Burst1_on_orig_allele2;
-  species[14] = Burst1_is_mutated_allele1;
-  species[15] = Burst1_is_mutated_allele2;
-
+  species[5] = Burst1_onorig_targ_allele1;
+  species[6] = Burst1_onpara1_targ_allele1;
+  species[7] = Burst1_onpara2_targ_allele1;
+  species[8] = Burst1_off_targ_allele1;
+  species[9] = Burst1_onorig_targ_allele2;
+  species[10] = Burst1_onpara1_targ_allele2;
+  species[11] = Burst1_onpara2_targ_allele2;
+  species[12] = Burst1_off_targ_allele2;
+  species[13] = Burst1_on_para1_allele1;
+  species[14] = Burst1_on_para1_allele2;
+  species[15] = Burst1_on_para2_allele1;
+  species[16] = Burst1_on_para2_allele2;
+  species[17] = Burst1_on_orig_allele1;
+  species[18] = Burst1_on_orig_allele2;
+  species[19] = Burst1_is_mutated_allele1;
+  species[20] = Burst1_is_mutated_allele2;
   // updateSpecies(species, A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2);
 
   // for (int i = 0; i<28; i++)
@@ -263,71 +290,86 @@ void gillespie(long m, double *times_out,double *species_out,double currT,double
   long totaliterations;
 
 //INSERT ALL VARIABLE DECLARATIONS HERE
-  long A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2;
-  double r_prodbasal_A1, r_prodbasal_Anonsense1, r_prodbasal_Aprime1, r_prodbasal_B1, r_prodon_A1, r_prodon_Anonsense1, r_prodon_Aprime1, r_prodon_B1, d_Aprime1_B1, r_deg_A1, r_deg_Anonsense1, r_deg_Aprime1, r_deg_B1, r_onbasal_A1, r_onbasal_Anonsense1, r_onbasal_Aprime1, r_onbasal_B1, r_nitc_byAnonsense1_A1, r_nitc_byAnonsense1_Anonsense1, r_nitc_byAnonsense1_Aprime1, r_addon_byA1_B1, r_addon_byAprime1_B1, r_off_A1, r_off_Anonsense1, r_off_Aprime1, r_offorig_B1, r_offpara_B1, k_A1, k_Anonsense1, k_Aprime1, k_B1, n_A1, n_Anonsense1, n_Aprime1, n_B1;
-  long i, j, k;
-//UNPACK ALL SPECIES HERE
+  long A1, Anonsense1, Aprime1, Aprime2, B1, Burst1_onorig_targ_allele1, Burst1_onpara1_targ_allele1, Burst1_onpara2_targ_allele1,  Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara1_targ_allele2, Burst1_onpara2_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para1_allele1, Burst1_on_para1_allele2, Burst1_on_para2_allele1, Burst1_on_para2_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2;
+  double r_prodbasal_A1, r_prodbasal_Anonsense1, r_prodbasal_Aprime1, r_prodbasal_Aprime2, r_prodbasal_B1, r_prodon_A1, r_prodon_Anonsense1, r_prodon_Aprime1, r_prodon_Aprime2, r_prodon_B1, d_Aprime1_B1, d_Aprime2_B1, r_deg_A1, r_deg_Anonsense1, r_deg_Aprime1, r_deg_Aprime2, r_deg_B1, r_onbasal_A1, r_onbasal_Anonsense1, r_onbasal_Aprime1, r_onbasal_Aprime2, r_onbasal_B1, r_nitc_byAnonsense1_A1, r_nitc_byAnonsense1_Anonsense1, r_nitc_byAnonsense1_Aprime1, r_nitc_byAnonsense1_Aprime2, r_addon_byA1_B1, r_addon_byAprime1_B1, r_addon_byAprime2_B1, r_off_A1, r_off_Anonsense1, r_off_Aprime1, r_off_Aprime2, r_offorig_B1, r_offpara1_B1, r_offpara2_B1, k_A1, k_Anonsense1, k_Aprime1, k_Aprime2, k_B1, n_A1, n_Anonsense1, n_Aprime1, n_Aprime2, n_B1;
+
   A1 = (long)species[0];
   Anonsense1 = (long)species[1];
   Aprime1 = (long)species[2];
-  B1 = (long)species[3];
+  Aprime2 = (long)species[3];
+  B1 = (long)species[4];
 
-  Burst1_onorig_targ_allele1 = (long)species[4];
-  Burst1_onpara_targ_allele1 = (long)species[5];
-  Burst1_off_targ_allele1 = (long)species[6];
-  Burst1_onorig_targ_allele2 = (long)species[7];
-  Burst1_onpara_targ_allele2 = (long)species[8];
-  Burst1_off_targ_allele2 = (long)species[9];
-  Burst1_on_para_allele1 = (long)species[10];
-  Burst1_on_para_allele2 = (long)species[11];
-  Burst1_on_orig_allele1 = (long)species[12];
-  Burst1_on_orig_allele2 = (long)species[13];
-  Burst1_is_mutated_allele1 = (long)species[14];
-  Burst1_is_mutated_allele2 = (long)species[15];
+  Burst1_onorig_targ_allele1 = (long)species[5];
+  Burst1_onpara1_targ_allele1 = (long)species[6];
+  Burst1_onpara2_targ_allele1 = (long)species[7];
+  Burst1_off_targ_allele1 = (long)species[8];
+  Burst1_onorig_targ_allele2 = (long)species[9];
+  Burst1_onpara1_targ_allele2 = (long)species[10];
+  Burst1_onpara2_targ_allele2 = (long)species[11];
+  Burst1_off_targ_allele2 = (long)species[12];
+  Burst1_on_para1_allele1 = (long)species[13];
+  Burst1_on_para1_allele2 = (long)species[14];
+  Burst1_on_para2_allele1 = (long)species[15];
+  Burst1_on_para2_allele2 = (long)species[16];
+  Burst1_on_orig_allele1 = (long)species[17];
+  Burst1_on_orig_allele2 = (long)species[18];
+  Burst1_is_mutated_allele1 = (long)species[19];
+  Burst1_is_mutated_allele2 = (long)species[20];
 
 //UNPACK ALL RATES HERE
   r_prodbasal_A1 = rates[0];
   r_prodbasal_Anonsense1 = rates[1];
   r_prodbasal_Aprime1 = rates[2];
+  r_prodbasal_Aprime2 = rates[2];
   r_prodbasal_B1 = rates[3];
   
   r_prodon_A1 = rates[4];
   r_prodon_Anonsense1 = rates[5];
   r_prodon_Aprime1 = rates[6];
+  r_prodon_Aprime2 = rates[6];
   r_prodon_B1 = rates[7];
 
   d_Aprime1_B1 = rates[8];
+  d_Aprime2_B1 = rates[8];
 
   r_deg_A1 = rates[9];
   r_deg_Anonsense1 = rates[10];
   r_deg_Aprime1 = rates[11];
+  r_deg_Aprime2 = rates[11];
   r_deg_B1 = rates[12];
 
   r_onbasal_A1 = rates[13];
   r_onbasal_Anonsense1 = rates[14];
   r_onbasal_Aprime1 = rates[15];
+  r_onbasal_Aprime2 = rates[15];
   r_onbasal_B1 = rates[16];
 
   r_nitc_byAnonsense1_A1 = rates[17];
   r_nitc_byAnonsense1_Anonsense1 = rates[18];
   r_nitc_byAnonsense1_Aprime1 = rates[19];
+  r_nitc_byAnonsense1_Aprime2 = rates[19];
   r_addon_byA1_B1 = rates[20];
   r_addon_byAprime1_B1 = rates[21];
+  r_addon_byAprime2_B1 = rates[21];
 
   r_off_A1 = rates[22];
   r_off_Anonsense1 = rates[23];
   r_off_Aprime1 = rates[24];
+  r_off_Aprime2 = rates[24];
   r_offorig_B1 = rates[25];
-  r_offpara_B1 = rates[26];
+  r_offpara1_B1 = rates[26];
+  r_offpara2_B1 = rates[26];
 
   k_A1  = rates[27];
   k_Anonsense1  = rates[28];
   k_Aprime1  = rates[29];
+  k_Aprime2  = rates[29];
   k_B1  = rates[30];
 
   n_A1  = rates[31];
   n_Anonsense1  = rates[32];
   n_Aprime1  = rates[33];
+  n_Aprime2  = rates[33];
   n_B1  = rates[34];
 
  
@@ -377,20 +419,25 @@ void gillespie(long m, double *times_out,double *species_out,double currT,double
 species_out[savecount*NSPECIES+0] = A1;
 species_out[savecount*NSPECIES+1] = Anonsense1;
 species_out[savecount*NSPECIES+2] = Aprime1;
-species_out[savecount*NSPECIES+3] = B1;
+species_out[savecount*NSPECIES+3] = Aprime2;
+species_out[savecount*NSPECIES+4] = B1;
 
-species_out[savecount*NSPECIES+4] = Burst1_onorig_targ_allele1;
-species_out[savecount*NSPECIES+5] = Burst1_onpara_targ_allele1;
-species_out[savecount*NSPECIES+6] = Burst1_off_targ_allele1;
-species_out[savecount*NSPECIES+7] = Burst1_onorig_targ_allele2;
-species_out[savecount*NSPECIES+8] = Burst1_onpara_targ_allele2;
-species_out[savecount*NSPECIES+9] = Burst1_off_targ_allele2;
-species_out[savecount*NSPECIES+10] = Burst1_on_para_allele1;
-species_out[savecount*NSPECIES+11] = Burst1_on_para_allele2;
-species_out[savecount*NSPECIES+12] = Burst1_on_orig_allele1;
-species_out[savecount*NSPECIES+13] = Burst1_on_orig_allele2;
-species_out[savecount*NSPECIES+14] = Burst1_is_mutated_allele1;
-species_out[savecount*NSPECIES+15] = Burst1_is_mutated_allele2;
+species_out[savecount*NSPECIES+5] = Burst1_onorig_targ_allele1;
+species_out[savecount*NSPECIES+6] = Burst1_onpara1_targ_allele1;
+species_out[savecount*NSPECIES+7] = Burst1_onpara2_targ_allele1;
+species_out[savecount*NSPECIES+8] = Burst1_off_targ_allele1;
+species_out[savecount*NSPECIES+9] = Burst1_onorig_targ_allele2;
+species_out[savecount*NSPECIES+10] = Burst1_onpara1_targ_allele2;
+species_out[savecount*NSPECIES+11] = Burst1_onpara2_targ_allele2;
+species_out[savecount*NSPECIES+12] = Burst1_off_targ_allele2;
+species_out[savecount*NSPECIES+13] = Burst1_on_para1_allele1;
+species_out[savecount*NSPECIES+14] = Burst1_on_para1_allele2;
+species_out[savecount*NSPECIES+15] = Burst1_on_para2_allele1;
+species_out[savecount*NSPECIES+16] = Burst1_on_para2_allele2;
+species_out[savecount*NSPECIES+17] = Burst1_on_orig_allele1;
+species_out[savecount*NSPECIES+18] = Burst1_on_orig_allele2;
+species_out[savecount*NSPECIES+19] = Burst1_is_mutated_allele1;
+species_out[savecount*NSPECIES+20] = Burst1_is_mutated_allele2;
             times_out[savecount] = savecount*deltaTsave;
             savecount++;
             savecountcheck++;
@@ -407,7 +454,7 @@ if (p<cumpropensities[0]) {
     A1=A1 + 1;
   }
  
-  updateSpecies(species, A1, Anonsense1, Aprime1, B1, Burst1_onorig_targ_allele1, Burst1_onpara_targ_allele1, Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para_allele1, Burst1_on_para_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2);
+  updateSpecies(species, A1, Anonsense1, Aprime1, Aprime2, B1, Burst1_onorig_targ_allele1, Burst1_onpara1_targ_allele1, Burst1_onpara2_targ_allele1,  Burst1_off_targ_allele1, Burst1_onorig_targ_allele2, Burst1_onpara1_targ_allele2, Burst1_onpara2_targ_allele2, Burst1_off_targ_allele2, Burst1_on_para1_allele1, Burst1_on_para1_allele2, Burst1_on_para2_allele1, Burst1_on_para2_allele2, Burst1_on_orig_allele1, Burst1_on_orig_allele2, Burst1_is_mutated_allele1, Burst1_is_mutated_allele2);
   updatePropensities(species, rates, propensities);
 
 } else if (p<cumpropensities[1]) {
