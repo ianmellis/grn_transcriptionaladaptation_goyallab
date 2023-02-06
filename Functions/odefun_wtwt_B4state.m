@@ -4,56 +4,56 @@ function dydt = odefun_wtwt_B4state(t,y,rates)
 r_prodbasal_A1 = rates(1);
 r_prodbasal_Anonsense1 = rates(2);
 r_prodbasal_Aprime1 = rates(3);
-r_prodbasal_Aprime2 = rates(3);
-r_prodbasal_B1 = rates(4);
+r_prodbasal_Aprime2 = rates(4);
+r_prodbasal_B1 = rates(5);
 
-r_prodon_A1 = rates(5);
-r_prodon_Anonsense1 = rates(6);
-r_prodon_Aprime1 = rates(7);
-r_prodon_Aprime2 = rates(7);
-r_prodon_B1 = rates(8);
+r_prodon_A1 = rates(6);
+r_prodon_Anonsense1 = rates(7);
+r_prodon_Aprime1 = rates(8);
+r_prodon_Aprime2 = rates(9);
+r_prodon_B1 = rates(10);
 
-d_Aprime1_B1 = rates(9);
-d_Aprime2_B1 = rates(9);
+d_Aprime1_B1 = rates(11);
+d_Aprime2_B1 = rates(12);
 
-r_deg_A1 = rates(10);
-r_deg_Anonsense1 = rates(11);
-r_deg_Aprime1 = rates(12);
-r_deg_Aprime2 = rates(12);
-r_deg_B1 = rates(13);
+r_deg_A1 = rates(13);
+r_deg_Anonsense1 = rates(14);
+r_deg_Aprime1 = rates(15);
+r_deg_Aprime2 = rates(16);
+r_deg_B1 = rates(17);
 
-r_onbasal_A1 = rates(14);
-r_onbasal_Anonsense1 = rates(15);
-r_onbasal_Aprime1 = rates(16);
-r_onbasal_Aprime2 = rates(16);
-r_onbasal_B1 = rates(17);
+r_onbasal_A1 = rates(18);
+r_onbasal_Anonsense1 = rates(19);
+r_onbasal_Aprime1 = rates(20);
+r_onbasal_Aprime2 = rates(21);
+r_onbasal_B1 = rates(22);
 
-r_nitc_byAnonsense1_A1 = rates(18);
-r_nitc_byAnonsense1_Anonsense1 = rates(19);
-r_nitc_byAnonsense1_Aprime1 = rates(20);
-r_nitc_byAnonsense1_Aprime2 = rates(20);
-r_addon_byA1_B1 = rates(21);
-r_addon_byAprime1_B1 = rates(22);
-r_addon_byAprime2_B1 = rates(22);
+r_nitc_byAnonsense1_A1 = rates(23);
+r_nitc_byAnonsense1_Anonsense1 = rates(24);
+r_nitc_byAnonsense1_Aprime1 = rates(25);
+r_nitc_byAnonsense1_Aprime2 = rates(26);
+r_addon_byA1_B1 = rates(27);
+r_addon_byAprime1_B1 = rates(28);
+r_addon_byAprime2_B1 = rates(29);
 
-r_off_A1 = rates(23);
-r_off_Anonsense1 = rates(24);
-r_off_Aprime1 = rates(25);
-r_off_Aprime2 = rates(25);
-r_offorig_B1 = rates(26);
-r_offpara_B1 = rates(27);
+r_off_A1 = rates(30);
+r_off_Anonsense1 = rates(31);
+r_off_Aprime1 = rates(32);
+r_off_Aprime2 = rates(33);
+r_offorig_B1 = rates(34);
+r_offpara_B1 = rates(35);
 
-k_A1  = rates(28);
-k_Anonsense1  = rates(29);
-k_Aprime1  = rates(30);
-k_Aprime2  = rates(30);
-k_B1  = rates(31);
+k_A1  = rates(36);
+k_Anonsense1  = rates(37);
+k_Aprime1  = rates(38);
+k_Aprime2  = rates(39);
+k_B1  = rates(40);
 
-n_A1  = rates(32);
-n_Anonsense1  = rates(33);
-n_Aprime1  = rates(34);
-n_Aprime2  = rates(34);
-n_B1  = rates(35);
+n_A1  = rates(41);
+n_Anonsense1  = rates(42);
+n_Aprime1  = rates(43);
+n_Aprime2  = rates(44);
+n_B1  = rates(45);
 
 % vector: y: 
 % y(1) = ona_1 (wt)
