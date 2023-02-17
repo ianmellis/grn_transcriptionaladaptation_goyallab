@@ -1434,7 +1434,7 @@ for ind = 1:(length(bounds)-1)
         %     [times,savespecies] = gillespie_burstshistomex_B3state(0,sp_1,ra_1,pr_1,sum(clock*100),maxgillespie,maxgillespie);
         [times,savespecies] = gillespie_burstshistomex_4node_testFunc(0,sp_1,ra_1,pr_1,simseeds(i),maxgillespie,maxgillespie);
         
-        s_store{i} = savespecies;
+        s_store{j} = savespecies;
     end
     
     for i = (bounds(ind)+1):bounds(ind+1)
@@ -1629,7 +1629,7 @@ for ind = 1:(length(bounds)-1)
             'n_Aprime2 ',...
             'n_B1'};
         
-        savespecies = s_store{i};
+        savespecies = s_store{storeind};
         
         sp_q300 = savespecies(:,[599:300:100000, 100599:300:200000, 200599:300:300000]);
         sp_q300(22,:) = [599:300:100000, 100599:300:200000, 200599:300:300000];
