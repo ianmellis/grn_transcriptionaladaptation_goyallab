@@ -7,7 +7,7 @@ from scipy.stats import sem
 import random
 
 random.seed(10)
-bootstrap_reps = 1000
+BOOTSTRAP_REPS = 1000
 
 def filter_data(df, pos_only=False, sig_only=False):
     if 'Base_Mean' in df: # filter differently if DESeq Dataset
@@ -46,18 +46,21 @@ def filter_data(df, pos_only=False, sig_only=False):
 
 def gen_pvals(df, boot_dists):
     summarized = df.groupby('KO_Gene').mean().reset_index()
-    p_val_dict = {}
+    data = []
     for _, row in summarized.iterrows():
         dist = boot_dists[row['KO_Gene']]
         perc_upreg_obs = row['upreg']
         perc_greater_than_obs = len(
-            [i for i in dist if i > perc_upreg_obs]) / len(dist)
-        p_val_dict[row['KO_Gene']] = perc_greater_than_obs
+            [i for i in dist if i >= perc_upreg_obs]) / len(dist)
+        data.append([row['KO_Gene'], perc_greater_than_obs])
+
+    df = pd.DataFrame(data, columns=['KO_Gene', 'p-value'])
         
-    return p_val_dict
+    return df
 
 
-def plot_data(df, boot_df, boot_dists):
+def plot_data(df, boot_df, boot_dists, geo_id):
+    fig_size = (13,8.5) 
     if 'Base_Mean' in df: # add in significance coloring
         hue = 'significant'
         palette = 'gist_gray_r'
@@ -68,40 +71,61 @@ def plot_data(df, boot_df, boot_dists):
         palette = None
     
     df = filter_data(df, pos_only=False, sig_only=False)
-    print(gen_pvals(df, boot_dists))
-
     df = df.sort_values(by="KO_Gene")
-    #fig, ax1 = plt.subplots()
+    if len(set(df['KO_Gene'])) > 17:
+        rotation = 45
+    else:
+        rotation = 0
+
+    plt.figure(figsize=fig_size)
     sns.set_theme(context='notebook', style='whitegrid', palette='deep',
                       font='sans-serif', font_scale=1, color_codes=True, rc=None)
     ax1 = sns.stripplot(x='KO_Gene', y='FC2', data=df, color=color, palette=palette, hue=hue)
     sns.barplot(x="KO_Gene", y="FC2", errorbar=None,color='gray', data=df, ax=ax1, alpha=.3)
-    plt.show()
+    plt.xticks(rotation=rotation)
+    plt.savefig('./analysis/FC2/' + geo_id + '.png', dpi=200)
+    plt.clf()
+    df.to_csv('./analysis/FC2/tabular_format/'+geo_id+'.csv')
 
-    #plot percent upregulated
+
+    # setup df for percent upregulated
+    pval_df = gen_pvals(df, boot_dists)
     boot_df = boot_df.groupby(['KO_Gene']).mean().reset_index()
     combined_df = boot_df.merge(df.groupby(['KO_Gene'])['upreg'].mean(), left_on='KO_Gene', right_on='KO_Gene')
     combined_df = combined_df.rename({'upreg': 'Paralogs', 'boot_upreg': 'Bootstrapped Genes'}, axis=1)
     upreg_data = pd.melt(combined_df, id_vars=['KO_Gene'], value_vars=['Paralogs', 'Bootstrapped Genes',])
     upreg_data = upreg_data.rename({'value':'Percent Upregulated'}, axis=1)
     upreg_data = upreg_data.merge(boot_df, how='left', left_on=['KO_Gene', 'Percent Upregulated'], right_on=['KO_Gene', 'boot_upreg'])
+    upreg_data = upreg_data.merge(pval_df, how='left', left_on='KO_Gene', right_on='KO_Gene')
+
+    # plot percent upregulated
+    plt.figure(figsize=fig_size)
     sns.set_theme(context='notebook', style='whitegrid', palette='deep',
                       font='sans-serif', font_scale=1, color_codes=True, rc=None)
-    ax2 = sns.barplot(x="KO_Gene", y="Percent Upregulated", palette='Paired', hue='variable', data=upreg_data)
-
+    ax2 = sns.barplot(x="KO_Gene", y="Percent Upregulated", palette='Paired',
+                      hue='variable', data=upreg_data)
     x_coords = [p.get_x() + 0.5*p.get_width() for p in ax2.patches]
     y_coords = [p.get_height() for p in ax2.patches]
     plt.errorbar(x=x_coords, y=y_coords, yerr=upreg_data["SE"], fmt="none", c="k")
-    plt.show()
+    plt.xticks(rotation=rotation)
+    plt.savefig('./analysis/percent_upregulated/' + geo_id + '.png', dpi=200)
+    plt.clf()
+    upreg_data.to_csv('./analysis/percent_upregulated/tabular_format/'+geo_id+'.csv')
+
 
     #plot knockout
+    plt.figure(figsize=fig_size)
     sns.set_theme(context='notebook', style='whitegrid', palette='deep',
                   font='sans-serif', font_scale=1, color_codes=True, rc=None)
-    sns.stripplot(x='KO_Gene', y='KO_FC2', color='black', jitter=False, data=df)
-    plt.show()
+    sns.stripplot(x='KO_Gene', y='KO_FC2', color='black',
+                  jitter=False, data=df)
+    plt.xticks(rotation=rotation)
+    plt.savefig('./analysis/KO_FC2_plots/' + geo_id + '.png', dpi=200)
+    plt.clf()
 
 
 def process_deseq_data(deseq_file, paralog_data, ko_genes):
+    #TODO: fix cases where there is a paralog with data, but padj is NaN
     fc_data = []
     deseq_file['baseMean'] = pd.to_numeric(deseq_file['baseMean'], errors='coerce')
     deseq_file.dropna(subset=['baseMean'], inplace=True)
@@ -146,7 +170,7 @@ def process_deseq_data(deseq_file, paralog_data, ko_genes):
             par_padj = float(par_data['padj'][0])
 
             rank = int(par_data['rank'][0])
-            for _ in range(0,bootstrap_reps):
+            for _ in range(0,BOOTSTRAP_REPS):
                 bootstrap_idx = random.randint(*random.choice([(rank-50, rank-1), (rank+1, rank+50)]))
                 bootstrap_idx = 0 if (bootstrap_idx < 0) else bootstrap_idx
                 bootstrap_idx = -1 if (bootstrap_idx >= len(gene_data)) else bootstrap_idx
@@ -176,7 +200,7 @@ def process_bootstrap_data(gene, sample, fc2_data, padj_data):
 
     # start calculating averages
     perc_upregs = []
-    for i in range(0, bootstrap_reps):
+    for i in range(0, BOOTSTRAP_REPS):
         upreg_sum = 0
         for j, paralog_samples in enumerate(fc2_data):
             if len(padj_data) == 0: #TPM dataset
@@ -249,7 +273,7 @@ def process_counts_data(norm_counts, counts, paralog_data, ko_genes, controls, c
                 par_fc2 = np.log2(paralog_expr/par_ctrl_expr)
 
                 rank = int(pd.Series(norm_counts.loc[paralog, 'rank'])[0])
-                for _ in range(0,bootstrap_reps):
+                for _ in range(0,BOOTSTRAP_REPS):
                     bootstrap_idx = random.randint(*random.choice([(rank-50, rank-1), (rank+1, rank+50)]))
                     bootstrap_idx = 0 if (bootstrap_idx < 0) else bootstrap_idx
                     bootstrap_idx = -1 if (bootstrap_idx >= len(norm_counts)) else bootstrap_idx
@@ -276,7 +300,7 @@ def main():
     raw_dataset_directory = './raw_datasets/'
 
     for x, row in dataset_metadata.iterrows():
-        if x in [2]:
+        if x in [0,1,2]:
             continue
 
         condition = row['condition']
@@ -297,7 +321,7 @@ def main():
             
             df, boot_df, boot_dists = process_counts_data(expression_data, raw_expression_data, paralog_data, ko_genes, ctrl_samples, condition)
 
-        plot_data(df, boot_df, boot_dists)
+        plot_data(df, boot_df, boot_dists, row['GEO_ID'])
 
 
 main()
