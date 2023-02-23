@@ -347,41 +347,43 @@ for i = 1:100
     
     ic_wtmut = ic_wtwt;
     
-    [t,y] = ode45(@(t,y) odefun_wtmut_B3state_neg(t,y,ra_1), ts, ic_wtmut);
+    [t,y] = ode45(@(t,y) odefun_wtmut_B4state(t,y,ra_1), ts, ic_wtmut); 
     
     ss_A1 = real(y(size(y,1),5));
     ss_Anons1 = real(y(size(y,1),6));
-    ss_Aprim1 = real(y(size(y,1),11));
-    ss_B1 = real(y(size(y,1),18));
+    ss_Aprim1 = real(y(size(y,1),15));
+    ss_Aprim2 = real(y(size(y,1),16));
+    ss_B1 = real(y(size(y,1),25));
     
-    ssSP_wm(i,:) = [i,ss_A1,ss_Anons1,ss_Aprim1,ss_B1];
+    ssSP_wm(i,:) = [i,ss_A1,ss_Anons1,ss_Aprim1,ss_Aprim2,ss_B1];
     
     ic_mutmut = ic_wtwt;
     
-    [t,y] = ode45(@(t,y) odefun_mutmut_B3state_neg(t,y,ra_1), ts, ic_mutmut);
+    [t,y] = ode45(@(t,y) odefun_mutmut_B4state(t,y,ra_1), ts, ic_mutmut); 
     
     ss_A1 = real(y(size(y,1),5));
     ss_Anons1 = real(y(size(y,1),6));
-    ss_Aprim1 = real(y(size(y,1),11));
-    ss_B1 = real(y(size(y,1),18));
+    ss_Aprim1 = real(y(size(y,1),15));
+    ss_Aprim2 = real(y(size(y,1),16));
+    ss_B1 = real(y(size(y,1),25));
     
-    ssSP_mm(i,:) = [i,ss_A1,ss_Anons1,ss_Aprim1,ss_B1];
+    ssSP_mm(i,:) = [i,ss_A1,ss_Anons1,ss_Aprim1,ss_Aprim2,ss_B1];
     
 
     
 end
 
 %%
-ss_file = [outdir, 'steady_state_ODE45_wtwt_B3state_negODE.csv'];
-ss_table = array2table(ssSP_ww, 'VariableNames', {'paramset', 'ss_A1','ss_Anons1','ss_Aprim1','ss_B1'});
+ss_file = [outdir, 'steady_state_ODE45_wtwt_B4state_ODE.csv'];
+ss_table = array2table(ssSP_ww, 'VariableNames', {'paramset', 'ss_A1','ss_Anons1','ss_Aprim1','ss_Aprim2','ss_B1'});
 writetable(ss_table, ss_file, 'Delimiter', ',')
 
-ss_file = [outdir, 'steady_state_ODE45_wtmut_B3state_negODE.csv'];
-ss_table = array2table(ssSP_wm, 'VariableNames', {'paramset', 'ss_A1','ss_Anons1','ss_Aprim1','ss_B1'});
+ss_file = [outdir, 'steady_state_ODE45_wtmut_B4state_ODE.csv'];
+ss_table = array2table(ssSP_wm, 'VariableNames', {'paramset', 'ss_A1','ss_Anons1','ss_Aprim1','ss_Aprim2','ss_B1'});
 writetable(ss_table, ss_file, 'Delimiter', ',')
 
-ss_file = [outdir, 'steady_state_ODE45_mutmut_B3state_negODE.csv'];
-ss_table = array2table(ssSP_mm, 'VariableNames', {'paramset', 'ss_A1','ss_Anons1','ss_Aprim1','ss_B1'});
+ss_file = [outdir, 'steady_state_ODE45_mutmut_B4state_ODE.csv'];
+ss_table = array2table(ssSP_mm, 'VariableNames', {'paramset', 'ss_A1','ss_Anons1','ss_Aprim1','ss_Aprim2','ss_B1'});
 writetable(ss_table, ss_file, 'Delimiter', ',')
 
 %% het for all 100 paramsets - consecutive starting conditions - don't run
