@@ -41,19 +41,20 @@ r_off_Anonsense1 = rates(31);
 r_off_Aprime1 = rates(32);
 r_off_Aprime2 = rates(33);
 r_offorig_B1 = rates(34);
-r_offpara_B1 = rates(35);
+r_offpara1_B1 = rates(35);
+r_offpara2_B1 = rates(36);
 
-k_A1  = rates(36);
-k_Anonsense1  = rates(37);
-k_Aprime1  = rates(38);
-k_Aprime2  = rates(39);
-k_B1  = rates(40);
+k_A1  = rates(37);
+k_Anonsense1  = rates(38);
+k_Aprime1  = rates(39);
+k_Aprime2  = rates(40);
+k_B1  = rates(41);
 
-n_A1  = rates(41);
-n_Anonsense1  = rates(42);
-n_Aprime1  = rates(43);
-n_Aprime2  = rates(44);
-n_B1  = rates(45);
+n_A1  = rates(42);
+n_Anonsense1  = rates(43);
+n_Aprime1  = rates(44);
+n_Aprime2  = rates(45);
+n_B1  = rates(46);
 
 % vector: y: 
 % y(1) = ona_1 (wt)
