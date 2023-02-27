@@ -54,7 +54,7 @@ def gen_pvals(df, boot_dists):
             [i for i in dist if i >= perc_upreg_obs]) / len(dist)
         data.append([row['KO_Gene'], perc_greater_than_obs])
 
-    df = pd.DataFrame(data, columns=['KO_Gene', 'p-value'])
+    df = pd.DataFrame(data, columns=['KO_Gene', 'p_value'])
         
     return df
 
@@ -74,8 +74,10 @@ def plot_data(df, boot_df, boot_dists, geo_id):
     df = df.sort_values(by="KO_Gene")
     if len(set(df['KO_Gene'])) > 17:
         rotation = 45
+        bottom = True
     else:
         rotation = 0
+        bottom = False
 
     plt.figure(figsize=fig_size)
     sns.set_theme(context='notebook', style='whitegrid', palette='deep',
@@ -83,6 +85,7 @@ def plot_data(df, boot_df, boot_dists, geo_id):
     ax1 = sns.stripplot(x='KO_Gene', y='FC2', data=df, color=color, palette=palette, hue=hue)
     sns.barplot(x="KO_Gene", y="FC2", errorbar=None,color='gray', data=df, ax=ax1, alpha=.3)
     plt.xticks(rotation=rotation)
+    ax1.tick_params(bottom=bottom)
     plt.savefig('./analysis/FC2/' + geo_id + '.png', dpi=200)
     plt.clf()
     df.to_csv('./analysis/FC2/tabular_format/'+geo_id+'.csv')
@@ -107,7 +110,14 @@ def plot_data(df, boot_df, boot_dists, geo_id):
     x_coords = [p.get_x() + 0.5*p.get_width() for p in ax2.patches]
     y_coords = [p.get_height() for p in ax2.patches]
     plt.errorbar(x=x_coords, y=y_coords, yerr=upreg_data["SE"], fmt="none", c="k")
+    plt.ylim(0, 1)
     plt.xticks(rotation=rotation)
+    ax2.tick_params(bottom=bottom)
+    p_val_df = upreg_data.groupby(['KO_Gene']).max().reset_index()
+    for _, row in p_val_df.iterrows():
+        text = '-'+str(round(row.p_value, 2))+'-' if row.p_value <=0.05 else ''
+        ax2.text(row.name, row['Percent Upregulated']+0.01, text,
+                color='black', ha='center')
     plt.savefig('./analysis/percent_upregulated/' + geo_id + '.png', dpi=200)
     plt.clf()
     upreg_data.to_csv('./analysis/percent_upregulated/tabular_format/'+geo_id+'.csv')
@@ -195,8 +205,8 @@ def process_bootstrap_data(gene, sample, fc2_data, padj_data):
     # first remove paralogs that weren't found
     fc2_data = [l for l in fc2_data if len(l) != 0]
     padj_data = [l for l in padj_data if len(l) != 0]
-    #if len(fc2_data) == 0:
-    #    return [gene, sample, np.nan, np.nan]
+    if len(fc2_data) == 0:
+        return [gene, sample, np.nan, np.nan], []
 
     # start calculating averages
     perc_upregs = []
@@ -218,7 +228,7 @@ def process_bootstrap_data(gene, sample, fc2_data, padj_data):
     
     return [gene, sample, avg_perc_upreg, se_perc_upreg], perc_upregs 
 
-def process_counts_data(norm_counts, counts, paralog_data, ko_genes, controls, condition):
+def process_counts_data(norm_counts, counts, paralog_data, ko_genes, controls, conditions):
     norm_counts = norm_counts.set_index('gene_name')
     counts = counts.set_index('gene_name')
 
@@ -246,7 +256,7 @@ def process_counts_data(norm_counts, counts, paralog_data, ko_genes, controls, c
         # start calculating FC
         bootstrap_fc2_data = [[] for _ in range(len(paralogs))]
         for sample in relevant_samples:
-            if condition != 'na' and condition not in sample:
+            if not all(map(lambda x: x in sample, conditions)) and conditions[0]!='na':
                 continue
 
             norm_counts = norm_counts.sort_values(sample)
@@ -303,7 +313,7 @@ def main():
         if x in [0,1,2]:
             continue
 
-        condition = row['condition']
+        condition = row['condition'].split(',')
         deseq = row['DESeq']
         paralog_data = pd.read_csv(paralog_directory+row['GEO_ID']+'-paralogs.csv')
         ko_genes = row['ko_genes'].split(',')

@@ -1,0 +1,3 @@
+,KO_Gene,variable,Percent Upregulated,boot_upreg,SE,p_value
+0,TLR4,Paralogs,0.5,,,0.001
+1,TLR4,Bootstrapped Genes,0.2729545454545456,0.2729545454545456,0.002589800887884399,0.001
