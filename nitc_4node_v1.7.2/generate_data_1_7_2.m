@@ -69,7 +69,8 @@ min_range = [repmat(-1,1,1),...         %basal_nitc_on_ratio (0.1,10) - is 10 hi
     repmat(0,1,1),...                   %r_prod_on (1,1000)
     repmat(-1,1,1),...                  %r_addon_byA1_B1 (0.1,10)
     repmat(-1,1,1),...                  %n (Hill coefficient n) (0.1,5) too large a range? I think so, but having some non-linearity is good. Perhaps ok with 10000 paramsets.
-    repmat(-1,1,1)];                    %r_onbasal_A1 (0.1, 10)
+    repmat(-1,1,1),...                  %r_onbasal_A1 (0.1, 10)
+    repmat(0,1,1)];                     %Aprim1_Aprim2_prodon_ratio(1,100)
 %                                       
 % max_range = [repmat(10,1,1),...         %basal_nitc_on_ratio (0.1,10) - is 10 high enough?
 %     repmat(2,1,1),...                   %onbasalA1_off_ratio (0.01,2) - per Larsson this is the bulk of the distribution (very quick off-burst)
@@ -87,8 +88,8 @@ max_range = [repmat(1,1,1),...          %basal_nitc_on_ratio (0.1,10) - is 10 hi
     repmat(3,1,1),...                   %r_prod_on (1,1000)
     repmat(1,1,1),...                   %r_addon_byA1_B1 (0.1,10)
     repmat(0.699,1,1),...               %n (Hill coefficient n) (0.1,5) too large a range?
-    repmat(1,1,1)];                     %r_onbasal_A1 (0.1, 10)
-
+    repmat(1,1,1),...                   %r_onbasal_A1 (0.1, 10)
+    repmat(2,1,1)];                     %Aprim1_Aprim2_prodon_ratio
 
 latinhyp_log = lhsdesign_modified(nruns, min_range, max_range);
 
