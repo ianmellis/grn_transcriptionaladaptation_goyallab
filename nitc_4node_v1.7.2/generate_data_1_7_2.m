@@ -125,7 +125,8 @@ lhs_1_s.Properties.VariableNames = {'basal_nitc_on_ratio',...
     'r_prod_on',...
     'r_addon_byA1_B1',...
     'Hill_coefficient_n',...
-    'r_onbasal_A1'};
+    'r_onbasal_A1',...
+    'Aprim1_Aprim2_prodon_ratio'};
 
 %%
 writetable(lhs_1_s,lhs_1_f,'Delimiter',',')
@@ -145,7 +146,8 @@ lhs_1_s.Properties.VariableNames = {'basal_nitc_on_ratio',...
     'r_prod_on',...
     'r_addon_byA1_B1',...
     'Hill_coefficient_n',...
-    'r_onbasal_A1'};
+    'r_onbasal_A1',...
+    'Aprim1_Aprim2_prodon_ratio'};
 
 %% save exponentiation
 writetable(lhs_1_s,lhs_1_f,'Delimiter',',')
@@ -177,6 +179,10 @@ parfor i = 1:3
     % r_bind_byA1_B1/r_bind_byAprime1_B1 = relative promoter-binding rates of
     % A1 vs Aprime1
     A1_Aprime1_prodon_ratio = latinhyp(i, 4);
+    
+    % d_Aprime1_B1/d_Aprime2_B1 = relative prodon
+    % enhancement of B1 by Aprim1 over Aprim2
+    Aprim1_Aprim2_prodon_ratio = latinhyp(i, 9);
     
     paramsetnum = i;
     
@@ -211,7 +217,7 @@ parfor i = 1:3
     r_prodon_B1 = r_prod_on;
     
     d_Aprime1_B1 = 1/A1_Aprime1_prodon_ratio; % multiplied in sim, so reciprocal taken here
-    d_Aprime2_B1 = d_Aprime1_B1*Aprim1_Aprim2_prodon_ratio;
+    d_Aprime2_B1 = d_Aprime1_B1/Aprim1_Aprim2_prodon_ratio;
     
     r_deg_A1 = r_deg;
     r_deg_Anonsense1 = r_deg;
@@ -419,6 +425,10 @@ for i = 1:3
     % A1 vs Aprime1
     A1_Aprime1_prodon_ratio = latinhyp(i, 4);
     
+    % d_Aprime1_B1/d_Aprime2_B1 = relative prodon
+    % enhancement of B1 by Aprim1 over Aprim2
+    Aprim1_Aprim2_prodon_ratio = latinhyp(i, 9);
+    
     paramsetnum = i;
     
     % rates
@@ -452,7 +462,7 @@ for i = 1:3
     r_prodon_B1 = r_prod_on;
     
     d_Aprime1_B1 = 1/A1_Aprime1_prodon_ratio; % multiplied in sim, so reciprocal taken here
-    d_Aprime2_B1 = d_Aprime1_B1;
+    d_Aprime2_B1 = d_Aprime1_B1/Aprim1_Aprim2_prodon_ratio;
     
     r_deg_A1 = r_deg;
     r_deg_Anonsense1 = r_deg;
@@ -701,6 +711,10 @@ parfor i = 4:103
     % A1 vs Aprime1
     A1_Aprime1_prodon_ratio = latinhyp(i, 4);
     
+    % d_Aprime1_B1/d_Aprime2_B1 = relative prodon
+    % enhancement of B1 by Aprim1 over Aprim2
+    Aprim1_Aprim2_prodon_ratio = latinhyp(i, 9);
+    
     paramsetnum = i;
     
     % rates
@@ -734,7 +748,7 @@ parfor i = 4:103
     r_prodon_B1 = r_prod_on;
     
     d_Aprime1_B1 = 1/A1_Aprime1_prodon_ratio; % multiplied in sim, so reciprocal taken here
-    d_Aprime2_B1 = d_Aprime1_B1;
+    d_Aprime2_B1 = d_Aprime1_B1/Aprim1_Aprim2_prodon_ratio;
     
     r_deg_A1 = r_deg;
     r_deg_Anonsense1 = r_deg;
@@ -942,6 +956,10 @@ for i = 4:103
     % A1 vs Aprime1
     A1_Aprime1_prodon_ratio = latinhyp(i, 4);
     
+    % d_Aprime1_B1/d_Aprime2_B1 = relative prodon
+    % enhancement of B1 by Aprim1 over Aprim2
+    Aprim1_Aprim2_prodon_ratio = latinhyp(i, 9);
+    
     paramsetnum = i;
     
     % rates
@@ -975,7 +993,7 @@ for i = 4:103
     r_prodon_B1 = r_prod_on;
     
     d_Aprime1_B1 = 1/A1_Aprime1_prodon_ratio; % multiplied in sim, so reciprocal taken here
-    d_Aprime2_B1 = d_Aprime1_B1;
+    d_Aprime2_B1 = d_Aprime1_B1/Aprim1_Aprim2_prodon_ratio;
     
     r_deg_A1 = r_deg;
     r_deg_Anonsense1 = r_deg;
@@ -1219,6 +1237,10 @@ for ind = 1:(length(bounds)-1)
         % A1 vs Aprime1
         A1_Aprime1_prodon_ratio = latinhyp(i, 4);
         
+        % d_Aprime1_B1/d_Aprime2_B1 = relative prodon
+        % enhancement of B1 by Aprim1 over Aprim2
+        Aprim1_Aprim2_prodon_ratio = latinhyp(i, 9);
+        
         paramsetnum = i;
         
         % rates
@@ -1252,7 +1274,7 @@ for ind = 1:(length(bounds)-1)
         r_prodon_B1 = r_prod_on;
         
         d_Aprime1_B1 = 1/A1_Aprime1_prodon_ratio; % multiplied in sim, so reciprocal taken here
-        d_Aprime2_B1 = d_Aprime1_B1;
+        d_Aprime2_B1 = d_Aprime1_B1/Aprim1_Aprim2_prodon_ratio;
         
         r_deg_A1 = r_deg;
         r_deg_Anonsense1 = r_deg;
@@ -1463,6 +1485,10 @@ for ind = 1:(length(bounds)-1)
         % A1 vs Aprime1
         A1_Aprime1_prodon_ratio = latinhyp(i, 4);
         
+        % d_Aprime1_B1/d_Aprime2_B1 = relative prodon
+        % enhancement of B1 by Aprim1 over Aprim2
+        Aprim1_Aprim2_prodon_ratio = latinhyp(i, 9);
+        
         paramsetnum = i;
         
         % rates
@@ -1496,7 +1522,7 @@ for ind = 1:(length(bounds)-1)
         r_prodon_B1 = r_prod_on;
         
         d_Aprime1_B1 = 1/A1_Aprime1_prodon_ratio; % multiplied in sim, so reciprocal taken here
-        d_Aprime2_B1 = d_Aprime1_B1;
+        d_Aprime2_B1 = d_Aprime1_B1/Aprim1_Aprim2_prodon_ratio;
         
         r_deg_A1 = r_deg;
         r_deg_Anonsense1 = r_deg;
