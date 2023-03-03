@@ -46,7 +46,7 @@ end
 % - A1_Aprime_prodon_ratio = d_Aprime_B1 = scalar multiple descrease in
 % production rate of B1 burst when turned on by para instead of orig
 
-rng(8393);
+rng(8893);
 
 nruns = 10000;
 
