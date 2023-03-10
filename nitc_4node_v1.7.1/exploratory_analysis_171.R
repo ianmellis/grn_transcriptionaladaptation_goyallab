@@ -161,8 +161,8 @@ for (paramset in paramsets171){
   
 }
 
-write.csv(all_species_q300, file = paste0('/Volumes/IAMYG1/grn_nitc_data/v1.7.1/all_species_q300.csv'))
-all_species_q300 <- as_tibble(read.csv(paste0('/Volumes/IAMYG1/grn_nitc_data/v1.7.1/all_species_q300.csv'), stringsAsFactors = F, header = T))
+write.csv(all_species_q300, file = paste0('/Volumes/IAMYG2/grn_nitc_data/v1.7.1/all_species_q300.csv'))
+all_species_q300 <- as_tibble(read.csv(paste0('/Volumes/IAMYG2/grn_nitc_data/v1.7.1/all_species_q300.csv'), stringsAsFactors = F, header = T))
 
 # summary stats draft1
 allstats_full171 <- allstats171 %>% mutate(version = '1.7.1')
@@ -708,7 +708,7 @@ unimodal_symmetric_robust_tree171 %>%
 #correlations
 
 genos = 0:2
-prods = c('A1', 'Anonsense1', 'Aprime1', 'B1')
+prods = c('A1', 'Anonsense1', 'Aprime1', 'Aprime2', 'B1')
 
 pdf(paste0(plotdir171, 'stats_class_assignment_check_v', as.character(anver),'/correlations_perGene_perGenotype.pdf'), width = 24, height = 32)
 par(mfcol = c(4,3))
